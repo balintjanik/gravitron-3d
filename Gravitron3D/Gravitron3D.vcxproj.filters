@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{de539653-475b-4a5d-b931-486fb7b94e05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{2647e48b-ba56-4089-91c3-4c7c3bfddc95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{651257f8-5beb-48f1-ade6-fbdde722213c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View">
+      <UniqueIdentifier>{eb8ad55b-a5c1-477e-90a0-1378b884f0be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\Vert_PosNormTex.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\Frag_LightingSkeleton.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Assets\MarbleBall.png" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\Suzanne.obj" />
+    <None Include="Assets\wood.jpg" />
+    <None Include="Assets\Wood_Table_Texture.png" />
+    <None Include="Assets\MarbleBall.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rockICO.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Suzanne.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\wood.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Wood_Table_Texture.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\MarbleBall.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rockICO.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Suzanne.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\wood.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Wood_Table_Texture.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\MarbleBall.png" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\Suzanne.obj" />
+    <None Include="Assets\wood.jpg" />
+    <None Include="Assets\Wood_Table_Texture.png" />
+    <None Include="Assets\MarbleBall.png" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\Suzanne.obj" />
+    <None Include="Assets\wood.jpg" />
+    <None Include="Assets\Wood_Table_Texture.png" />
+    <None Include="Assets\MarbleBall.png" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\Suzanne.obj" />
+    <None Include="Assets\wood.jpg" />
+    <None Include="Assets\Wood_Table_Texture.png" />
+    <None Include="Assets\MarbleBall.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rockICO.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Suzanne.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\wood.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Wood_Table_Texture.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\MarbleBall.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rock.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\rockICO.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Suzanne.obj">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\wood.jpg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Assets\Wood_Table_Texture.png">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\rock.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\rock.obj">
+      <Filter>Assets</Filter>
+    </Text>
+    <Text Include="Assets\rockICO.obj">
+      <Filter>Assets</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Model\octree.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\particle.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="View\Camera.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\CameraManipulator.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\GLUtils.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\MyApp.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\ObjParser.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\SDL_GLDebugMessageCallback.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Model\octree.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\particle.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="View\SDL_GLDebugMessageCallback.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\Camera.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\CameraManipulator.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\GLUtils.hpp">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\MyApp.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\ObjParser.h">
+      <Filter>View</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
