@@ -1,51 +1,54 @@
 #pragma once
-#include <vector>
+
 #include "particle.h"
 
-struct Quad {
-	float center_x, center_y, center_z;
-	float size;
+struct Octant {
+	glm::vec4 centerSize;
 
-	Quad(float center_x = 0, float center_y = 0, float center_z = 0, float size = 0)
-		: center_x(center_x), center_y(center_y), center_z(center_z), size(size)
-	{
-	}
+	Octant(glm::vec4 centerSize_ = glm::vec4(0)) : centerSize(centerSize_) {}
 
-	size_t octant(float pos_x, float pos_y, float pos_z);
-	Quad into_octant(size_t i);
-	std::vector<Quad> into_octants();
+	Octant(glm::vec3 center_, float size_) : centerSize(glm::vec4(center_, size_)) { }
 
-	static Quad new_containing(std::vector<Particle>& particles);
+	uint32_t getOctantFromPosition(glm::vec3 position);
+
+	Octant intoOctant(uint32_t i);
+
+	std::vector<Octant> intoOctants();
+
+	static Octant createNewContaining(std::vector<Particle>& particles);
 };
 
 struct Node {
-	size_t children = 0;
-	size_t next = 0;
-	Quad quad;
-	float pos_x = 0.0, pos_y = 0.0, pos_z = 0.0;
-	float mass = 0.0;
+	glm::vec4 positionMass;
+	Octant octant;
+	uint32_t children = 0;
+	uint32_t next = 0;
 
 	Node() {}
-	Node(size_t next, Quad quad) : next(next), quad(quad) {}
 
-	bool is_branch();
-	bool is_empty();
-	bool is_leaf();
+	Node(uint32_t next_, Octant octant_) : next(next_), octant(octant_) {}
+
+	bool isBranch();
+
+	bool isEmpty();
+
+	bool isLeaf();
 };
 
 struct Octree {
-	const std::size_t ROOT = 0;
+	const uint32_t ROOT = 0;
 	std::vector<Node> nodes;
-	std::vector<size_t> parents;
+	std::vector<uint32_t> parents;
 
 	Octree() : nodes(), parents() {}
 
-	void clear(Quad quad);
-	size_t subdivide(size_t node);
+	void clear(Octant octant);
+
+	uint32_t subdivide(uint32_t node);
 	
-	void insert(float pos_x, float pos_y, float pos_z, float mass);
+	void insert(glm::vec4 positionMass);
 
 	void propagate();
 
-	float acc(float& acc_x, float& acc_y, float& acc_z, float pos_x, float pos_y, float pos_z, float theta, float epsilon);
+	float calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 position, float theta, float epsilon);
 };

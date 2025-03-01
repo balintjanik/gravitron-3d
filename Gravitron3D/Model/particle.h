@@ -1,18 +1,28 @@
 #pragma once
+
+#include <glm/glm.hpp>
 #include <vector>
 
 struct Particle {
-	float pos_x, pos_y, pos_z;
-	float vel_x, vel_y, vel_z;
-	float acc_x, acc_y, acc_z;
-	float mass;
-	float all_force = 0.0f;
-	Particle(float px = 0.0, float py = 0.0, float pz = 0.0, float vx = 0.0, float vy = 0.0, float vz = 0.0, float m = 1.0, float ax = 0.0, float ay = 0.0, float az = 0.0)
-		: pos_x(px), pos_y(py), pos_z(pz), vel_x(vx), vel_y(vy), vel_z(vz), mass(m), acc_x(ax), acc_y(ay), acc_z(az)
+	glm::vec4 positionMass;
+	glm::vec4 velocitySize;
+	glm::vec4 accelerationForce;
+
+	Particle(glm::vec4 positionMass_ = glm::vec4(0.f),
+		glm::vec4 velocitySize_ = glm::vec4(0.f),
+		glm::vec4 accelerationForce_ = glm::vec4(0.f))
+		: positionMass(positionMass_),
+		velocitySize(velocitySize_),
+		accelerationForce(accelerationForce_)
 	{
 	}
 
-	void update(float acc_x, float acc_y, float acc_z, float delta_time, float speed, float all_force);
+	Particle(glm::vec3 position_, float mass_,
+		glm::vec3 velocity_, float size_,
+		glm::vec3 acceleration_, float force_)
+		: positionMass(glm::vec4(position_, mass_)),
+		velocitySize(glm::vec4(velocity_, size_)),
+		accelerationForce(glm::vec4(acceleration_, force_))
+	{
+	}
 };
-
-std::vector<Particle> initParticles(int n);

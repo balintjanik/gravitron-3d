@@ -1,36 +1,36 @@
 #include "octree.h"
-#include <iostream>
 
-size_t Quad::octant(float pos_x, float pos_y, float pos_z)
+uint32_t Octant::getOctantFromPosition(glm::vec3 position)
 {
-    size_t x = size_t(pos_x < center_x);
-    size_t y = size_t(pos_y < center_y);
-    size_t z = size_t(pos_z < center_z);
-    //return y << 1 | x;
+    uint32_t x = uint32_t(position.x < centerSize.x);
+    uint32_t y = uint32_t(position.y < centerSize.y);
+    uint32_t z = uint32_t(position.z < centerSize.z);
     return  z << 2 | y << 1 | x;
 
 }
 
-Quad Quad::into_octant(size_t i) {
-    Quad newQuad = *this;
-    newQuad.size *= 0.5f;
+Octant Octant::intoOctant(uint32_t i) {
+    Octant newOctant = *this;
+    float size = newOctant.centerSize.w * 0.5f;
 
-    newQuad.center_x += (0.5f - (i & 1)) * newQuad.size;
-    newQuad.center_y += (0.5f - ((i >> 1) & 1)) * newQuad.size;
-    newQuad.center_z += (0.5f - (i >> 2)) * newQuad.size;
+    float center_x = newOctant.centerSize.x + (0.5f - (i & 1)) * newOctant.centerSize.w;
+    float center_y = newOctant.centerSize.y + (0.5f - ((i >> 1) & 1)) * newOctant.centerSize.w;
+    float center_z = newOctant.centerSize.z + (0.5f - (i >> 2)) * newOctant.centerSize.w;
     
-    return newQuad;
+    newOctant.centerSize = glm::vec4(center_x, center_y, center_z, size);
+
+    return newOctant;
 }
 
-std::vector<Quad> Quad::into_octants(){
-    std::vector<Quad> octants;
-    for (size_t i = 0; i < 8; ++i) {
-        octants.push_back(into_octant(i));
+std::vector<Octant> Octant::intoOctants(){
+    std::vector<Octant> octants;
+    for (uint32_t i = 0; i < 8; ++i) {
+        octants.push_back(intoOctant(i));
     }
     return octants;
 }
 
-Quad Quad::new_containing(std::vector<Particle>& particles)
+Octant Octant::createNewContaining(std::vector<Particle>& particles)
 {
     float min_x = FLT_MAX;
     float min_y = FLT_MAX;
@@ -41,12 +41,12 @@ Quad Quad::new_containing(std::vector<Particle>& particles)
     for (int i = 0; i < particles.size(); i++)
     {
         Particle p = particles[i];
-        min_x = std::min(min_x, p.pos_x);
-        min_y = std::min(min_y, p.pos_y);
-        min_z = std::min(min_z, p.pos_z);
-        max_x = std::max(max_x, p.pos_x);
-        max_y = std::max(max_y, p.pos_y);
-        max_z = std::max(max_z, p.pos_z);
+        min_x = std::min(min_x, p.positionMass.x);
+        min_y = std::min(min_y, p.positionMass.y);
+        min_z = std::min(min_z, p.positionMass.z);
+        max_x = std::max(max_x, p.positionMass.x);
+        max_y = std::max(max_y, p.positionMass.y);
+        max_z = std::max(max_z, p.positionMass.z);
     }
 
     float center_x = (min_x + max_x) * 0.5;
@@ -54,38 +54,38 @@ Quad Quad::new_containing(std::vector<Particle>& particles)
     float center_z = (min_z + max_z) * 0.5;
     float size = std::max(std::max((max_x - min_x), (max_y - min_y)), (max_z - min_z));
     
-    return Quad(center_x, center_y, center_z, size);
+    return Octant(glm::vec4(center_x, center_y, center_z, size));
 }
 
-bool Node::is_branch()
+bool Node::isBranch()
 {
     return children != 0;
 }
 
-bool Node::is_empty()
+bool Node::isEmpty()
 {
-    return mass == 0.0;
+    return positionMass.w == 0.0;
 }
 
-bool Node::is_leaf()
+bool Node::isLeaf()
 {
     return children == 0;
 }
 
-void Octree::clear(Quad quad)
+void Octree::clear(Octant octant)
 {
     nodes.clear();
     parents.clear();
-    nodes.push_back(Node(0, quad));
+    nodes.push_back(Node(0, octant));
 }
 
-size_t Octree::subdivide(size_t node) {
+uint32_t Octree::subdivide(uint32_t node) {
     parents.push_back(node);
 
-    size_t children = nodes.size();
+    uint32_t children = nodes.size();
     nodes[node].children = children;
 
-    size_t nexts[8] = {
+    uint32_t nexts[8] = {
         children + 1,
         children + 2,
         children + 3,
@@ -96,72 +96,60 @@ size_t Octree::subdivide(size_t node) {
         nodes[node].next
     };
 
-    auto quads = nodes[node].quad.into_octants();
+    auto octants = nodes[node].octant.intoOctants();
 
-    for (size_t i = 0; i < 8; ++i) {
-        nodes.push_back(Node(nexts[i], quads[i]));
+    for (uint32_t i = 0; i < 8; ++i) {
+        nodes.push_back(Node(nexts[i], octants[i]));
     }
 
     return children;
 }
 
-void Octree::insert(float pos_x, float pos_y, float pos_z, float mass)
+void Octree::insert(glm::vec4 positionMass)
 {
-    size_t node = ROOT;
+    uint32_t node = ROOT;
 
-    while (nodes[node].is_branch())
+    while (nodes[node].isBranch())
     {
-        size_t q = nodes[node].quad.octant(pos_x, pos_y, pos_z);
+        size_t q = nodes[node].octant.getOctantFromPosition(glm::vec3(positionMass));
         node = nodes[node].children + q;
     }
 
-    if (nodes[node].is_empty())
+    if (nodes[node].isEmpty())
     {
-        nodes[node].pos_x = pos_x;
-        nodes[node].pos_y = pos_y;
-        nodes[node].pos_z = pos_z;
-        nodes[node].mass = mass;
+        nodes[node].positionMass = positionMass;
         return;
     }
 
-    float px = nodes[node].pos_x;
-    float py = nodes[node].pos_y;
-    float pz = nodes[node].pos_z;
-    float m = nodes[node].mass;
+    glm::vec4 nodePositionMass = nodes[node].positionMass;
 
     float threshold = 1e-8;
-    if (fabs(pos_x - px) < threshold && fabs(pos_y - py) < threshold && fabs(pos_z - pz) < threshold)
+    if (glm::all(glm::lessThan(glm::abs(glm::vec3(positionMass) - glm::vec3(nodePositionMass)), glm::vec3(threshold))))
     {
-        nodes[node].mass += mass;
+        nodes[node].positionMass.w += positionMass.w;
         return;
     }
 
-    bool both_in_same_leaf_node = true;
-    while (both_in_same_leaf_node)
+    bool bothInTheSameLeafNode = true;
+    while (bothInTheSameLeafNode)
     {
         size_t children = subdivide(node);
 
-        size_t q1 = nodes[node].quad.octant(px, py, pz);
-        size_t q2 = nodes[node].quad.octant(pos_x, pos_y, pos_z);
+        size_t o1 = nodes[node].octant.getOctantFromPosition(glm::vec3(nodePositionMass));
+        size_t o2 = nodes[node].octant.getOctantFromPosition(glm::vec3(positionMass));
 
-        if (q1 == q2)
+        if (o1 == o2)
         {
-            node = children + q1;
+            node = children + o1;
         }
         else
         {
-            size_t n1 = children + q1;
-            size_t n2 = children + q2;
+            size_t n1 = children + o1;
+            size_t n2 = children + o2;
 
-            nodes[n1].pos_x = px;
-            nodes[n1].pos_y = py;
-            nodes[n1].pos_z = pz;
-            nodes[n1].mass = m;
-            nodes[n2].pos_x = pos_x;
-            nodes[n2].pos_y = pos_y;
-            nodes[n2].pos_z = pos_z;
-            nodes[n2].mass = mass;
-            both_in_same_leaf_node = false;
+            nodes[n1].positionMass = nodePositionMass;
+            nodes[n2].positionMass = positionMass;
+            bothInTheSameLeafNode = false;
         }
     }
 }
@@ -174,110 +162,87 @@ void Octree::propagate()
     {
         size_t i = nodes[node].children;
 
-        nodes[node].pos_x = nodes[i].pos_x * nodes[i].mass
-            + nodes[i + 1].pos_x * nodes[i + 1].mass
-            + nodes[i + 2].pos_x * nodes[i + 2].mass
-            + nodes[i + 3].pos_x * nodes[i + 3].mass
-            + nodes[i + 4].pos_x * nodes[i + 4].mass
-            + nodes[i + 5].pos_x * nodes[i + 5].mass
-            + nodes[i + 6].pos_x * nodes[i + 6].mass
-            + nodes[i + 7].pos_x * nodes[i + 7].mass;
+        glm::vec3 weightedPosition =
+            glm::vec3(nodes[i].positionMass) * nodes[i].positionMass.w +
+            glm::vec3(nodes[i + 1].positionMass) * nodes[i + 1].positionMass.w +
+            glm::vec3(nodes[i + 2].positionMass) * nodes[i + 2].positionMass.w +
+            glm::vec3(nodes[i + 3].positionMass) * nodes[i + 3].positionMass.w +
+            glm::vec3(nodes[i + 4].positionMass) * nodes[i + 4].positionMass.w +
+            glm::vec3(nodes[i + 5].positionMass) * nodes[i + 5].positionMass.w +
+            glm::vec3(nodes[i + 6].positionMass) * nodes[i + 6].positionMass.w +
+            glm::vec3(nodes[i + 7].positionMass) * nodes[i + 7].positionMass.w;
 
-        nodes[node].pos_y = nodes[i].pos_y * nodes[i].mass
-            + nodes[i + 1].pos_y * nodes[i + 1].mass
-            + nodes[i + 2].pos_y * nodes[i + 2].mass
-            + nodes[i + 3].pos_y * nodes[i + 3].mass
-            + nodes[i + 4].pos_y * nodes[i + 4].mass
-            + nodes[i + 5].pos_y * nodes[i + 5].mass
-            + nodes[i + 6].pos_y * nodes[i + 6].mass
-            + nodes[i + 7].pos_y * nodes[i + 7].mass;
-
-        nodes[node].pos_z = nodes[i].pos_z * nodes[i].mass
-            + nodes[i + 1].pos_z * nodes[i + 1].mass
-            + nodes[i + 2].pos_z * nodes[i + 2].mass
-            + nodes[i + 3].pos_z * nodes[i + 3].mass
-            + nodes[i + 4].pos_z * nodes[i + 4].mass
-            + nodes[i + 5].pos_z * nodes[i + 5].mass
-            + nodes[i + 6].pos_z * nodes[i + 6].mass
-            + nodes[i + 7].pos_z * nodes[i + 7].mass;
+        float totalMass =
+            nodes[i].positionMass.w +
+            nodes[i + 1].positionMass.w +
+            nodes[i + 2].positionMass.w +
+            nodes[i + 3].positionMass.w +
+            nodes[i + 4].positionMass.w +
+            nodes[i + 5].positionMass.w +
+            nodes[i + 6].positionMass.w +
+            nodes[i + 7].positionMass.w;
         
-        nodes[node].mass = nodes[i].mass
-            + nodes[i + 1].mass
-            + nodes[i + 2].mass
-            + nodes[i + 3].mass
-            + nodes[i + 4].mass
-            + nodes[i + 5].mass
-            + nodes[i + 6].mass
-            + nodes[i + 7].mass;
+        weightedPosition /= totalMass;
 
-        float mass = nodes[node].mass;
-        nodes[node].pos_x /= mass;
-        nodes[node].pos_y /= mass;
-        nodes[node].pos_z /= mass;
+        nodes[node].positionMass = glm::vec4(weightedPosition, totalMass);
     }
 }
 
-float Octree::acc(float& acc_x, float& acc_y, float& acc_z, float pos_x, float pos_y, float pos_z,  float theta, float epsilon)
+float Octree::calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 position, float theta, float epsilon)
 {
-    float all_force = 0;
-    acc_x = 0.0;
-    acc_y = 0.0;
-    acc_z = 0.0;
+    float allForce = 0;
+    r_acceleration = glm::vec3(0.f);
 
-    float theta_sq = theta * theta;
-    float epsilon_sq = epsilon * epsilon;
+    float thetaSq = theta * theta;
+    float epsilonSq = epsilon * epsilon;
 
-    size_t node = ROOT;
-    bool checked_all = false;
+    uint32_t node = ROOT;
+    bool checkedAll = false;
 
-    while (!checked_all)
+    while (!checkedAll)
     {
-        Node n = nodes[node];
+        Node currentNode = nodes[node];
 
-        float dx = n.pos_x - pos_x;
-        float dy = n.pos_y - pos_y;
-        float dz = n.pos_z - pos_z;
-        float dsq = dx * dx + dy * dy + dz * dz;
+        glm::vec3 distance = glm::vec3(currentNode.positionMass) - position;
+        float distanceSq = glm::dot(distance, distance);
 
         // FONTOS - ez alapból nem volt benne, de, ha ez nincs,
         // akkor a saját node-jánál is számolni akar,
         // zéróosztó lesz és beakad meghal a program
         // Note: floating-point division miatt nem == 0.0 hanem ez lett
-        if (dsq < 1e-10)
+        if (distanceSq < 1e-10)
         {
-            if (n.next == 0)
+            if (currentNode.next == 0)
             {
-                checked_all = true;
+                checkedAll = true;
             }
             else
             {
-                node = n.next;
+                node = currentNode.next;
             }
             continue;
         }
 
-        if (n.is_leaf() || n.quad.size * n.quad.size < dsq * theta_sq)
+        if (currentNode.isLeaf() || currentNode.octant.centerSize.w * currentNode.octant.centerSize.w < distanceSq * thetaSq)
         {
-            float denom = (dsq + epsilon_sq) * sqrt(dsq);
-            acc_x += dx * (n.mass / denom);
-            acc_y += dy * (n.mass / denom);
-            acc_z += dz * (n.mass / denom);
+            float denom = (distanceSq + epsilonSq) * sqrt(distanceSq);
+            r_acceleration += distance * (currentNode.positionMass.w / denom);
 
-            all_force += (n.mass) / (dsq + epsilon_sq);
+            allForce += (currentNode.positionMass.w) / (distanceSq + epsilonSq);
 
-            if (n.next == 0)
+            if (currentNode.next == 0)
             {
-                checked_all = true;
+                checkedAll = true;
                 continue;
             }
 
-            node = n.next;
+            node = currentNode.next;
         }
         else
         {
-            node = n.children;
+            node = currentNode.children;
         }
     }
 
-    return all_force;
+    return allForce;
 }
