@@ -1,4 +1,4 @@
-#include "octree.h"
+#include "Octree.h"
 
 uint32_t Octant::getOctantFromPosition(glm::vec3 position)
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "particle.h"
+#include "Particle.h"
 
 struct Octant {
 

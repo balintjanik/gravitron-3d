@@ -1,4 +1,4 @@
-﻿#include "particle.h"
+﻿#include "Particle.h"
 #include <random>
 #include <iostream>
 
