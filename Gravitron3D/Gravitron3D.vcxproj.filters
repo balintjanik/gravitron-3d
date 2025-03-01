@@ -15,22 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\Vert_PosNormTex.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\Frag_LightingSkeleton.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Assets\MarbleBall.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\Suzanne.obj" />
-    <None Include="Assets\wood.jpg" />
-    <None Include="Assets\Wood_Table_Texture.png" />
-    <None Include="Assets\MarbleBall.png">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Assets\rock.jpg">
       <Filter>Resource Files</Filter>
     </None>
@@ -40,97 +24,6 @@
     <None Include="Assets\rockICO.obj">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Assets\Suzanne.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\wood.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Wood_Table_Texture.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\MarbleBall.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rock.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rock.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rockICO.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Suzanne.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\wood.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Wood_Table_Texture.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\MarbleBall.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\Suzanne.obj" />
-    <None Include="Assets\wood.jpg" />
-    <None Include="Assets\Wood_Table_Texture.png" />
-    <None Include="Assets\MarbleBall.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\Suzanne.obj" />
-    <None Include="Assets\wood.jpg" />
-    <None Include="Assets\Wood_Table_Texture.png" />
-    <None Include="Assets\MarbleBall.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\Suzanne.obj" />
-    <None Include="Assets\wood.jpg" />
-    <None Include="Assets\Wood_Table_Texture.png" />
-    <None Include="Assets\MarbleBall.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rock.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rock.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rockICO.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Suzanne.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\wood.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Wood_Table_Texture.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\MarbleBall.png">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rock.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rock.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rockICO.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Suzanne.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\wood.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\Wood_Table_Texture.png">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
