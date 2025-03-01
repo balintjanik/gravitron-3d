@@ -1,0 +1,7 @@
+enum PresetType {
+	GALAXY,
+	SOLAR_SYSTEM,
+	GALAXY_COLLISION,
+	RANDOM,
+	CUSTOM
+};
