@@ -1,46 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{de539653-475b-4a5d-b931-486fb7b94e05}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets">
-      <UniqueIdentifier>{2647e48b-ba56-4089-91c3-4c7c3bfddc95}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{651257f8-5beb-48f1-ade6-fbdde722213c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="View">
-      <UniqueIdentifier>{eb8ad55b-a5c1-477e-90a0-1378b884f0be}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\rock.jpg">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rock.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Assets\rockICO.obj">
-      <Filter>Resource Files</Filter>
-    </None>
-      <Filter>Resource Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Assets\rock.jpg">
-      <Filter>Assets</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Assets\rock.obj">
-      <Filter>Assets</Filter>
-    </Text>
-    <Text Include="Assets\rockICO.obj">
-      <Filter>Assets</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Model\octree.cpp">
       <Filter>Model</Filter>
     </ClCompile>
@@ -65,7 +26,6 @@
     <ClCompile Include="View\SDL_GLDebugMessageCallback.cpp">
       <Filter>View</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\octree.h">
@@ -73,9 +33,6 @@
     </ClInclude>
     <ClInclude Include="Model\particle.h">
       <Filter>Model</Filter>
-    </ClInclude>
-    <ClInclude Include="View\SDL_GLDebugMessageCallback.h">
-      <Filter>View</Filter>
     </ClInclude>
     <ClInclude Include="View\Camera.h">
       <Filter>View</Filter>
@@ -92,5 +49,43 @@
     <ClInclude Include="View\ObjParser.h">
       <Filter>View</Filter>
     </ClInclude>
+    <ClInclude Include="View\SDL_GLDebugMessageCallback.h">
+      <Filter>View</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\shader.vert">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\rockICO.obj">
+      <Filter>Assets</Filter>
+    </Text>
+    <Text Include="Assets\rock.obj">
+      <Filter>Assets</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Model">
+      <UniqueIdentifier>{8ab5eaae-2796-4f09-9145-186b72c8eec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{1bc39cdb-f456-4931-a703-55562537fb5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2517ddf1-f9ab-4ed0-a705-aa4ce323c3ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View">
+      <UniqueIdentifier>{ae14e814-d85e-4f9d-b606-4fb8cc3ad6c7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\rock.jpg">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
 </Project>
