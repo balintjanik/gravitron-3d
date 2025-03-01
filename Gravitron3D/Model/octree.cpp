@@ -2,22 +2,23 @@
 
 uint32_t Octant::getOctantFromPosition(glm::vec3 position)
 {
-    uint32_t x = uint32_t(position.x < centerSize.x);
-    uint32_t y = uint32_t(position.y < centerSize.y);
-    uint32_t z = uint32_t(position.z < centerSize.z);
+    uint32_t x = uint32_t(position.x < getCenter().x);
+    uint32_t y = uint32_t(position.y < getCenter().y);
+    uint32_t z = uint32_t(position.z < getCenter().z);
     return  z << 2 | y << 1 | x;
 
 }
 
 Octant Octant::intoOctant(uint32_t i) {
     Octant newOctant = *this;
-    float size = newOctant.centerSize.w * 0.5f;
+    float size = newOctant.getSize() * 0.5f;
 
-    float center_x = newOctant.centerSize.x + (0.5f - (i & 1)) * newOctant.centerSize.w;
-    float center_y = newOctant.centerSize.y + (0.5f - ((i >> 1) & 1)) * newOctant.centerSize.w;
-    float center_z = newOctant.centerSize.z + (0.5f - (i >> 2)) * newOctant.centerSize.w;
+    float center_x = newOctant.getCenter().x + (0.5f - (i & 1)) * newOctant.getSize();
+    float center_y = newOctant.getCenter().y + (0.5f - ((i >> 1) & 1)) * newOctant.getSize();
+    float center_z = newOctant.getCenter().z + (0.5f - (i >> 2)) * newOctant.getSize();
     
-    newOctant.centerSize = glm::vec4(center_x, center_y, center_z, size);
+    newOctant.setCenter(glm::vec3(center_x, center_y, center_z));
+    newOctant.setSize(size);
 
     return newOctant;
 }
@@ -105,28 +106,30 @@ uint32_t Octree::subdivide(uint32_t node) {
     return children;
 }
 
-void Octree::insert(glm::vec4 positionMass)
+void Octree::insert(glm::vec3 position, float mass)
 {
     uint32_t node = ROOT;
 
     while (nodes[node].isBranch())
     {
-        size_t q = nodes[node].octant.getOctantFromPosition(glm::vec3(positionMass));
+        size_t q = nodes[node].octant.getOctantFromPosition(position);
         node = nodes[node].children + q;
     }
 
     if (nodes[node].isEmpty())
     {
-        nodes[node].positionMass = positionMass;
+        nodes[node].setPosition(position);
+        nodes[node].setMass(mass);
         return;
     }
 
-    glm::vec4 nodePositionMass = nodes[node].positionMass;
+    glm::vec3 nodePosition = nodes[node].getPosition();
+    float nodeMass = nodes[node].getMass();
 
     float threshold = 1e-8;
-    if (glm::all(glm::lessThan(glm::abs(glm::vec3(positionMass) - glm::vec3(nodePositionMass)), glm::vec3(threshold))))
+    if (glm::all(glm::lessThan(glm::abs(position - nodePosition), glm::vec3(threshold))))
     {
-        nodes[node].positionMass.w += positionMass.w;
+        nodes[node].setMass(nodes[node].getMass() + mass);
         return;
     }
 
@@ -135,8 +138,8 @@ void Octree::insert(glm::vec4 positionMass)
     {
         size_t children = subdivide(node);
 
-        size_t o1 = nodes[node].octant.getOctantFromPosition(glm::vec3(nodePositionMass));
-        size_t o2 = nodes[node].octant.getOctantFromPosition(glm::vec3(positionMass));
+        size_t o1 = nodes[node].octant.getOctantFromPosition(nodePosition);
+        size_t o2 = nodes[node].octant.getOctantFromPosition(position);
 
         if (o1 == o2)
         {
@@ -147,8 +150,10 @@ void Octree::insert(glm::vec4 positionMass)
             size_t n1 = children + o1;
             size_t n2 = children + o2;
 
-            nodes[n1].positionMass = nodePositionMass;
-            nodes[n2].positionMass = positionMass;
+            nodes[n1].setPosition(nodePosition);
+            nodes[n1].setMass(nodeMass);
+            nodes[n2].setPosition(position);
+            nodes[n2].setMass(mass);
             bothInTheSameLeafNode = false;
         }
     }
@@ -163,28 +168,29 @@ void Octree::propagate()
         size_t i = nodes[node].children;
 
         glm::vec3 weightedPosition =
-            glm::vec3(nodes[i].positionMass) * nodes[i].positionMass.w +
-            glm::vec3(nodes[i + 1].positionMass) * nodes[i + 1].positionMass.w +
-            glm::vec3(nodes[i + 2].positionMass) * nodes[i + 2].positionMass.w +
-            glm::vec3(nodes[i + 3].positionMass) * nodes[i + 3].positionMass.w +
-            glm::vec3(nodes[i + 4].positionMass) * nodes[i + 4].positionMass.w +
-            glm::vec3(nodes[i + 5].positionMass) * nodes[i + 5].positionMass.w +
-            glm::vec3(nodes[i + 6].positionMass) * nodes[i + 6].positionMass.w +
-            glm::vec3(nodes[i + 7].positionMass) * nodes[i + 7].positionMass.w;
+            nodes[i].getPosition() * nodes[i].getMass() +
+            nodes[i + 1].getPosition() * nodes[i + 1].getMass() +
+            nodes[i + 2].getPosition() * nodes[i + 2].getMass() +
+            nodes[i + 3].getPosition() * nodes[i + 3].getMass() +
+            nodes[i + 4].getPosition() * nodes[i + 4].getMass() +
+            nodes[i + 5].getPosition() * nodes[i + 5].getMass() +
+            nodes[i + 6].getPosition() * nodes[i + 6].getMass() +
+            nodes[i + 7].getPosition() * nodes[i + 7].getMass();
 
         float totalMass =
-            nodes[i].positionMass.w +
-            nodes[i + 1].positionMass.w +
-            nodes[i + 2].positionMass.w +
-            nodes[i + 3].positionMass.w +
-            nodes[i + 4].positionMass.w +
-            nodes[i + 5].positionMass.w +
-            nodes[i + 6].positionMass.w +
-            nodes[i + 7].positionMass.w;
+            nodes[i].getMass() +
+            nodes[i + 1].getMass() +
+            nodes[i + 2].getMass() +
+            nodes[i + 3].getMass() +
+            nodes[i + 4].getMass() +
+            nodes[i + 5].getMass() +
+            nodes[i + 6].getMass() +
+            nodes[i + 7].getMass();
         
         weightedPosition /= totalMass;
 
-        nodes[node].positionMass = glm::vec4(weightedPosition, totalMass);
+        nodes[node].setPosition(weightedPosition);
+        nodes[node].setMass(totalMass);
     }
 }
 
@@ -203,7 +209,7 @@ float Octree::calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 positio
     {
         Node currentNode = nodes[node];
 
-        glm::vec3 distance = glm::vec3(currentNode.positionMass) - position;
+        glm::vec3 distance = currentNode.getPosition() - position;
         float distanceSq = glm::dot(distance, distance);
 
         // FONTOS - ez alapból nem volt benne, de, ha ez nincs,
@@ -223,12 +229,12 @@ float Octree::calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 positio
             continue;
         }
 
-        if (currentNode.isLeaf() || currentNode.octant.centerSize.w * currentNode.octant.centerSize.w < distanceSq * thetaSq)
+        if (currentNode.isLeaf() || currentNode.octant.getSize() * currentNode.octant.getSize() < distanceSq * thetaSq)
         {
             float denom = (distanceSq + epsilonSq) * sqrt(distanceSq);
-            r_acceleration += distance * (currentNode.positionMass.w / denom);
+            r_acceleration += distance * (currentNode.getMass() / denom);
 
-            allForce += (currentNode.positionMass.w) / (distanceSq + epsilonSq);
+            allForce += (currentNode.getMass()) / (distanceSq + epsilonSq);
 
             if (currentNode.next == 0)
             {
