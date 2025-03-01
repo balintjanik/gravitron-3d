@@ -109,8 +109,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Model\octree.cpp" />
-    <ClCompile Include="Model\particle.cpp" />
+    <ClCompile Include="Model\Octree.cpp" />
+    <ClCompile Include="Model\PresetUtils.cpp" />
+    <ClCompile Include="Model\Settings.cpp" />
+    <ClCompile Include="Model\SimulationManager.cpp" />
     <ClCompile Include="View\Camera.cpp" />
     <ClCompile Include="View\CameraManipulator.cpp" />
     <ClCompile Include="View\GLUtils.cpp" />
@@ -119,8 +121,14 @@
     <ClCompile Include="View\SDL_GLDebugMessageCallback.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Model\octree.h" />
-    <ClInclude Include="Model\particle.h" />
+    <ClInclude Include="Model\Octree.h" />
+    <ClInclude Include="Model\Particle.h" />
+    <ClInclude Include="Model\PositionType.h" />
+    <ClInclude Include="Model\PresetType.h" />
+    <ClInclude Include="Model\PresetUtils.h" />
+    <ClInclude Include="Model\Settings.h" />
+    <ClInclude Include="Model\SimulationManager.h" />
+    <ClInclude Include="Model\VelocityType.h" />
     <ClInclude Include="View\Camera.h" />
     <ClInclude Include="View\CameraManipulator.h" />
     <ClInclude Include="View\GLUtils.hpp" />

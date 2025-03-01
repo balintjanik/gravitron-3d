@@ -2,10 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Model\octree.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
-    <ClCompile Include="Model\particle.cpp">
+    <ClCompile Include="Model\Octree.cpp">
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="View\Camera.cpp">
@@ -26,12 +23,21 @@
     <ClCompile Include="View\SDL_GLDebugMessageCallback.cpp">
       <Filter>View</Filter>
     </ClCompile>
+    <ClCompile Include="Model\PresetUtils.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\Settings.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\SimulationManager.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Model\octree.h">
+    <ClInclude Include="Model\Octree.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Model\particle.h">
+    <ClInclude Include="Model\Particle.h">
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="View\Camera.h">
@@ -51,6 +57,24 @@
     </ClInclude>
     <ClInclude Include="View\SDL_GLDebugMessageCallback.h">
       <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\PositionType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\PresetUtils.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\PresetType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Settings.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SimulationManager.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\VelocityType.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
