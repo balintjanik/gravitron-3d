@@ -31,20 +31,16 @@ public:
 	// Getters
 	glm::vec3 getPosition() const { return glm::vec3(positionMass); }
 	float getMass() const { return positionMass.w; }
-
 	glm::vec3 getVelocity() const { return glm::vec3(velocitySize); }
 	float getSize() const { return velocitySize.w; }
-
 	glm::vec3 getAcceleration() const { return glm::vec3(accelerationForce); }
 	float getForce() const { return accelerationForce.w; }
 
 	// Setters
 	void setPosition(const glm::vec3& newPosition) { positionMass = glm::vec4(newPosition, positionMass.w); }
 	void setMass(float newMass) { positionMass.w = newMass; }
-
 	void setVelocity(const glm::vec3& newVelocity) { velocitySize = glm::vec4(newVelocity, velocitySize.w); }
 	void setSize(float newSize) { velocitySize.w = newSize; }
-	
 	void setAcceleration(const glm::vec3& newAcceleration) { accelerationForce = glm::vec4(newAcceleration, accelerationForce.w); }
 	void setForce(float newForce) { accelerationForce.w = newForce; }
 };

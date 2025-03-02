@@ -1,3 +1,5 @@
+#pragma once
+
 enum PresetType {
 	GALAXY,
 	SOLAR_SYSTEM,
