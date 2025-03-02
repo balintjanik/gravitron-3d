@@ -113,6 +113,8 @@
     <ClCompile Include="Model\PresetUtils.cpp" />
     <ClCompile Include="Model\Settings.cpp" />
     <ClCompile Include="Model\SimulationManager.cpp" />
+    <ClCompile Include="Persistence\ParticleDataLoader.cpp" />
+    <ClCompile Include="Persistence\SettingsDataLoader.cpp" />
     <ClCompile Include="View\Camera.cpp" />
     <ClCompile Include="View\CameraManipulator.cpp" />
     <ClCompile Include="View\GLUtils.cpp" />
@@ -129,6 +131,9 @@
     <ClInclude Include="Model\Settings.h" />
     <ClInclude Include="Model\SimulationManager.h" />
     <ClInclude Include="Model\VelocityType.h" />
+    <ClInclude Include="Persistence\DataLoaderTemplate.h" />
+    <ClInclude Include="Persistence\ParticleDataLoader.h" />
+    <ClInclude Include="Persistence\SettingsDataLoader.h" />
     <ClInclude Include="View\Camera.h" />
     <ClInclude Include="View\CameraManipulator.h" />
     <ClInclude Include="View\GLUtils.hpp" />

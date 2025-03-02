@@ -32,6 +32,12 @@
     <ClCompile Include="Model\SimulationManager.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="Persistence\ParticleDataLoader.cpp">
+      <Filter>Persistence</Filter>
+    </ClCompile>
+    <ClCompile Include="Persistence\SettingsDataLoader.cpp">
+      <Filter>Persistence</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model\Octree.h">
@@ -76,6 +82,15 @@
     <ClInclude Include="Model\VelocityType.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Persistence\DataLoaderTemplate.h">
+      <Filter>Persistence</Filter>
+    </ClInclude>
+    <ClInclude Include="Persistence\ParticleDataLoader.h">
+      <Filter>Persistence</Filter>
+    </ClInclude>
+    <ClInclude Include="Persistence\SettingsDataLoader.h">
+      <Filter>Persistence</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\shader.frag">
@@ -105,6 +120,9 @@
     </Filter>
     <Filter Include="View">
       <UniqueIdentifier>{ae14e814-d85e-4f9d-b606-4fb8cc3ad6c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Persistence">
+      <UniqueIdentifier>{0243b94b-aff9-49ca-8ab3-6e80d88e5e18}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
