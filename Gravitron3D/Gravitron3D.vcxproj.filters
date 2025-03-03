@@ -14,7 +14,7 @@
     <ClCompile Include="View\GLUtils.cpp">
       <Filter>View</Filter>
     </ClCompile>
-    <ClCompile Include="View\MyApp.cpp">
+    <ClCompile Include="View\SimulationView.cpp">
       <Filter>View</Filter>
     </ClCompile>
     <ClCompile Include="View\ObjParser.cpp">
@@ -55,7 +55,7 @@
     <ClInclude Include="View\GLUtils.hpp">
       <Filter>View</Filter>
     </ClInclude>
-    <ClInclude Include="View\MyApp.h">
+    <ClInclude Include="View\SimulationView.h">
       <Filter>View</Filter>
     </ClInclude>
     <ClInclude Include="View\ObjParser.h">
@@ -90,6 +90,9 @@
     </ClInclude>
     <ClInclude Include="Persistence\SettingsDataLoader.h">
       <Filter>Persistence</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SUpdateInfo.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

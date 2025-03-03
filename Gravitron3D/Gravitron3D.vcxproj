@@ -118,7 +118,7 @@
     <ClCompile Include="View\Camera.cpp" />
     <ClCompile Include="View\CameraManipulator.cpp" />
     <ClCompile Include="View\GLUtils.cpp" />
-    <ClCompile Include="View\MyApp.cpp" />
+    <ClCompile Include="View\SimulationView.cpp" />
     <ClCompile Include="View\ObjParser.cpp" />
     <ClCompile Include="View\SDL_GLDebugMessageCallback.cpp" />
   </ItemGroup>
@@ -130,6 +130,7 @@
     <ClInclude Include="Model\PresetUtils.h" />
     <ClInclude Include="Model\Settings.h" />
     <ClInclude Include="Model\SimulationManager.h" />
+    <ClInclude Include="Model\SUpdateInfo.h" />
     <ClInclude Include="Model\VelocityType.h" />
     <ClInclude Include="Persistence\DataLoaderTemplate.h" />
     <ClInclude Include="Persistence\ParticleDataLoader.h" />
@@ -137,7 +138,7 @@
     <ClInclude Include="View\Camera.h" />
     <ClInclude Include="View\CameraManipulator.h" />
     <ClInclude Include="View\GLUtils.hpp" />
-    <ClInclude Include="View\MyApp.h" />
+    <ClInclude Include="View\SimulationView.h" />
     <ClInclude Include="View\ObjParser.h" />
     <ClInclude Include="View\SDL_GLDebugMessageCallback.h" />
   </ItemGroup>

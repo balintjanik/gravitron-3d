@@ -14,7 +14,7 @@
 #include <iostream>
 #include <sstream>
 
-#include "View/MyApp.h"
+#include "View/SimulationView.h"
 
 int main( int argc, char* args[] )
 {
@@ -147,7 +147,7 @@ int main( int argc, char* args[] )
 		SDL_Event ev;
 
 		// alkalmazás példánya
-		CMyApp app;
+		SimulationView app;
 		if (!app.Init())
 		{
 			SDL_GL_DeleteContext(context);
