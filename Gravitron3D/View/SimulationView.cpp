@@ -99,7 +99,7 @@ void SimulationView::CleanTextures()
 
 bool SimulationView::Init()
 {
-	simulationManager.initSimulation(50000, PresetType::PRESET_GALAXY, PositionType::POSITION_RANDOM, VelocityType::VELOCITY_ORBIT);
+	simulationManager.initSimulation(80000, PresetType::PRESET_GALAXY, PositionType::POSITION_RANDOM, VelocityType::VELOCITY_ORBIT);
 
 	SetupDebugCallback();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -153,7 +153,7 @@ void SimulationView::Update( const SUpdateInfo& updateInfo )
 	particlePositions.clear();
 	for (const auto& p : simulationManager.particles)
 	{
-		particlePositions.push_back(glm::vec4(p.getPosition().x / 100, p.getPosition().y / 100, p.getPosition().z / 100, p.getForce()));
+		particlePositions.push_back(glm::vec4(p.getPosition(), p.getForce()));
 	}
 
 	// Orphan the old buffer and replace it with the new particle positions

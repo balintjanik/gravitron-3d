@@ -21,15 +21,15 @@ uniform float scaleFactor;
 
 void main()
 {
-	// Define scaling factor
-    // float scaleFactor = 0.005;
+    // Normalize positions for better display
+    vec4 normalized_instance_position = vec4(instance_position.xyz / 100, instance_position.w);
 
     // Compute world transformation matrix (translation + scale)
     mat4 world = mat4(1.0);
     world[0][0] = scaleFactor;
     world[1][1] = scaleFactor;
     world[2][2] = scaleFactor;
-    world[3] = vec4(instance_position.xyz, 1.0); // Apply translation
+    world[3] = vec4(normalized_instance_position.xyz, 1.0); // Apply translation
 
     // Compute worldIT (transpose of inverse)
     mat4 worldIT = transpose(inverse(mat4(world)));
