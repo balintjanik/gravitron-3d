@@ -33,6 +33,7 @@ void SimulationManager::updateParticlesRange(size_t start, size_t end, float del
 		glm::vec3 acceleration = glm::vec3(0);
 		float allForce = octree.calculateAcceleration(acceleration, p.getPosition(), settings.getTheta(), settings.getEpsilon());
 
+		p.setForce(allForce);
 		p.setAcceleration(acceleration);
 		p.setVelocity(p.getVelocity() + p.getAcceleration() * deltaTime * settings.getSimulationSpeed());
 		p.setPosition(p.getPosition() + p.getVelocity() * deltaTime * settings.getSimulationSpeed());
