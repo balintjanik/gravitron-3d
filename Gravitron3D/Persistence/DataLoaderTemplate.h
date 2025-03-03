@@ -5,11 +5,13 @@
 template <typename Derived>
 class DataLoader {
 public:
-    static void saveToFile(const std::string& filename, const auto& data) {
+    template <typename T>
+    static void saveToFile(const std::string& filename, const T& data) {
         Derived::saveImpl(filename, data);
     }
 
-    static void loadFromFile(const std::string& filename, auto& data) {
+    template <typename T>
+    static void loadFromFile(const std::string& filename, T& data) {
         Derived::loadImpl(filename, data);
     }
 };
