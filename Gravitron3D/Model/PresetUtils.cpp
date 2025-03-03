@@ -1,5 +1,13 @@
 #include "PresetUtils.h"
 
+float PresetUtils::randomFloat(float min, float max)
+{
+	// TODO: this assumes max>min
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float range = max - min;
+	return (random * range) + min;
+}
+
 std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity) {
 	std::vector<Particle> particles;
 
@@ -11,26 +19,28 @@ std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, Pres
 	initParticlePositions(particles, position);
 
 	initParticleVelocities(particles, velocity);
+
+	return particles;
 }
 
-void initParticlePositions(std::vector<Particle>& r_particles, PositionType position) {
+void PresetUtils::initParticlePositions(std::vector<Particle>& r_particles, PositionType position) {
 	switch (position)
 	{
-	case RANDOM: // TODO: specify range?
-		glm::vec3 min = glm::vec3(-200.f, -200.f, -200.f);
-		glm::vec3 max = glm::vec3( 200.f,  200.f,  200.f);
+	case POSITION_RANDOM: // TODO: specify range?
+		glm::vec3 min = glm::vec3(-50.f, -50.f, -50.f);
+		glm::vec3 max = glm::vec3( 50.f,  50.f,  50.f);
 		for (int i = 0; i < r_particles.size(); i++) {
 
 			r_particles[i].setPosition(glm::vec3(randomFloat(min.x, max.x), randomFloat(min.y, max.y), randomFloat(min.z, max.z)));
 		}
 		break;
-	case SPHERE: // TODO: specify radius?
+	case POSITION_SPHERE: // TODO: specify radius?
 		break;
-	case DISK: // TODO: specify radius?
+	case POSITION_DISK: // TODO: specify radius?
 		break;
-	case GRID_3D:
+	case POSITION_GRID_3D:
 		break;
-	case GRID_2D:
+	case POSITION_GRID_2D:
 		break;
 	default:
 		throw "Invalid position type.";
@@ -38,27 +48,19 @@ void initParticlePositions(std::vector<Particle>& r_particles, PositionType posi
 	}
 }
 
-void initParticleVelocities(std::vector<Particle>& r_particles, VelocityType velocity) {
+void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, VelocityType velocity) {
 	switch (velocity)
 	{
-	case RANDOM: // TODO: specify range?
+	case VELOCITY_RANDOM: // TODO: specify range?
 		break;
-	case ZERO:
+	case VELOCITY_ZERO:
 		break;
-	case ORBIT:
+	case VELOCITY_ORBIT:
 		break;
-	case TOWARD_CENTER:
+	case VELOCITY_TOWARD_CENTER:
 		break;
 	default:
 		throw "Invalid velocity type.";
 		break;
 	}
-}
-
-float randomFloat(float min, float max)
-{
-	// TODO: this assumes max>min
-	float random = ((float)rand()) / (float)RAND_MAX;
-	float range = max - min;
-	return (random * range) + min;
 }
