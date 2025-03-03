@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "SUpdateInfo.h"
 #include "Particle.h"
 #include "Octree.h"
 #include "Settings.h"
@@ -10,12 +11,6 @@
 #include "VelocityType.h"
 #include "../Persistence/ParticleDataLoader.h"
 #include "../Persistence/SettingsDataLoader.h"
-
-struct SUpdateInfo
-{
-	float ElapsedTimeInSec = 0.0f;
-	float DeltaTimeInSec = 0.0f;
-};
 
 class SimulationManager {
 public:
