@@ -42,12 +42,12 @@ Octant Octant::createNewContaining(std::vector<Particle>& particles)
     for (int i = 0; i < particles.size(); i++)
     {
         Particle p = particles[i];
-        min_x = std::min(min_x, p.positionMass.x);
-        min_y = std::min(min_y, p.positionMass.y);
-        min_z = std::min(min_z, p.positionMass.z);
-        max_x = std::max(max_x, p.positionMass.x);
-        max_y = std::max(max_y, p.positionMass.y);
-        max_z = std::max(max_z, p.positionMass.z);
+        min_x = std::min(min_x, p.getPosition().x);
+        min_y = std::min(min_y, p.getPosition().y);
+        min_z = std::min(min_z, p.getPosition().z);
+        max_x = std::max(max_x, p.getPosition().x);
+        max_y = std::max(max_y, p.getPosition().y);
+        max_z = std::max(max_z, p.getPosition().z);
     }
 
     float center_x = (min_x + max_x) * 0.5;
