@@ -6,6 +6,7 @@ void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType pr
 	settings.setNumberOfThreads(std::thread::hardware_concurrency());
 	if (settings.getNumberOfThreads() == 0) settings.setNumberOfThreads(4); // Fallback to 4 if hardware_concurrency cannot detect
 
+	particles.clear();
 	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity);
 }
 

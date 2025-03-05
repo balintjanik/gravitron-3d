@@ -1,4 +1,4 @@
-#include "PresetUtils.h"
+﻿#include "PresetUtils.h"
 
 float PresetUtils::randomFloat(float min, float max)
 {
@@ -11,56 +11,357 @@ float PresetUtils::randomFloat(float min, float max)
 std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity) {
 	std::vector<Particle> particles;
 
+	if (numberOfParticles == 0) return particles;
+
 	for (int i = 0; i < numberOfParticles; i++) {
 		particles.push_back(Particle());
 		particles[i].setMass(1.f); // TODO: mass setting?
 	}
 
-	initParticlePositions(particles, position);
-
-	initParticleVelocities(particles, velocity);
+	switch (preset)
+	{
+	case PRESET_GALAXY:
+		initPresetGalaxy(particles);
+		break;
+	case PRESET_SOLAR_SYSTEM:
+		initPresetSolarSystem(particles);
+		break;
+	case PRESET_GALAXY_COLLISION:
+		initPresetGalaxyCollision(particles);
+		break;
+	case PRESET_RANDOM:
+		initPresetRandom(particles);
+		break;
+	case PRESET_CUSTOM:
+		initParticlePositions(particles, position);
+		initParticleVelocities(particles, velocity);
+		break;
+	default:
+		break;
+	}
 
 	return particles;
 }
 
 void PresetUtils::initParticlePositions(std::vector<Particle>& r_particles, PositionType position) {
-	switch (position)
-	{
-	case POSITION_RANDOM: // TODO: specify range?
-		glm::vec3 min = glm::vec3(-50.f, -50.f, -50.f);
-		glm::vec3 max = glm::vec3( 50.f,  50.f,  50.f);
-		for (int i = 0; i < r_particles.size(); i++) {
+	// TODO: specify range?
+	if (position == POSITION_RANDOM) {
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+		glm::vec3 min = glm::vec3(-500.f, -500.f, -500.f);
+		glm::vec3 max = glm::vec3( 500.f,  500.f,  500.f);
+		
+		calculatePositionsRandom(r_particles, rangeMin, rangeMax, min, max);
+	}
+	// TODO: specify radius?
+	else if (position == POSITION_SPHERE) {
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+		glm::vec3 center = glm::vec3(0.0f);
+		float radiusMin = 0.0f;
+		float radiusMax = 300.0f;
 
-			r_particles[i].setPosition(glm::vec3(randomFloat(min.x, max.x), randomFloat(min.y, max.y), randomFloat(min.z, max.z)));
-		}
-		break;
-	case POSITION_SPHERE: // TODO: specify radius?
-		break;
-	case POSITION_DISK: // TODO: specify radius?
-		break;
-	case POSITION_GRID_3D:
-		break;
-	case POSITION_GRID_2D:
-		break;
-	default:
+		calculatePositionsSphere(r_particles, rangeMin, rangeMax, center, radiusMin, radiusMax, false);
+	}
+	// TODO: specify radius?
+	else if (position == POSITION_DISK) {
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+		glm::vec3 center = glm::vec3(0.0f);
+		float radiusMin = 0.0f;
+		float radiusMax = 300.0f;
+		
+		calculatePositionsSphere(r_particles, rangeMin, rangeMax, center, radiusMin, radiusMax, true);
+	}
+	else if (position == POSITION_GRID_3D) {
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+		glm::vec3 min = glm::vec3(-250.f, -250.f,-250.f);
+		glm::vec3 max = glm::vec3(250.f, 250.f, 250.f);
+
+		calculatePositionsGrid3D(r_particles, rangeMin, rangeMax, min, max);
+	}
+	else if (position == POSITION_GRID_2D) {
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+		glm::vec3 min = glm::vec3(-250.f, 0.f, -250.f);
+		glm::vec3 max = glm::vec3(250.f, 0.f, 250.f);
+
+		calculatePositionsGrid2D(r_particles, rangeMin, rangeMax, min, max);
+	}
+	else {
 		throw "Invalid position type.";
-		break;
 	}
 }
 
 void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, VelocityType velocity) {
-	switch (velocity)
-	{
-	case VELOCITY_RANDOM: // TODO: specify range?
-		break;
-	case VELOCITY_ZERO:
-		break;
-	case VELOCITY_ORBIT:
-		break;
-	case VELOCITY_TOWARD_CENTER:
-		break;
-	default:
-		throw "Invalid velocity type.";
-		break;
+	// TODO: specify range?
+	if (velocity == VELOCITY_RANDOM) {
+		glm::vec3 min = glm::vec3(-50.f, -50.f, -50.f);
+		glm::vec3 max = glm::vec3(50.f, 50.f, 50.f);
+		
+		calculateVelocitiesRandom(r_particles, 0, r_particles.size(), min, max);
 	}
+	else if (velocity == VELOCITY_ZERO) {
+		for (int i = 0; i < r_particles.size(); i++) {
+
+			r_particles[i].setVelocity(glm::vec3(0.f));
+		}
+	}
+	else if (velocity == VELOCITY_ORBIT) {
+		float centerX = 0.f;
+		float centerY = 0.f;
+		float centerZ = 0.f;
+		float centerMass = r_particles.size();
+		float velocityScale = 0.8f;
+
+		for (int i = 1; i < r_particles.size(); i++)
+		{
+			glm::vec3 position = r_particles[i].getPosition();
+			float px = position.x;
+			float py = position.y;
+			float pz = position.z;
+
+			// Calculate the 3D distance from the center to the particle
+			float distance = sqrt((px - centerX) * (px - centerX) + (py - centerY) * (py - centerY) + (pz - centerZ) * (pz - centerZ));
+
+			// Calculate initial velocity magnitude for circular rotation, based on 3D distance
+			float velocityMagnitude = 0.f;
+			if (distance > 0.f)
+				velocityMagnitude = sqrt(centerMass / distance) * velocityScale;
+
+			// Determine a perpendicular vector for the initial velocity
+			// Here, we use a simple approach by crossing the radius vector with an arbitrary vector (1, 0, 0) to get a perpendicular direction
+			float rx = px - centerX;
+			float ry = py - centerY;
+			float rz = pz - centerZ;
+
+			// Use a consistent reference vector for the cross product, e.g., (0, 1, 0)
+			float ref_x = 0.0f;
+			float ref_y = 1.0f;
+			float ref_z = 0.0f;
+
+			// Cross product of radius vector (rx, ry, rz) with reference vector (ref_x, ref_y, ref_z)
+			float vx = ry * ref_z - rz * ref_y;
+			float vy = rz * ref_x - rx * ref_z;
+			float vz = rx * ref_y - ry * ref_x;
+
+			// Normalize the perpendicular vector
+			float length = sqrt(vx * vx + vy * vy + vz * vz);
+			if (length > 0.00001f) {
+				vx = (vx / length) * velocityMagnitude;
+				vy = (vy / length) * velocityMagnitude;
+				vz = (vz / length) * velocityMagnitude;
+			}
+
+			// Add particle to the list
+			r_particles[i].setVelocity(glm::vec3(vx, vy, vz));
+		}
+	}
+	else if (velocity == VELOCITY_TOWARD_CENTER) {
+	}
+	else {
+		throw "Invalid velocity type.";
+	}
+}
+
+void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
+	float centerX = 0.f;
+	float centerY = 0.f;
+	float centerZ = 0.f;
+	float radiusMin = 20.0f;
+	float radiusMax = 300.0f;
+	float velocityScale = 0.8f;
+	
+	// Set center
+	float centerMass = 100000.0f;
+	r_particles[0].setPosition(glm::vec3(centerX, centerY, centerZ));
+	r_particles[0].setMass(centerMass);
+	for (int i = 1; i < r_particles.size(); i++)
+	{
+		// Generate a random position in a sphere
+		float radius = randomFloat(radiusMin, radiusMax); // Random radius between radiusMin and radiusMax
+		float theta = randomFloat(0.0f, 2 * 3.1415f);     // Random angle theta (0 to 2π)
+		float phi = randomFloat(0.0f, 3.1415f);           // Random angle phi (0 to π)
+
+		// Convert spherical to Cartesian coordinates for position
+		float px = centerX + radius * sin(phi) * cos(theta);
+		float py = centerY + radius * sin(phi) * sin(theta);
+		float pz = centerZ + radius * cos(phi);
+
+		// Calculate the 3D distance from the center to the particle
+		float distance = sqrt((px - centerX) * (px - centerX) + (py - centerY) * (py - centerY) + (pz - centerZ) * (pz - centerZ));
+
+		// Calculate initial velocity magnitude for circular rotation, based on 3D distance
+		float velocityMagnitude = 0.0f;
+		if (distance > 0.f)
+			velocityMagnitude = sqrt(centerMass / distance) * velocityScale;
+
+		// Determine a perpendicular vector for the initial velocity
+		// Here, we use a simple approach by crossing the radius vector with an arbitrary vector (1, 0, 0) to get a perpendicular direction
+		float rx = px - centerX;
+		float ry = py - centerY;
+		float rz = pz - centerZ;
+
+		// Use a consistent reference vector for the cross product, e.g., (0, 1, 0)
+		float ref_x = 0.0f;
+		float ref_y = 1.0f;
+		float ref_z = 0.0f;
+
+		// Cross product of radius vector (rx, ry, rz) with reference vector (ref_x, ref_y, ref_z)
+		float vx = ry * ref_z - rz * ref_y;
+		float vy = rz * ref_x - rx * ref_z;
+		float vz = rx * ref_y - ry * ref_x;
+
+		// Normalize the perpendicular vector
+		float length = sqrt(vx * vx + vy * vy + vz * vz);
+		if (length > 0.0001) {
+			vx = (vx / length) * velocityMagnitude;
+			vy = (vy / length) * velocityMagnitude;
+			vz = (vz / length) * velocityMagnitude;
+		}
+
+		// Set particle mass
+		float mass = 1.0f;
+
+		// Add particle to the list
+		r_particles[i].setPosition(glm::vec3(px, py, pz));
+		r_particles[i].setMass(mass);
+		r_particles[i].setVelocity(glm::vec3(vx, vy, vz));
+	}
+}
+
+void PresetUtils::initPresetSolarSystem(std::vector<Particle>& r_particles) {
+	// TODO: implement
+}
+
+void PresetUtils::initPresetGalaxyCollision(std::vector<Particle>& r_particles) {
+	// TODO: implement
+}
+
+void PresetUtils::initPresetRandom(std::vector<Particle>& r_particles) {
+	// TODO: implement
+}
+
+void PresetUtils::calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	for (int i = rangeMin; i < rangeMax; i++) {
+
+		r_particles[i].setPosition(glm::vec3(randomFloat(minValue.x, maxValue.x), randomFloat(minValue.y, maxValue.y), randomFloat(minValue.z, maxValue.z)));
+	}
+}
+
+void PresetUtils::calculatePositionsSphere(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 center, float radiusMin, float radiusMax, bool is2D) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	for (int i = rangeMin; i < rangeMax; i++)
+	{
+		// Generate a random position in a sphere
+		float radius = randomFloat(radiusMin, radiusMax);
+		float theta = randomFloat(0.0f, 2 * 3.1415f);
+		float phi = randomFloat(0.0f, 3.1415f);
+
+		// Convert polar to Cartesian coordinates
+		float px = center.x + radius * sin(phi) * cos(theta);
+		float py = center.y + radius * sin(phi) * sin(theta);
+		float pz = center.z + radius * cos(phi);
+
+		if (is2D) {
+			px = center.x + radius * cos(theta);
+			py = 0.0f;
+			pz = center.y + radius * sin(theta);
+		}
+
+		r_particles[i].setPosition(glm::vec3(px, py, pz));
+	}
+}
+
+void PresetUtils::calculatePositionsGrid3D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	int totalParticles = rangeMax - rangeMin;
+	if (totalParticles <= 0) return;
+
+	int gridSize = std::ceil(std::cbrt(totalParticles));
+	int count = 0;
+
+	glm::vec3 stepSize = (maxValue - minValue) / glm::vec3(gridSize - 1, gridSize - 1, gridSize - 1);
+
+	for (int x = 0; x < gridSize && count < totalParticles; x++) {
+		for (int y = 0; y < gridSize && count < totalParticles; y++) {
+			for (int z = 0; z < gridSize && count < totalParticles; z++) {
+				int index = rangeMin + count;
+				glm::vec3 position = minValue + glm::vec3(x, y, z) * stepSize;
+				r_particles[index].setPosition(position);
+				count++;
+
+				if (count >= totalParticles)
+					return;
+			}
+		}
+	}
+}
+
+void PresetUtils::calculatePositionsGrid2D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	int totalParticles = rangeMax - rangeMin;
+	if (totalParticles <= 0) return;
+
+	int gridX = std::ceil(std::sqrt(totalParticles));
+	int gridZ = gridX;
+
+	glm::vec3 stepSize = (maxValue - minValue) / glm::vec3(gridX - 1, 1, gridZ - 1);
+
+	int count = 0;
+
+	for (int x = 0; x < gridX && count < totalParticles; x++) {
+		for (int z = 0; z < gridZ && count < totalParticles; z++) {
+			int index = rangeMin + count;
+			glm::vec3 position = minValue + glm::vec3(x * stepSize.x, minValue.y, z * stepSize.z);
+			r_particles[index].setPosition(position);
+			count++;
+
+			if (count >= totalParticles)
+				return;
+		}
+	}
+}
+
+void PresetUtils::calculateVelocitiesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	for (int i = rangeMin; i < rangeMax; i++) {
+
+		r_particles[i].setVelocity(glm::vec3(randomFloat(minValue.x, maxValue.x), randomFloat(minValue.y, maxValue.y), randomFloat(minValue.z, maxValue.z)));
+	}
+}
+
+void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles) {
+	// TODO: implement
+}
+
+void PresetUtils::calculateVelocitiesTowardCenter(std::vector<Particle>& r_particles) {
+	// TODO: implement
 }
