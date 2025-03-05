@@ -108,7 +108,7 @@ void SimulationView::InitImGuiSettings() {
 
 bool SimulationView::Init()
 {
-	simulationManager.initSimulation(numberOfParticles, PresetType::PRESET_GALAXY, PositionType::POSITION_RANDOM, VelocityType::VELOCITY_ORBIT);
+	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
 
 	SetupDebugCallback();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -219,6 +219,30 @@ void SimulationView::Render()
 	glBindVertexArray( 0 );
 }
 
+template <typename EnumType, size_t N>
+bool SimulationView::ShowEnumDropdown(const char* label, const char* (&names)[N], EnumType& currentValue) {
+	bool valueChanged = false;
+
+	if (ImGui::BeginCombo(label, names[static_cast<int>(currentValue)])) {
+		for (size_t i = 0; i < N; i++) {
+			bool isSelected = (currentValue == static_cast<EnumType>(i));
+
+			if (ImGui::Selectable(names[i], isSelected)) {
+				currentValue = static_cast<EnumType>(i);
+				valueChanged = true;
+			}
+
+			if (isSelected) {
+				ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	return valueChanged;
+}
+
+
 void SimulationView::RenderGUI()
 {
 	// Window
@@ -277,38 +301,14 @@ void SimulationView::RenderGUI()
 	if (ImGui::CollapsingHeader("New simulation")) {
 		ImGui::SliderInt("Number of particles", &numberOfParticles, 0, 80000);
 
-		if (ImGui::BeginCombo("Preset type", PRESET_TYPE_NAMES[presetType])) {
-			for (int i = 0; i < sizeof(PRESET_TYPE_NAMES) / sizeof(PRESET_TYPE_NAMES[0]); ++i) {
-				bool isSelected = (presetType == static_cast<PresetType>(i));
+		ShowEnumDropdown("Preset Type", PRESET_TYPE_NAMES, presetType);
 
-				if (ImGui::Selectable(PRESET_TYPE_NAMES[i], isSelected)) {
-					presetType = static_cast<PresetType>(i);
-				}
+		ShowEnumDropdown("Position Type", POSITION_TYPE_NAMES, positionType);
 
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus(); // Focus selected item
-				}
-			}
-			ImGui::EndCombo();
-		}
-
-		if (ImGui::BeginCombo("Position type", POSITION_TYPE_NAMES[positionType])) {
-			for (int i = 0; i < sizeof(POSITION_TYPE_NAMES) / sizeof(POSITION_TYPE_NAMES[0]); ++i) {
-				bool isSelected = (positionType == static_cast<PositionType>(i));
-
-				if (ImGui::Selectable(POSITION_TYPE_NAMES[i], isSelected)) {
-					positionType = static_cast<PositionType>(i);
-				}
-
-				if (isSelected) {
-					ImGui::SetItemDefaultFocus(); // Focus selected item
-				}
-			}
-			ImGui::EndCombo();
-		}
+		ShowEnumDropdown("Velocity Type", VELOCITY_TYPE_NAMES, velocityType);
 
 		if (ImGui::Button("Start New Simulation")) {
-			simulationManager.initSimulation(numberOfParticles, presetType, positionType, VelocityType::VELOCITY_ORBIT);
+			simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
 		}
 	}
 

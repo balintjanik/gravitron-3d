@@ -79,6 +79,10 @@ protected:
 
 	// ImGui
 	void InitImGuiSettings();
+
+	template <typename EnumType, size_t N>
+	bool ShowEnumDropdown(const char* label, const char* (&names)[N], EnumType& currentValue);
+
 	ImGuiIO& io = ImGui::GetIO();
 	float windowWidth;
 	float windowHeight;
@@ -115,5 +119,7 @@ protected:
 	int numberOfParticles = 80000;
 	PresetType presetType = static_cast<PresetType>(0);
 	PositionType positionType = static_cast<PositionType>(0);
+	VelocityType velocityType = static_cast<VelocityType>(0);
+
 };
 
