@@ -2,7 +2,6 @@
 #include "SDL_GLDebugMessageCallback.h"
 #include "ObjParser.h"
 
-#include <imgui.h>
 #include <iostream>
 #include <filesystem>
 
@@ -97,9 +96,19 @@ void SimulationView::CleanTextures()
 	glDeleteTextures( 1, &m_sphereTextureID );
 }
 
+void SimulationView::InitImGuiSettings() {
+	io = ImGui::GetIO();
+
+	windowWidth = 350.0f;
+	windowHeight = io.DisplaySize.y;
+	// ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - windowWidth, 0)); // Right side
+	ImGui::SetNextWindowPos(ImVec2(0, 0)); // Left side
+	ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
+}
+
 bool SimulationView::Init()
 {
-	simulationManager.initSimulation(80000, PresetType::PRESET_GALAXY, PositionType::POSITION_RANDOM, VelocityType::VELOCITY_ORBIT);
+	simulationManager.initSimulation(numberOfParticles, PresetType::PRESET_GALAXY, PositionType::POSITION_RANDOM, VelocityType::VELOCITY_ORBIT);
 
 	SetupDebugCallback();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -120,6 +129,8 @@ bool SimulationView::Init()
 
 	m_cameraManipulator.SetCamera( &m_camera );
 
+	InitImGuiSettings();
+
 	return true;
 }
 
@@ -130,13 +141,7 @@ void SimulationView::Clean()
 	CleanTextures();
 }
 
-void SimulationView::Update( const SUpdateInfo& updateInfo )
-{
-	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
-	m_DeltaTimeInSec = updateInfo.DeltaTimeInSec;
-
-	m_cameraManipulator.Update( updateInfo.DeltaTimeInSec );
-
+void SimulationView::UpdateData() {
 	// FPS
 	timeSinceLastSec += m_DeltaTimeInSec;
 	frames++;
@@ -146,8 +151,25 @@ void SimulationView::Update( const SUpdateInfo& updateInfo )
 		timeSinceLastSec = 0.0f;
 	}
 
+	// Threads
+	numberOfThreads = simulationManager.settings.getNumberOfThreads();
+
+	// Current simulation info
+	currentNumberOfParticles = simulationManager.settings.getNumberOfParticles();
+}
+
+void SimulationView::Update( const SUpdateInfo& updateInfo )
+{
+	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
+	m_DeltaTimeInSec = updateInfo.DeltaTimeInSec;
+
+	m_cameraManipulator.Update( updateInfo.DeltaTimeInSec );
+
 	// Update model
 	simulationManager.updateSimulation(updateInfo);
+
+	// Update data
+	UpdateData();
 
 	// Copy particle positions to display
 	particlePositions.clear();
@@ -199,10 +221,28 @@ void SimulationView::Render()
 
 void SimulationView::RenderGUI()
 {
-	if (ImGui::Begin("Settings"))
-	{
+	// Window
+	windowHeight = io.DisplaySize.y;
+	ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
+
+	ImGui::Begin("Settings", nullptr, ImGuiWindowFlags_NoMove);
+	windowWidth = ImGui::GetWindowSize().x;
+
+	// Performance
+	if (ImGui::CollapsingHeader("Performance")) {
+		ImGui::Text("FPS: %d", fps);
+		ImGui::Text("Threads: %d", numberOfThreads);
+	}
+
+	// Simulation info
+	if (ImGui::CollapsingHeader("Simulation info")) {
+		ImGui::Text("Number of particles: %d", currentNumberOfParticles);
+	}
+
+	// Light settings
+	if (ImGui::CollapsingHeader("Light settings")) {
 		bool isPoint = m_lightPos.w >= 1.0f;
-		ImGui::Checkbox("Is Point?", &isPoint);
+		ImGui::Checkbox("Spot light (on) / Directional light (off)", &isPoint);
 		m_lightPos.w = isPoint ? 1.f : 0.f;
 
 		if (m_lightPos.w == 0.0f) // Directional light
@@ -223,15 +263,55 @@ void SimulationView::RenderGUI()
 			ImGui::SliderFloat("Linear Att.", &m_lightLinearAttenuation, 0.f, 1.f);
 			ImGui::SliderFloat("Quadratic Att.", &m_lightQuadraticAttenuation, 0.f, 1.f);
 		}
+	}
 
-		ImGui::Text("FPS: %d", fps);
-
-		float simulationSpeed = simulationManager.settings.getSimulationSpeed();
+	// Display settings
+	if (ImGui::CollapsingHeader("Display settings")) {
 		if (ImGui::SliderFloat("Delta Time", &simulationSpeed, 0.f, 5.f))
 			simulationManager.settings.setSimulationSpeed(simulationSpeed);
 
 		ImGui::SliderFloat("Particle size", &scaleFactor, 0.001f, 0.1f);
 	}
+
+	// New simulation
+	if (ImGui::CollapsingHeader("New simulation")) {
+		ImGui::SliderInt("Number of particles", &numberOfParticles, 0, 80000);
+
+		if (ImGui::BeginCombo("Preset type", PRESET_TYPE_NAMES[presetType])) {
+			for (int i = 0; i < sizeof(PRESET_TYPE_NAMES) / sizeof(PRESET_TYPE_NAMES[0]); ++i) {
+				bool isSelected = (presetType == static_cast<PresetType>(i));
+
+				if (ImGui::Selectable(PRESET_TYPE_NAMES[i], isSelected)) {
+					presetType = static_cast<PresetType>(i);
+				}
+
+				if (isSelected) {
+					ImGui::SetItemDefaultFocus(); // Focus selected item
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		if (ImGui::BeginCombo("Position type", POSITION_TYPE_NAMES[positionType])) {
+			for (int i = 0; i < sizeof(POSITION_TYPE_NAMES) / sizeof(POSITION_TYPE_NAMES[0]); ++i) {
+				bool isSelected = (positionType == static_cast<PositionType>(i));
+
+				if (ImGui::Selectable(POSITION_TYPE_NAMES[i], isSelected)) {
+					positionType = static_cast<PositionType>(i);
+				}
+
+				if (isSelected) {
+					ImGui::SetItemDefaultFocus(); // Focus selected item
+				}
+			}
+			ImGui::EndCombo();
+		}
+
+		if (ImGui::Button("Start New Simulation")) {
+			simulationManager.initSimulation(numberOfParticles, presetType, positionType, VelocityType::VELOCITY_ORBIT);
+		}
+	}
+
 	ImGui::End();
 }
 

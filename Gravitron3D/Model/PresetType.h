@@ -7,3 +7,11 @@ enum PresetType {
 	PRESET_RANDOM,
 	PRESET_CUSTOM
 };
+
+static const char* PRESET_TYPE_NAMES[] = {
+	"Galaxy",
+	"Solar system",
+	"Galaxy collision",
+	"Random",
+	"Custom"
+};

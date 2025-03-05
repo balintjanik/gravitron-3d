@@ -12,14 +12,17 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 
+// ImGui
+#include <imgui.h>
+
 // Utils
 #include "GLUtils.hpp"
 #include "Camera.h"
 #include "CameraManipulator.h"
 
+// Model
 #include "../Model/SimulationManager.h"
 #include "../Model/SUpdateInfo.h"
-#include <thread>
 
 class SimulationView
 {
@@ -29,7 +32,8 @@ public:
 
 	bool Init();
 	void Clean();
-
+	
+	void UpdateData();
 	void Update( const SUpdateInfo& );
 	void Render();
 	void RenderGUI();
@@ -58,26 +62,13 @@ protected:
 
 	void InitShaders();
 	void CleanShaders();
-
-	// Light
-	glm::vec4 m_lightPos = glm::vec4( 0.0f, -1.0f, 0.0f, 0.0f );
-
-	float m_lightConstantAttenuation    = 0.0;
-	float m_lightLinearAttenuation      = 1.0;
-	float m_lightQuadraticAttenuation   = 0.0;
 	
 	// Geometry
-	float scaleFactor = 0.005f; // TODO: move to model?
 	OGLObject m_sphereGPU = {};
 	GLuint  instanceVBO = 0;
 
 	void InitGeometry();
 	void CleanGeometry();
-
-	// FPS
-	unsigned int fps = 0;
-	unsigned int frames;
-	float timeSinceLastSec = 0.0f;
 
 	// Textures
     GLuint m_SamplerID = 0;
@@ -86,8 +77,43 @@ protected:
 	void InitTextures();
 	void CleanTextures();
 
+	// ImGui
+	void InitImGuiSettings();
+	ImGuiIO& io = ImGui::GetIO();
+	float windowWidth;
+	float windowHeight;
+
 	// Model
 	SimulationManager simulationManager;
 	std::vector<glm::vec4> particlePositions;
+
+	// Settings
+	float theta = 1.0f;
+	float epsilon = 1.0f;
+
+	// Performance
+	unsigned int fps = 0;
+	unsigned int frames;
+	float timeSinceLastSec = 0.0f;
+	uint32_t numberOfThreads = 1;
+
+	// Current simulation info
+	int currentNumberOfParticles;
+
+	// Light settings
+	glm::vec4 m_lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
+
+	float m_lightConstantAttenuation = 0.0;
+	float m_lightLinearAttenuation = 1.0;
+	float m_lightQuadraticAttenuation = 0.0;
+
+	// Display settings
+	float scaleFactor = 0.005f; // TODO: move to model?
+	float simulationSpeed = 1.0f;
+
+	// New simulation settings
+	int numberOfParticles = 80000;
+	PresetType presetType = static_cast<PresetType>(0);
+	PositionType positionType = static_cast<PositionType>(0);
 };
 
