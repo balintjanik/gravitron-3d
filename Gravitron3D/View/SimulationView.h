@@ -116,7 +116,7 @@ protected:
 	float simulationSpeed = 1.0f;
 
 	// New simulation settings
-	int numberOfParticles = 80000;
+	int numberOfParticles = 10000;
 	PresetType presetType = static_cast<PresetType>(0);
 	PositionType positionType = static_cast<PositionType>(0);
 	VelocityType velocityType = static_cast<VelocityType>(0);

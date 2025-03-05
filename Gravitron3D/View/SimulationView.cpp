@@ -179,7 +179,7 @@ void SimulationView::Update( const SUpdateInfo& updateInfo )
 	}
 
 	// Orphan the old buffer and replace it with the new particle positions
-	glNamedBufferData(instanceVBO, sizeof(glm::vec4) * particlePositions.size(), &particlePositions[0], GL_DYNAMIC_DRAW);
+	glNamedBufferData(instanceVBO, sizeof(glm::vec4) * particlePositions.size(), particlePositions.data(), GL_DYNAMIC_DRAW);
 }
 
 void SimulationView::Render()
@@ -299,13 +299,14 @@ void SimulationView::RenderGUI()
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {
-		ImGui::SliderInt("Number of particles", &numberOfParticles, 0, 80000);
+		ImGui::SliderInt("Number of particles", &numberOfParticles, 0, 150000);
 
 		ShowEnumDropdown("Preset Type", PRESET_TYPE_NAMES, presetType);
 
-		ShowEnumDropdown("Position Type", POSITION_TYPE_NAMES, positionType);
-
-		ShowEnumDropdown("Velocity Type", VELOCITY_TYPE_NAMES, velocityType);
+		if (presetType == PRESET_CUSTOM) {
+			ShowEnumDropdown("Position Type", POSITION_TYPE_NAMES, positionType);
+			ShowEnumDropdown("Velocity Type", VELOCITY_TYPE_NAMES, velocityType);
+		}
 
 		if (ImGui::Button("Start New Simulation")) {
 			simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
