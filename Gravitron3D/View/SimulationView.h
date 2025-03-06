@@ -88,12 +88,10 @@ protected:
 	float windowHeight;
 
 	// Model
+	void InitSimulation();
+
 	SimulationManager simulationManager;
 	std::vector<glm::vec4> particlePositions;
-
-	// Settings
-	float theta = 1.0f;
-	float epsilon = 1.0f;
 
 	// Performance
 	unsigned int fps = 0;
@@ -114,6 +112,10 @@ protected:
 	// Display settings
 	float scaleFactor = 0.005f; // TODO: move to model?
 	float simulationSpeed = 1.0f;
+
+	// Calculation settings
+	float theta = 1.0f;
+	float epsilon = 1.0f;
 
 	// New simulation settings
 	int numberOfParticles = 10000;

@@ -96,6 +96,15 @@ void SimulationView::CleanTextures()
 	glDeleteTextures( 1, &m_sphereTextureID );
 }
 
+void SimulationView::InitSimulation() {
+	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
+
+	simulationManager.settings.setTheta(theta);
+	simulationManager.settings.setEpsilon(epsilon);
+	
+	simulationManager.settings.setSimulationSpeed(simulationSpeed);
+}
+
 void SimulationView::InitImGuiSettings() {
 	io = ImGui::GetIO();
 
@@ -108,7 +117,7 @@ void SimulationView::InitImGuiSettings() {
 
 bool SimulationView::Init()
 {
-	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
+	InitSimulation();
 
 	SetupDebugCallback();
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -291,10 +300,21 @@ void SimulationView::RenderGUI()
 
 	// Display settings
 	if (ImGui::CollapsingHeader("Display settings")) {
-		if (ImGui::SliderFloat("Delta Time", &simulationSpeed, 0.f, 5.f))
-			simulationManager.settings.setSimulationSpeed(simulationSpeed);
-
 		ImGui::SliderFloat("Particle size", &scaleFactor, 0.001f, 0.1f);
+
+		// TODO: add coloring, etc.
+	}
+
+	// Calculation settings
+	if (ImGui::CollapsingHeader("Calculation settings")) {
+		if (ImGui::SliderFloat("Simulation speed", &simulationSpeed, 0.f, 5.f))
+			simulationManager.settings.setSimulationSpeed(simulationSpeed);
+		
+		if (ImGui::SliderFloat("Theta", &theta, 0.f, 3.f))
+			simulationManager.settings.setTheta(theta);
+
+		if (ImGui::SliderFloat("Epsilon", &epsilon, 0.f, 3.f))
+			simulationManager.settings.setEpsilon(epsilon);
 	}
 
 	// New simulation
@@ -309,7 +329,7 @@ void SimulationView::RenderGUI()
 		}
 
 		if (ImGui::Button("Start New Simulation")) {
-			simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
+			InitSimulation();
 		}
 	}
 
