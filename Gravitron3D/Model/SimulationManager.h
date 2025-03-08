@@ -23,6 +23,9 @@ public:
 	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity);
 	void updateSimulation(const SUpdateInfo& updateInfo);
 
+	void loadSettings(const std::string& filename);
+	void saveSettings(const std::string& filename);
+
 private:
 	void updateParticles(float deltaTime);
 	void updateParticlesRange(size_t start, size_t end, float deltaTime);

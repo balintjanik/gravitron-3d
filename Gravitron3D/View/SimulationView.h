@@ -14,6 +14,7 @@
 
 // ImGui
 #include <imgui.h>
+#include <string>
 
 // Utils
 #include "GLUtils.hpp"
@@ -117,11 +118,23 @@ protected:
 	float theta = 1.0f;
 	float epsilon = 1.0f;
 
+	// Load/save settings
+	char saveFileName[128] = "";
+	int selectedFileIndex = -1;
+	std::vector<std::string> availableFiles;
+	void ShowLoadSaveSettingsUI();
+
 	// New simulation settings
 	int numberOfParticles = 10000;
 	PresetType presetType = static_cast<PresetType>(0);
 	PositionType positionType = static_cast<PositionType>(0);
 	VelocityType velocityType = static_cast<VelocityType>(0);
 
+	// Message
+	void UpdateMessage(std::string newMessage, glm::vec3 newMessageColor);
+	void ShowMessage(float r, float g, float b);
+	glm::vec3 messageColor = glm::vec3(0);
+	float messageTime = 0;
+	std::string message = "";
 };
 

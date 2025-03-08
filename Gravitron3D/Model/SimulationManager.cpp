@@ -57,3 +57,11 @@ void SimulationManager::updateParticles(float deltaTime) {
 		thread.join();
 	}
 }
+
+void SimulationManager::loadSettings(const std::string& filename) {
+	settings = SettingsDataLoader::loadFromFile(filename);
+}
+
+void SimulationManager::saveSettings(const std::string& filename) {
+	SettingsDataLoader::saveToFile(filename, settings);
+}

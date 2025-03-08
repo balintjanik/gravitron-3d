@@ -165,6 +165,12 @@ void SimulationView::UpdateData() {
 
 	// Current simulation info
 	currentNumberOfParticles = simulationManager.settings.getNumberOfParticles();
+
+	// Simulation settings
+	simulationSpeed = simulationManager.settings.getSimulationSpeed();
+	theta = simulationManager.settings.getTheta();
+	epsilon = simulationManager.settings.getEpsilon();
+
 }
 
 void SimulationView::Update( const SUpdateInfo& updateInfo )
@@ -251,6 +257,126 @@ bool SimulationView::ShowEnumDropdown(const char* label, const char* (&names)[N]
 	return valueChanged;
 }
 
+void SimulationView::UpdateMessage(std::string newMessage, glm::vec3 newMessageColor) {
+	message = newMessage;
+	messageColor = newMessageColor;
+	messageTime = 0.0f;
+}
+
+void SimulationView::ShowMessage(float r, float g, float b) {
+	messageTime += ImGui::GetIO().DeltaTime;
+
+	// Pulsate when the message is new
+	float alpha = 1.0f;
+	if (messageTime < 1.5f) {
+		alpha = (sin(messageTime * 30.0f) + 1.0f) * 0.25f + 0.5f;
+	}
+	ImVec4 pulsatingColor = ImVec4(r, g, b, alpha);
+
+	ImGui::PushStyleColor(ImGuiCol_Text, pulsatingColor);
+
+	ImGui::SetCursorPos(ImVec2(10, ImGui::GetIO().DisplaySize.y - 30));
+	ImGui::Text(message.c_str());
+
+	// Restore the default text color
+	ImGui::PopStyleColor();
+}
+
+void SimulationView::ShowLoadSaveSettingsUI() {
+	// Ensure directories exist before saving or loading
+	std::filesystem::create_directories("UserData");
+	std::filesystem::create_directories("UserData/Settings");
+
+	// List all .stg files in the "UserData/Settings" folder
+	availableFiles.clear();
+	availableFiles.push_back("");
+	for (const auto& entry : std::filesystem::directory_iterator("UserData/Settings")) {
+		if (entry.is_regular_file() && entry.path().extension() == ".stg") {
+			availableFiles.push_back(entry.path().stem().string());
+		}
+	}
+
+	// Load/save settings
+	if (ImGui::CollapsingHeader("Load/Save Settings")) {
+		// Save settings
+		ImGui::SeparatorText("Save settings");
+		ImGui::InputText("##SettingsFilename", saveFileName, IM_ARRAYSIZE(saveFileName));
+		ImGui::SameLine();
+		if (ImGui::Button("Save Settings")) {
+			try {
+				if (strlen(saveFileName) > 0) {
+					std::string filePath = "UserData/Settings/" + std::string(saveFileName) + ".stg";
+
+					if (std::filesystem::exists(filePath)) {
+						UpdateMessage("File already exists. Please choose a different name.", glm::vec3(1.0f, 0.0f, 0.0f));
+					}
+					else {
+						simulationManager.saveSettings(filePath);
+						UpdateMessage("Settings saved as " + std::string(saveFileName), glm::vec3(1.0f));
+					}
+				}
+				else {
+					UpdateMessage("You must enter a name for the save first!", glm::vec3(1.0f, 0.0f, 0.0f));
+				}
+			}
+			catch (const std::exception& e) {
+				UpdateMessage("Error while saving settings: " + std::string(e.what()), glm::vec3(1.0f, 0.0f, 0.0f));
+			}
+			catch (...) {
+				UpdateMessage("An unknown error occured while saving settings.", glm::vec3(1.0f, 0.0f, 0.0f));
+			}
+		}
+
+		// Load settings
+		ImGui::SeparatorText("Load settings");
+		if (!availableFiles.empty()) {
+			// Convert availableFiles to const char* array for Combo box
+			std::vector<const char*> fileNames;
+			for (const auto& file : availableFiles) {
+				fileNames.push_back(file.c_str());
+			}
+
+			// Display combo box with file names
+			if (ImGui::BeginCombo("##SettingsFiles", selectedFileIndex > 0 ? availableFiles[selectedFileIndex].c_str() : "Select a file")) {
+				for (int i = 0; i < availableFiles.size(); ++i) {
+					bool isSelected = (i == selectedFileIndex);
+					if (ImGui::Selectable(availableFiles[i].c_str(), isSelected)) {
+						selectedFileIndex = i;
+					}
+
+					if (isSelected) {
+						ImGui::SetItemDefaultFocus();
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Load Settings")) {
+				try {
+					if (selectedFileIndex > 0) {
+						std::string filePath = "UserData/Settings/" + availableFiles[selectedFileIndex] + ".stg";
+						simulationManager.loadSettings(filePath);
+						UpdateMessage("Settings loaded from " + availableFiles[selectedFileIndex], glm::vec3(1.0f));
+					}
+					else {
+						UpdateMessage("You must choose a save to load!", glm::vec3(1.0f, 0.0f, 0.0f));
+					}
+				}
+				catch (const std::exception& e) {
+					UpdateMessage("Error while loading settings: " + std::string(e.what()), glm::vec3(1.0f, 0.0f, 0.0f));
+				}
+				catch (...) {
+					UpdateMessage("An unknown error occured while loading settings.", glm::vec3(1.0f, 0.0f, 0.0f));
+				}
+			}
+		}
+		else {
+			ImGui::Text("No saved settings found.");
+		}
+	}
+}
 
 void SimulationView::RenderGUI()
 {
@@ -310,12 +436,15 @@ void SimulationView::RenderGUI()
 		if (ImGui::SliderFloat("Simulation speed", &simulationSpeed, 0.f, 5.f))
 			simulationManager.settings.setSimulationSpeed(simulationSpeed);
 		
-		if (ImGui::SliderFloat("Theta", &theta, 0.f, 3.f))
+		if (ImGui::SliderFloat("Theta", &theta, simulationManager.settings.getThetaMin(), simulationManager.settings.getThetaMax()))
 			simulationManager.settings.setTheta(theta);
 
-		if (ImGui::SliderFloat("Epsilon", &epsilon, 0.f, 3.f))
+		if (ImGui::SliderFloat("Epsilon", &epsilon, simulationManager.settings.getEpsilonMin(), simulationManager.settings.getEpsilonMax()))
 			simulationManager.settings.setEpsilon(epsilon);
 	}
+
+	// Load/save settings
+	ShowLoadSaveSettingsUI();
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {
@@ -332,6 +461,9 @@ void SimulationView::RenderGUI()
 			InitSimulation();
 		}
 	}
+
+	// Messages
+	ShowMessage(messageColor.r, messageColor.g, messageColor.b);
 
 	ImGui::End();
 }

@@ -132,7 +132,6 @@
     <ClInclude Include="Model\SimulationManager.h" />
     <ClInclude Include="Model\SUpdateInfo.h" />
     <ClInclude Include="Model\VelocityType.h" />
-    <ClInclude Include="Persistence\DataLoaderTemplate.h" />
     <ClInclude Include="Persistence\ParticleDataLoader.h" />
     <ClInclude Include="Persistence\SettingsDataLoader.h" />
     <ClInclude Include="View\Camera.h" />

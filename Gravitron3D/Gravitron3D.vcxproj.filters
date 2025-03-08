@@ -82,9 +82,6 @@
     <ClInclude Include="Model\VelocityType.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Persistence\DataLoaderTemplate.h">
-      <Filter>Persistence</Filter>
-    </ClInclude>
     <ClInclude Include="Persistence\ParticleDataLoader.h">
       <Filter>Persistence</Filter>
     </ClInclude>

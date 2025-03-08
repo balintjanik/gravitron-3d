@@ -10,7 +10,11 @@ private:
 	uint32_t numberOfThreads = 1;
 
 	float theta = 1.0f;
+    float thetaMax = 2.0f;
+    float thetaMin = 0.0f;
 	float epsilon = 1.0f;
+    float epsilonMax = 2.0f;
+    float epsilonMin = 0.0f;
 
 public:
 	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
@@ -20,6 +24,10 @@ public:
     float getSimulationSpeed() const { return simulationSpeed; }
     uint32_t getNumberOfThreads() const { return numberOfThreads; }
     float getTheta() const { return theta; }
+    float getThetaMax() const { return thetaMax; }
+    float getThetaMin() const { return thetaMin; }
+    float getEpsilonMax() const { return epsilonMax; }
+    float getEpsilonMin() const { return epsilonMin; }
     float getEpsilon() const { return epsilon; }
 
     // Setters

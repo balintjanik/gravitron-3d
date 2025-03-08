@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Model/Particle.h"
+#include <string>
 
 class ParticleDataLoader {
 public:
