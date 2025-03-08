@@ -122,7 +122,9 @@ protected:
 	char saveFileName[128] = "";
 	int selectedFileIndex = -1;
 	std::vector<std::string> availableFiles;
-	void ShowLoadSaveSettingsUI();
+	void CollectSettingsFiles();
+	void SaveSettingsUI();
+	void LoadSettingsUI();
 
 	// New simulation settings
 	int numberOfParticles = 10000;
