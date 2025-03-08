@@ -119,12 +119,20 @@ protected:
 	float epsilon = 1.0f;
 
 	// Load/save settings
-	char saveFileName[128] = "";
-	int selectedFileIndex = -1;
-	std::vector<std::string> availableFiles;
+	char saveSettingsFileName[128] = "";
+	int selectedSettingsFileIndex = -1;
+	std::vector<std::string> availableSettingsFiles;
 	void CollectSettingsFiles();
 	void SaveSettingsUI();
 	void LoadSettingsUI();
+
+	// Load/save particles
+	char saveParticlesFileName[128] = "";
+	int selectedParticlesFileIndex = -1;
+	std::vector<std::string> availableParticlesFiles;
+	void CollectParticlesFiles();
+	void SaveParticlesUI();
+	void LoadParticlesUI();
 
 	// New simulation settings
 	int numberOfParticles = 10000;

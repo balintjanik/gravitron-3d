@@ -26,6 +26,9 @@ public:
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);
 
+	void loadParticles(const std::string& filename);
+	void saveParticles(const std::string& filename);
+
 private:
 	void updateParticles(float deltaTime);
 	void updateParticlesRange(size_t start, size_t end, float deltaTime);

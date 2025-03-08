@@ -108,7 +108,7 @@ void SimulationView::InitSimulation() {
 void SimulationView::InitImGuiSettings() {
 	io = ImGui::GetIO();
 
-	windowWidth = 350.0f;
+	windowWidth = 420.0f;
 	windowHeight = io.DisplaySize.y;
 	// ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - windowWidth, 0)); // Right side
 	ImGui::SetNextWindowPos(ImVec2(0, 0)); // Left side
@@ -296,30 +296,31 @@ void SimulationView::CollectSettingsFiles() {
 	std::filesystem::create_directories("UserData/Settings");
 
 	// Collect all .stg files in the "UserData/Settings" folder
-	availableFiles.clear();
-	availableFiles.push_back("");
+	availableSettingsFiles.clear();
+	availableSettingsFiles.push_back("");
 	for (const auto& entry : std::filesystem::directory_iterator("UserData/Settings")) {
 		if (entry.is_regular_file() && entry.path().extension() == ".stg") {
-			availableFiles.push_back(entry.path().stem().string());
+			availableSettingsFiles.push_back(entry.path().stem().string());
 		}
 	}
 }
 
 void SimulationView::SaveSettingsUI() {
 	ImGui::SeparatorText("Save settings");
-	ImGui::InputText("##SettingsFilename", saveFileName, IM_ARRAYSIZE(saveFileName));
+	ImGui::InputText("##SettingsFilename", saveSettingsFileName, IM_ARRAYSIZE(saveSettingsFileName));
 	ImGui::SameLine();
 	if (ImGui::Button("Save Settings")) {
 		try {
-			if (strlen(saveFileName) > 0) {
-				std::string filePath = "UserData/Settings/" + std::string(saveFileName) + ".stg";
+			if (strlen(saveSettingsFileName) > 0) {
+				std::string filePath = "UserData/Settings/" + std::string(saveSettingsFileName) + ".stg";
 
 				if (std::filesystem::exists(filePath)) {
 					UpdateMessage("File already exists. Please choose a different name.", glm::vec3(1.0f, 0.0f, 0.0f));
 				}
 				else {
 					simulationManager.saveSettings(filePath);
-					UpdateMessage("Settings saved as " + std::string(saveFileName), glm::vec3(1.0f));
+					UpdateMessage("Settings saved as " + std::string(saveSettingsFileName) + ".", glm::vec3(1.0f));
+					saveSettingsFileName[0] = '\0';
 				}
 			}
 			else {
@@ -327,7 +328,7 @@ void SimulationView::SaveSettingsUI() {
 			}
 		}
 		catch (const std::exception& e) {
-			UpdateMessage("Error while saving settings: " + std::string(e.what()), glm::vec3(1.0f, 0.0f, 0.0f));
+			UpdateMessage("Error while saving settings: " + std::string(e.what()) + ".", glm::vec3(1.0f, 0.0f, 0.0f));
 		}
 		catch (...) {
 			UpdateMessage("An unknown error occured while saving settings.", glm::vec3(1.0f, 0.0f, 0.0f));
@@ -337,19 +338,19 @@ void SimulationView::SaveSettingsUI() {
 
 void SimulationView::LoadSettingsUI() {
 	ImGui::SeparatorText("Load settings");
-	if (!availableFiles.empty()) {
+	if (!availableSettingsFiles.empty()) {
 		// Convert availableFiles to const char* array for Combo box
 		std::vector<const char*> fileNames;
-		for (const auto& file : availableFiles) {
+		for (const auto& file : availableSettingsFiles) {
 			fileNames.push_back(file.c_str());
 		}
 
 		// Display combo box with file names
-		if (ImGui::BeginCombo("##SettingsFiles", selectedFileIndex > 0 ? availableFiles[selectedFileIndex].c_str() : "Select a file")) {
-			for (int i = 0; i < availableFiles.size(); ++i) {
-				bool isSelected = (i == selectedFileIndex);
-				if (ImGui::Selectable(availableFiles[i].c_str(), isSelected)) {
-					selectedFileIndex = i;
+		if (ImGui::BeginCombo("##SettingsFiles", selectedSettingsFileIndex > 0 ? availableSettingsFiles[selectedSettingsFileIndex].c_str() : "Select a file")) {
+			for (int i = 0; i < availableSettingsFiles.size(); ++i) {
+				bool isSelected = (i == selectedSettingsFileIndex);
+				if (ImGui::Selectable(availableSettingsFiles[i].c_str(), isSelected)) {
+					selectedSettingsFileIndex = i;
 				}
 				if (isSelected) {
 					ImGui::SetItemDefaultFocus();
@@ -360,17 +361,17 @@ void SimulationView::LoadSettingsUI() {
 		ImGui::SameLine();
 		if (ImGui::Button("Load Settings")) {
 			try {
-				if (selectedFileIndex > 0) {
-					std::string filePath = "UserData/Settings/" + availableFiles[selectedFileIndex] + ".stg";
+				if (selectedSettingsFileIndex > 0) {
+					std::string filePath = "UserData/Settings/" + availableSettingsFiles[selectedSettingsFileIndex] + ".stg";
 					simulationManager.loadSettings(filePath);
-					UpdateMessage("Settings loaded from " + availableFiles[selectedFileIndex], glm::vec3(1.0f));
+					UpdateMessage("Settings loaded from " + availableSettingsFiles[selectedSettingsFileIndex] + ".", glm::vec3(1.0f));
 				}
 				else {
 					UpdateMessage("You must choose a save to load!", glm::vec3(1.0f, 0.0f, 0.0f));
 				}
 			}
 			catch (const std::exception& e) {
-				UpdateMessage("Error while loading settings: " + std::string(e.what()), glm::vec3(1.0f, 0.0f, 0.0f));
+				UpdateMessage("Error while loading settings: " + std::string(e.what()) + ".", glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 			catch (...) {
 				UpdateMessage("An unknown error occured while loading settings.", glm::vec3(1.0f, 0.0f, 0.0f));
@@ -379,6 +380,99 @@ void SimulationView::LoadSettingsUI() {
 	}
 	else {
 		ImGui::Text("No saved settings found.");
+	}
+}
+
+void SimulationView::CollectParticlesFiles() {
+	// Ensure directories exist before saving or loading
+	std::filesystem::create_directories("UserData");
+	std::filesystem::create_directories("UserData/Particles");
+
+	// Collect all .ptc files in the "UserData/Particles" folder
+	availableParticlesFiles.clear();
+	availableParticlesFiles.push_back("");
+	for (const auto& entry : std::filesystem::directory_iterator("UserData/Particles")) {
+		if (entry.is_regular_file() && entry.path().extension() == ".ptc") {
+			availableParticlesFiles.push_back(entry.path().stem().string());
+		}
+	}
+}
+
+void SimulationView::SaveParticlesUI() {
+	ImGui::SeparatorText("Save particles");
+	ImGui::InputText("##ParticlesFilename", saveParticlesFileName, IM_ARRAYSIZE(saveParticlesFileName));
+	ImGui::SameLine();
+	if (ImGui::Button("Save Particles")) {
+		try {
+			if (strlen(saveParticlesFileName) > 0) {
+				std::string filePath = "UserData/Particles/" + std::string(saveParticlesFileName) + ".ptc";
+
+				if (std::filesystem::exists(filePath)) {
+					UpdateMessage("File already exists. Please choose a different name.", glm::vec3(1.0f, 0.0f, 0.0f));
+				}
+				else {
+					simulationManager.saveParticles(filePath);
+					UpdateMessage("Particles saved as " + std::string(saveParticlesFileName) + ".", glm::vec3(1.0f));
+					saveParticlesFileName[0] = '\0';
+				}
+			}
+			else {
+				UpdateMessage("You must enter a name for the save first!", glm::vec3(1.0f, 0.0f, 0.0f));
+			}
+		}
+		catch (const std::exception& e) {
+			UpdateMessage("Error while saving particles: " + std::string(e.what()) + ".", glm::vec3(1.0f, 0.0f, 0.0f));
+		}
+		catch (...) {
+			UpdateMessage("An unknown error occured while saving particles.", glm::vec3(1.0f, 0.0f, 0.0f));
+		}
+	}
+}
+
+void SimulationView::LoadParticlesUI() {
+	ImGui::SeparatorText("Load particles");
+	if (!availableParticlesFiles.empty()) {
+		// Convert availableFiles to const char* array for Combo box
+		std::vector<const char*> fileNames;
+		for (const auto& file : availableParticlesFiles) {
+			fileNames.push_back(file.c_str());
+		}
+
+		// Display combo box with file names
+		if (ImGui::BeginCombo("##ParticlesFiles", selectedParticlesFileIndex > 0 ? availableParticlesFiles[selectedParticlesFileIndex].c_str() : "Select a file")) {
+			for (int i = 0; i < availableParticlesFiles.size(); ++i) {
+				bool isSelected = (i == selectedParticlesFileIndex);
+				if (ImGui::Selectable(availableParticlesFiles[i].c_str(), isSelected)) {
+					selectedParticlesFileIndex = i;
+				}
+				if (isSelected) {
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Load Particles")) {
+			try {
+				if (selectedParticlesFileIndex > 0) {
+					std::string filePath = "UserData/Particles/" + availableParticlesFiles[selectedParticlesFileIndex] + ".ptc";
+					simulationManager.loadParticles(filePath);
+					UpdateMessage("Particles loaded from " + availableParticlesFiles[selectedParticlesFileIndex] + ".", glm::vec3(1.0f));
+				}
+				else {
+					UpdateMessage("You must choose a save to load!", glm::vec3(1.0f, 0.0f, 0.0f));
+				}
+			}
+			catch (const std::exception& e) {
+				UpdateMessage("Error while loading particles: " + std::string(e.what()) + ".", glm::vec3(1.0f, 0.0f, 0.0f));
+			}
+			catch (...) {
+				UpdateMessage("An unknown error occured while loading particles.", glm::vec3(1.0f, 0.0f, 0.0f));
+			}
+		}
+	}
+	else {
+		ImGui::Text("No saved particles found.");
 	}
 }
 
@@ -457,6 +551,18 @@ void SimulationView::RenderGUI()
 
 		// Load settings
 		LoadSettingsUI();
+	}
+
+	// Load/save particles
+	if (ImGui::CollapsingHeader("Load/Save Particles")) {
+		// Collect existing saves
+		CollectParticlesFiles();
+
+		// Save particles
+		SaveParticlesUI();
+
+		// Load particles
+		LoadParticlesUI();
 	}
 
 	// New simulation

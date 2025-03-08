@@ -65,3 +65,12 @@ void SimulationManager::loadSettings(const std::string& filename) {
 void SimulationManager::saveSettings(const std::string& filename) {
 	SettingsDataLoader::saveToFile(filename, settings);
 }
+
+void SimulationManager::loadParticles(const std::string& filename) {
+	particles = ParticleDataLoader::loadFromFile(filename);
+	settings.setNumberOfParticles(particles.size());
+}
+
+void SimulationManager::saveParticles(const std::string& filename) {
+	ParticleDataLoader::saveToFile(filename, particles);
+}
