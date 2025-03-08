@@ -281,10 +281,19 @@ void SimulationView::ShowMessage(float r, float g, float b) {
 	// Update coloring and positioning
 	ImVec4 pulsatingColor = ImVec4(r, g, b, alpha);
 	ImGui::PushStyleColor(ImGuiCol_Text, pulsatingColor);
-	ImGui::SetCursorPos(ImVec2(10, ImGui::GetIO().DisplaySize.y - 30));
+
+	// Positioning
+	float horizontalPadding = 10.0f;
+	float verticalPadding = 20.0f;
+	float wrapWidth = windowWidth - horizontalPadding;
+	ImVec2 textSize = ImGui::CalcTextSize(message.c_str(), NULL, false, wrapWidth);
+	float textYPos = windowHeight - textSize.y - verticalPadding;
+	ImGui::SetCursorPos(ImVec2(horizontalPadding, textYPos));
 
 	// Display text
-	ImGui::Text(message.c_str());
+	ImGui::PushTextWrapPos(wrapWidth);
+	ImGui::TextWrapped(message.c_str());
+	ImGui::PopTextWrapPos();
 
 	// Restore the default text color
 	ImGui::PopStyleColor();
