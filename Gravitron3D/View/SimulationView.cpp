@@ -266,16 +266,24 @@ void SimulationView::UpdateMessage(std::string newMessage, glm::vec3 newMessageC
 void SimulationView::ShowMessage(float r, float g, float b) {
 	messageTime += ImGui::GetIO().DeltaTime;
 
-	// Pulsate when the message is new
+	// Constant alpha
 	float alpha = 1.0f;
+
+	// Pulsate if message is new
 	if (messageTime < 1.5f) {
 		alpha = (sin(messageTime * 30.0f) + 1.0f) * 0.25f + 0.5f;
 	}
+	// Clear message after a while
+	else if (messageTime > 5.0f) {
+		message = "";
+	}
+
+	// Update coloring and positioning
 	ImVec4 pulsatingColor = ImVec4(r, g, b, alpha);
-
 	ImGui::PushStyleColor(ImGuiCol_Text, pulsatingColor);
-
 	ImGui::SetCursorPos(ImVec2(10, ImGui::GetIO().DisplaySize.y - 30));
+
+	// Display text
 	ImGui::Text(message.c_str());
 
 	// Restore the default text color
@@ -468,7 +476,8 @@ void SimulationView::RenderGUI()
 	}
 
 	// Messages
-	ShowMessage(messageColor.r, messageColor.g, messageColor.b);
+	if (message != "")
+		ShowMessage(messageColor.r, messageColor.g, messageColor.b);
 
 	ImGui::End();
 }
