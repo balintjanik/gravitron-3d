@@ -199,10 +199,10 @@ void SimulationView::Render()
 	// Uniforms
 	glProgramUniform1f(m_programID, ul(m_programID, "scaleFactor"), scaleFactor);
 	glProgramUniform3fv(m_programID, ul(m_programID, "cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
-	glProgramUniform4fv(m_programID, ul(m_programID, "lightPos"), 1, glm::value_ptr(m_lightPos));
-	glProgramUniform1f(m_programID, ul(m_programID, "lightConstantAttenuation"), m_lightConstantAttenuation);
-	glProgramUniform1f(m_programID, ul(m_programID, "lightLinearAttenuation"), m_lightLinearAttenuation);
-	glProgramUniform1f(m_programID, ul(m_programID, "lightQuadraticAttenuation"), m_lightQuadraticAttenuation);
+	glProgramUniform4fv(m_programID, ul(m_programID, "lightPos"), 1, glm::value_ptr(lightPos));
+	glProgramUniform1f(m_programID, ul(m_programID, "lightConstantAttenuation"), lightConstantAttenuation);
+	glProgramUniform1f(m_programID, ul(m_programID, "lightLinearAttenuation"), lightLinearAttenuation);
+	glProgramUniform1f(m_programID, ul(m_programID, "lightQuadraticAttenuation"), lightQuadraticAttenuation);
 	glProgramUniformMatrix4fv( m_programID, ul( m_programID, "viewProj"), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
 
 	glm::mat4 matWorld = glm::identity<glm::mat4>();
@@ -274,27 +274,27 @@ void SimulationView::RenderGUI()
 
 	// Light settings
 	if (ImGui::CollapsingHeader("Light settings")) {
-		bool isPoint = m_lightPos.w >= 1.0f;
+		bool isPoint = lightPos.w >= 1.0f;
 		ImGui::Checkbox("Spot light (on) / Directional light (off)", &isPoint);
-		m_lightPos.w = isPoint ? 1.f : 0.f;
+		lightPos.w = isPoint ? 1.f : 0.f;
 
-		if (m_lightPos.w == 0.0f) // Directional light
+		if (lightPos.w == 0.0f) // Directional light
 		{
-			glm::vec3 dir = glm::vec3(m_lightPos);
+			glm::vec3 dir = glm::vec3(lightPos);
 			ImGui::SliderFloat3("Light Direction", glm::value_ptr(dir), -1.f, 1.f);
 			if (dir != glm::vec3(0.0f))
 				dir = glm::normalize(dir);
 			else dir = glm::vec3(0.f, -1.f, 0.f);
-			m_lightPos = glm::vec4(dir, 0.0f);
+			lightPos = glm::vec4(dir, 0.0f);
 		}
-		else if (m_lightPos.w >= 1.f) // Spot light
+		else if (lightPos.w >= 1.f) // Spot light
 		{
-			m_lightPos = glm::vec4(0.f, 0.f, 0.f, 1.f);
-			ImGui::SliderFloat3("Light Position", glm::value_ptr(m_lightPos), -100.f, 100.f);
+			lightPos = glm::vec4(0.f, 0.f, 0.f, 1.f);
+			ImGui::SliderFloat3("Light Position", glm::value_ptr(lightPos), -100.f, 100.f);
 
-			ImGui::SliderFloat("Constant Att.", &m_lightConstantAttenuation, 0.f, 1.f);
-			ImGui::SliderFloat("Linear Att.", &m_lightLinearAttenuation, 0.f, 1.f);
-			ImGui::SliderFloat("Quadratic Att.", &m_lightQuadraticAttenuation, 0.f, 1.f);
+			ImGui::SliderFloat("Constant Att.", &lightConstantAttenuation, 0.f, 1.f);
+			ImGui::SliderFloat("Linear Att.", &lightLinearAttenuation, 0.f, 1.f);
+			ImGui::SliderFloat("Quadratic Att.", &lightQuadraticAttenuation, 0.f, 1.f);
 		}
 	}
 

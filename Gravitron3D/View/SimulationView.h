@@ -103,11 +103,11 @@ protected:
 	int currentNumberOfParticles;
 
 	// Light settings
-	glm::vec4 m_lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
+	glm::vec4 lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
 
-	float m_lightConstantAttenuation = 0.0;
-	float m_lightLinearAttenuation = 1.0;
-	float m_lightQuadraticAttenuation = 0.0;
+	float lightConstantAttenuation = 0.0;
+	float lightLinearAttenuation = 1.0;
+	float lightQuadraticAttenuation = 0.0;
 
 	// Display settings
 	float scaleFactor = 0.005f; // TODO: move to model?
