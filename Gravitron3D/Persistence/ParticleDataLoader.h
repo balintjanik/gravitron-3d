@@ -1,12 +1,10 @@
 #pragma once
 
-#include "DataLoaderTemplate.h"
 #include "../Model/Particle.h"
-#include <vector>
-#include <string>
 
-class ParticleDataLoader : public DataLoader<ParticleDataLoader> {
+class ParticleDataLoader {
 public:
-    static void saveImpl(const std::string& filename, const std::vector<Particle>& particles);
-    static void loadImpl(const std::string& filename, std::vector<Particle>& particles);
+    static void ParticleDataLoader::saveToFile(const std::string& filename, const std::vector<Particle>& particles);
+
+    static std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filename);
 };

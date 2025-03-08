@@ -1,11 +1,10 @@
 #pragma once
 
-#include "DataLoaderTemplate.h"
-#include <map>
-#include <string>
+#include "../Model/Settings.h"
 
-class SettingsDataLoader : public DataLoader<SettingsDataLoader> {
+class SettingsDataLoader {
 public:
-    static void saveImpl(const std::string& filename, const std::map<std::string, std::string>& settings);
-    static void loadImpl(const std::string& filename, std::map<std::string, std::string>& settings);
+    static void saveToFile(const std::string& filename, const Settings& settings);
+
+    static Settings loadFromFile(const std::string& filename);
 };
