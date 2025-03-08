@@ -3,27 +3,31 @@
 #include <iostream>
 
 void SettingsDataLoader::saveToFile(const std::string& filename, const Settings& settings) {
-    std::cout << "Saving settings to " << filename << std::endl;
-    
     std::ofstream out(filename, std::ios::binary);
     if (!out) {
-        std::cerr << "Failed to open file for saving: " << filename << std::endl;
-        return;
+        throw std::runtime_error("Failed to open file for saving: " + filename);
     }
+
     out.write(reinterpret_cast<const char*>(&settings), sizeof(Settings));
+    if (!out) {
+        throw std::runtime_error("Failed to write settings data.");
+    }
+
     out.close();
 }
 
 Settings SettingsDataLoader::loadFromFile(const std::string& filename) {
-    std::cout << "Loading settings from " << filename << std::endl;
-    
     Settings settings;
     std::ifstream in(filename, std::ios::binary);
     if (!in) {
-        std::cerr << "Failed to open file for loading: " << filename << std::endl;
-        return settings; // Return default settings if loading fails
+        throw std::runtime_error("Failed to open file for loading: " + filename);
     }
+
     in.read(reinterpret_cast<char*>(&settings), sizeof(Settings));
+    if (!in) {
+        throw std::runtime_error("Failed to read settings data.");
+    }
+
     in.close();
     return settings;
 }

@@ -1,5 +1,6 @@
 #include "SimulationManager.h"
 #include <thread>
+#include <stdexcept>
 
 void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity) {
 	settings = Settings(numberOfParticles);
@@ -59,18 +60,40 @@ void SimulationManager::updateParticles(float deltaTime) {
 }
 
 void SimulationManager::loadSettings(const std::string& filename) {
-	settings = SettingsDataLoader::loadFromFile(filename);
+	try {
+		Settings newSettings = SettingsDataLoader::loadFromFile(filename);
+		settings = std::move(newSettings);
+	}
+	catch (const std::exception& e) {
+		throw std::runtime_error(std::string(e.what()));
+	}
 }
 
 void SimulationManager::saveSettings(const std::string& filename) {
-	SettingsDataLoader::saveToFile(filename, settings);
+	try {
+		SettingsDataLoader::saveToFile(filename, settings);
+	}
+	catch (const std::exception& e) {
+		throw std::runtime_error(std::string(e.what()));
+	}
 }
 
 void SimulationManager::loadParticles(const std::string& filename) {
-	particles = ParticleDataLoader::loadFromFile(filename);
-	settings.setNumberOfParticles(particles.size());
+	try {
+		std::vector<Particle> newParticles = ParticleDataLoader::loadFromFile(filename);
+		particles = std::move(newParticles);
+		settings.setNumberOfParticles(particles.size());
+	}
+	catch (const std::exception& e) {
+		throw std::runtime_error(std::string(e.what()));
+	}
 }
 
 void SimulationManager::saveParticles(const std::string& filename) {
-	ParticleDataLoader::saveToFile(filename, particles);
+	try {
+		ParticleDataLoader::saveToFile(filename, particles);
+	}
+	catch (const std::exception& e) {
+		throw std::runtime_error(std::string(e.what()));
+	}
 }
