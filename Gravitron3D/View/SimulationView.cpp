@@ -518,7 +518,6 @@ void SimulationView::RenderGUI()
 
 	// Light settings
 	if (ImGui::CollapsingHeader("Light settings")) {
-		std::cout << lightPos.x << ", " << lightPos.y << ", " << lightPos.z << ", " << lightPos.w << ", " << std::endl;
 		bool isPoint = lightPos.w >= 1.0f;
 		if (ImGui::Checkbox("Spot light (on) / Directional light (off)", &isPoint)) {
 			if (lightPos.w == 0.0f && isPoint)
