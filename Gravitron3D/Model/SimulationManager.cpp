@@ -78,6 +78,10 @@ void SimulationManager::saveSettings(const std::string& filename) {
 	}
 }
 
+void SimulationManager::defaultSettings() {
+	settings = Settings(particles.size());
+}
+
 void SimulationManager::loadParticles(const std::string& filename) {
 	try {
 		std::vector<Particle> newParticles = ParticleDataLoader::loadFromFile(filename);

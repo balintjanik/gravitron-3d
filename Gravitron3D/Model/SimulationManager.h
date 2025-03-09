@@ -25,6 +25,7 @@ public:
 
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);
+	void defaultSettings();
 
 	void loadParticles(const std::string& filename);
 	void saveParticles(const std::string& filename);

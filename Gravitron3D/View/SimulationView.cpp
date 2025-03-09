@@ -383,6 +383,7 @@ void SimulationView::LoadSettingsUI() {
 					std::string filePath = "UserData/Settings/" + availableSettingsFiles[selectedSettingsFileIndex] + ".stg";
 					simulationManager.loadSettings(filePath);
 					UpdateMessage("Settings loaded from " + availableSettingsFiles[selectedSettingsFileIndex] + ".", glm::vec3(1.0f));
+					selectedSettingsFileIndex = -1;
 				}
 				else {
 					UpdateMessage("You must choose a save to load!", glm::vec3(1.0f, 0.0f, 0.0f));
@@ -476,6 +477,7 @@ void SimulationView::LoadParticlesUI() {
 					std::string filePath = "UserData/Particles/" + availableParticlesFiles[selectedParticlesFileIndex] + ".ptc";
 					simulationManager.loadParticles(filePath);
 					UpdateMessage("Particles loaded from " + availableParticlesFiles[selectedParticlesFileIndex] + ".", glm::vec3(1.0f));
+					selectedParticlesFileIndex = -1;
 				}
 				else {
 					UpdateMessage("You must choose a save to load!", glm::vec3(1.0f, 0.0f, 0.0f));
@@ -516,33 +518,40 @@ void SimulationView::RenderGUI()
 
 	// Light settings
 	if (ImGui::CollapsingHeader("Light settings")) {
+		std::cout << lightPos.x << ", " << lightPos.y << ", " << lightPos.z << ", " << lightPos.w << ", " << std::endl;
 		bool isPoint = lightPos.w >= 1.0f;
-		ImGui::Checkbox("Spot light (on) / Directional light (off)", &isPoint);
-		lightPos.w = isPoint ? 1.f : 0.f;
+		if (ImGui::Checkbox("Spot light (on) / Directional light (off)", &isPoint)) {
+			if (lightPos.w == 0.0f && isPoint)
+				lightPos = glm::vec4(0.0f);
+			else if (lightPos.w == 1.0f && !isPoint)
+				lightPos = glm::vec4(0.f, -1.f, 0.f, 0.f);
+			lightPos.w = isPoint ? 1.f : 0.f;
+			simulationManager.settings.setLightPos(lightPos);
+		}
 
 		if (lightPos.w == 0.0f) // Directional light
 		{
 			glm::vec3 dir = glm::vec3(lightPos);
-			ImGui::SliderFloat3("Light Direction", glm::value_ptr(dir), -1.f, 1.f);
-			if (dir != glm::vec3(0.0f))
-				dir = glm::normalize(dir);
-			else dir = glm::vec3(0.f, -1.f, 0.f);
-			lightPos = glm::vec4(dir, 0.0f);
+			if (ImGui::SliderFloat3("Light Direction", glm::value_ptr(dir), -1.f, 1.f)) {
+				if (dir != glm::vec3(0.0f))
+					dir = glm::normalize(dir);
+				else dir = glm::vec3(0.f, -1.f, 0.f);
+				lightPos = glm::vec4(dir, 0.0f);
+				simulationManager.settings.setLightPos(lightPos);
+			}
 		}
 		else if (lightPos.w >= 1.f) // Spot light
 		{
-			lightPos = glm::vec4(0.f, 0.f, 0.f, 1.f);
-			ImGui::SliderFloat3("Light Position", glm::value_ptr(lightPos), -100.f, 100.f);
+			if (ImGui::SliderFloat3("Light Position", glm::value_ptr(lightPos), -10.f, 10.f))
+				simulationManager.settings.setLightPos(lightPos);
 
-			ImGui::SliderFloat("Constant Att.", &lightConstantAttenuation, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation());
-			ImGui::SliderFloat("Linear Att.", &lightLinearAttenuation, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation());
-			ImGui::SliderFloat("Quadratic Att.", &lightQuadraticAttenuation, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation());
+			if (ImGui::SliderFloat("Constant Att.", &lightConstantAttenuation, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation()))
+				simulationManager.settings.setLightConstantAttenuation(lightConstantAttenuation);
+			if (ImGui::SliderFloat("Linear Att.", &lightLinearAttenuation, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation()))
+				simulationManager.settings.setLightLinearAttenuation(lightLinearAttenuation);
+			if (ImGui::SliderFloat("Quadratic Att.", &lightQuadraticAttenuation, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation()))
+				simulationManager.settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
 		}
-
-		simulationManager.settings.setLightPos(lightPos);
-		simulationManager.settings.setLightConstantAttenuation(lightConstantAttenuation);
-		simulationManager.settings.setLightLinearAttenuation(lightLinearAttenuation);
-		simulationManager.settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
 	}
 
 	// Display settings
@@ -575,6 +584,11 @@ void SimulationView::RenderGUI()
 
 		// Load settings
 		LoadSettingsUI();
+
+		// Default settings
+		ImGui::SeparatorText("Default settings");
+		if (ImGui::Button("Set back to default"))
+			simulationManager.defaultSettings();
 	}
 
 	// Load/save particles
