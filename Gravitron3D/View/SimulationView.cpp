@@ -166,6 +166,15 @@ void SimulationView::UpdateData() {
 	// Current simulation info
 	currentNumberOfParticles = simulationManager.settings.getNumberOfParticles();
 
+	// Light settings
+	lightPos = simulationManager.settings.getLightPos();
+	lightConstantAttenuation = simulationManager.settings.getLightConstantAttenuation();
+	lightLinearAttenuation = simulationManager.settings.getLightLinearAttenuation();
+	lightQuadraticAttenuation = simulationManager.settings.getLightQuadraticAttenuation();
+
+	// Display settings
+	scaleFactor = simulationManager.settings.getScaleFactor();
+
 	// Simulation settings
 	simulationSpeed = simulationManager.settings.getSimulationSpeed();
 	theta = simulationManager.settings.getTheta();
@@ -525,28 +534,34 @@ void SimulationView::RenderGUI()
 			lightPos = glm::vec4(0.f, 0.f, 0.f, 1.f);
 			ImGui::SliderFloat3("Light Position", glm::value_ptr(lightPos), -100.f, 100.f);
 
-			ImGui::SliderFloat("Constant Att.", &lightConstantAttenuation, 0.f, 1.f);
-			ImGui::SliderFloat("Linear Att.", &lightLinearAttenuation, 0.f, 1.f);
-			ImGui::SliderFloat("Quadratic Att.", &lightQuadraticAttenuation, 0.f, 1.f);
+			ImGui::SliderFloat("Constant Att.", &lightConstantAttenuation, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation());
+			ImGui::SliderFloat("Linear Att.", &lightLinearAttenuation, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation());
+			ImGui::SliderFloat("Quadratic Att.", &lightQuadraticAttenuation, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation());
 		}
+
+		simulationManager.settings.setLightPos(lightPos);
+		simulationManager.settings.setLightConstantAttenuation(lightConstantAttenuation);
+		simulationManager.settings.setLightLinearAttenuation(lightLinearAttenuation);
+		simulationManager.settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
 	}
 
 	// Display settings
 	if (ImGui::CollapsingHeader("Display settings")) {
-		ImGui::SliderFloat("Particle size", &scaleFactor, 0.001f, 0.1f);
+		if (ImGui::SliderFloat("Particle size", &scaleFactor, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor()))
+			simulationManager.settings.setScaleFactor(scaleFactor);
 
 		// TODO: add coloring, etc.
 	}
 
 	// Calculation settings
 	if (ImGui::CollapsingHeader("Calculation settings")) {
-		if (ImGui::SliderFloat("Simulation speed", &simulationSpeed, 0.f, 5.f))
+		if (ImGui::SliderFloat("Simulation speed", &simulationSpeed, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed()))
 			simulationManager.settings.setSimulationSpeed(simulationSpeed);
 		
-		if (ImGui::SliderFloat("Theta", &theta, simulationManager.settings.getThetaMin(), simulationManager.settings.getThetaMax()))
+		if (ImGui::SliderFloat("Theta", &theta, simulationManager.settings.getMinTheta(), simulationManager.settings.getMaxTheta()))
 			simulationManager.settings.setTheta(theta);
 
-		if (ImGui::SliderFloat("Epsilon", &epsilon, simulationManager.settings.getEpsilonMin(), simulationManager.settings.getEpsilonMax()))
+		if (ImGui::SliderFloat("Epsilon", &epsilon, simulationManager.settings.getMinEpsilon(), simulationManager.settings.getMaxEpsilon()))
 			simulationManager.settings.setEpsilon(epsilon);
 	}
 

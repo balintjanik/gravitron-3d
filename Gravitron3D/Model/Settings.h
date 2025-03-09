@@ -1,34 +1,80 @@
 #pragma once
 
+#include "glm/glm.hpp"
 #include <string>
 
 struct Settings {
 private:
 	uint32_t numberOfParticles;
+
 	float simulationSpeed;
+    static constexpr float minSimulationSpeed = 0.0f;
+    static constexpr float maxSimulationSpeed = 5.0f;
 
 	uint32_t numberOfThreads = 1;
 
 	float theta = 1.0f;
-    float thetaMax = 2.0f;
-    float thetaMin = 0.0f;
+    static constexpr float minTheta = 0.0f;
+    static constexpr float maxTheta = 2.0f;
 	float epsilon = 1.0f;
-    float epsilonMax = 2.0f;
-    float epsilonMin = 0.0f;
+    static constexpr float minEpsilon = 0.0f;
+    static constexpr float maxEpsilon = 2.0f;
+
+    glm::vec4 lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
+    float lightConstantAttenuation = 0.0;
+    static constexpr float minLightConstantAttenuation = 0.0f;
+    static constexpr float maxLightConstantAttenuation = 1.0f;
+
+    float lightLinearAttenuation = 1.0;
+    static constexpr float minLightLinearAttenuation = 0.0f;
+    static constexpr float maxLightLinearAttenuation = 1.0f;
+
+    float lightQuadraticAttenuation = 0.0;
+    static constexpr float minLightQuadraticAttenuation = 0.0f;
+    static constexpr float maxLightQuadraticAttenuation = 1.0f;
+
+    float scaleFactor = 0.005f;
+    static constexpr float minScaleFactor = 0.001f;
+    static constexpr float maxScaleFactor = 0.1f;
+
 
 public:
 	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
 
     // Getters
     uint32_t getNumberOfParticles() const { return numberOfParticles; }
+
     float getSimulationSpeed() const { return simulationSpeed; }
+    float getMinSimulationSpeed() const { return minSimulationSpeed; }
+    float getMaxSimulationSpeed() const { return maxSimulationSpeed; }
+
     uint32_t getNumberOfThreads() const { return numberOfThreads; }
+
     float getTheta() const { return theta; }
-    float getThetaMax() const { return thetaMax; }
-    float getThetaMin() const { return thetaMin; }
-    float getEpsilonMax() const { return epsilonMax; }
-    float getEpsilonMin() const { return epsilonMin; }
+    float getMinTheta() const { return minTheta; }
+    float getMaxTheta() const { return maxTheta; }
+
     float getEpsilon() const { return epsilon; }
+    float getMinEpsilon() const { return minEpsilon; }
+    float getMaxEpsilon() const { return maxEpsilon; }
+
+    glm::vec4 getLightPos() const { return lightPos; }
+
+    float getLightConstantAttenuation() const { return lightConstantAttenuation; }
+    float getMinLightConstantAttenuation() const { return minLightConstantAttenuation; }
+    float getMaxLightConstantAttenuation() const { return maxLightConstantAttenuation; }
+
+    float getLightLinearAttenuation() const { return lightLinearAttenuation; }
+    float getMinLightLinearAttenuation() const { return minLightLinearAttenuation; }
+    float getMaxLightLinearAttenuation() const { return maxLightLinearAttenuation; }
+
+    float getLightQuadraticAttenuation() const { return lightQuadraticAttenuation; }
+    float getMinLightQuadraticAttenuation() const { return minLightQuadraticAttenuation; }
+    float getMaxLightQuadraticAttenuation() const { return maxLightQuadraticAttenuation; }
+
+    float getScaleFactor() const { return scaleFactor; }
+    float getMinScaleFactor() const { return minScaleFactor; }
+    float getMaxScaleFactor() const { return maxScaleFactor; }
 
     // Setters
     void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = _numberOfParticles; }
@@ -42,25 +88,22 @@ public:
         }
     }
     void setTheta(float _theta) {
-        if (_theta < 0.0f) {
-            theta = 0.0f;
-        }
-        else if (_theta > 2.0f) {
-            theta = 2.0f;
-        }
-        else {
-            theta = _theta;
-        }
+        theta = glm::clamp(_theta, minTheta, maxTheta);
     }
     void setEpsilon(float _epsilon) {
-        if (_epsilon < 0.1f) {
-            epsilon = 0.1f;
-        }
-        else if (_epsilon > 2.0f) {
-            epsilon = 2.0f;
-        }
-        else {
-            epsilon = _epsilon;
-        }
+        epsilon = glm::clamp(_epsilon, minEpsilon, maxEpsilon);
+    }
+    void setLightPos(const glm::vec4& pos) { lightPos = pos; }
+    void setLightConstantAttenuation(float constant) {
+        lightConstantAttenuation = glm::clamp(constant, minLightConstantAttenuation, maxLightConstantAttenuation);
+    }
+    void setLightLinearAttenuation(float linear) {
+        lightLinearAttenuation = glm::clamp(linear, minLightLinearAttenuation, maxLightLinearAttenuation);
+    }
+    void setLightQuadraticAttenuation(float quadratic) {
+        lightQuadraticAttenuation = glm::clamp(quadratic, minLightQuadraticAttenuation, maxLightQuadraticAttenuation);
+    }
+    void setScaleFactor(float scale) {
+        scaleFactor = glm::clamp(scale, minScaleFactor, maxScaleFactor);
     }
 };
