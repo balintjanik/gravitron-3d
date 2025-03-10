@@ -91,6 +91,9 @@
     <ClInclude Include="Model\SUpdateInfo.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="View\CameraDefaultDirections.h">
+      <Filter>View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\shader.frag">

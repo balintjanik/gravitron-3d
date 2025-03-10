@@ -20,6 +20,7 @@
 #include "GLUtils.hpp"
 #include "Camera.h"
 #include "CameraManipulator.h"
+#include "CameraDefaultDirections.h"
 
 // Model
 #include "../Model/SimulationManager.h"
@@ -111,7 +112,10 @@ protected:
 	float lightQuadraticAttenuation = 0.0;
 
 	// Display settings
-	float scaleFactor = 0.005f; // TODO: move to model?
+	void SetCameraPresetView(CameraDefaultDirections direction);
+	void ShowCameraSettings();
+
+	float scaleFactor = 0.005f;
 	float simulationSpeed = 1.0f;
 
 	// Calculation settings

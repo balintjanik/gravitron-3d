@@ -496,6 +496,101 @@ void SimulationView::LoadParticlesUI() {
 	}
 }
 
+void SimulationView::SetCameraPresetView(CameraDefaultDirections direction) {
+	float distance = glm::distance(m_camera.GetEye(), m_camera.GetAt());
+	glm::vec3 newCameraPosition = m_camera.GetAt();
+	glm::vec3 lookTarget = m_camera.GetAt();
+
+	switch (direction)
+	{
+	case DIRECTION_TOP:
+		newCameraPosition.x += 0.005f;
+		newCameraPosition.y += distance;
+		break;
+	case DIRECTION_BOTTOM:
+		newCameraPosition.x -= 0.005f;
+		newCameraPosition.y -= distance;
+		break;
+	case DIRECTION_FRONT:
+		newCameraPosition.z += distance;
+		break;
+	case DIRECTION_BACK:
+		newCameraPosition.z -= distance;
+		break;
+	case DIRECTION_LEFT:
+		newCameraPosition.x -= distance;
+		break;
+	case DIRECTION_RIGHT:
+		newCameraPosition.x += distance;
+		break;
+	case DIRECTION_CENTER:
+		newCameraPosition = m_camera.GetEye();
+		lookTarget = glm::vec3(0);
+		break;
+	default:
+		// Don't change anything
+		newCameraPosition = m_camera.GetEye();
+		break;
+	}
+
+	m_camera.SetView(newCameraPosition, lookTarget, m_camera.GetWorldUp());
+	m_cameraManipulator.SetCamera(&m_camera);
+}
+
+void SimulationView::ShowCameraSettings() {
+	float buttonWidth = 50.0f; 
+	float buttonHeight = 20.0f;
+	float spacing = 5.0f;     
+
+	ImVec2 pos = ImVec2(spacing, spacing);//ImGui::GetCursorPos();
+
+	ImGui::BeginChild("Default directions", ImVec2(3 * (buttonWidth + spacing) + spacing, 4 * (buttonHeight + spacing) + spacing), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+	ImGui::SetCursorPos(ImVec2(pos.x + buttonWidth + spacing, pos.y));
+	ImGui::PushStyleVar(ImGuiStyleVar_ButtonTextAlign, ImVec2(0.5f, 0.5f));
+	if (ImGui::Button("Top", ImVec2(buttonWidth, buttonHeight))) {
+		SetCameraPresetView(DIRECTION_TOP);
+	}
+
+	ImGui::SetCursorPos(ImVec2(pos.x, pos.y + buttonHeight + spacing));
+	if (ImGui::Button("Left", ImVec2(buttonWidth, buttonHeight))) {
+		SetCameraPresetView(DIRECTION_LEFT);
+	}
+
+	ImGui::SameLine();
+	ImGui::SetCursorPos(ImVec2(pos.x + buttonWidth + spacing, pos.y + buttonHeight + spacing));
+	if (ImGui::Button("Front", ImVec2(buttonWidth, buttonHeight))) {
+		SetCameraPresetView(DIRECTION_FRONT);
+	}
+
+	ImGui::SameLine();
+	ImGui::SetCursorPos(ImVec2(pos.x + 2 * (buttonWidth + spacing), pos.y + buttonHeight + spacing));
+	if (ImGui::Button("Right", ImVec2(buttonWidth, buttonHeight))) {
+		SetCameraPresetView(DIRECTION_RIGHT);
+	}
+
+	ImGui::SetCursorPos(ImVec2(pos.x + buttonWidth + spacing, pos.y + 2 * (buttonHeight + spacing)));
+	if (ImGui::Button("Bottom", ImVec2(buttonWidth, buttonHeight))) {
+		SetCameraPresetView(DIRECTION_BOTTOM);
+	}
+
+	ImGui::SetCursorPos(ImVec2(pos.x + buttonWidth + spacing, pos.y + 3 * (buttonHeight + spacing)));
+	if (ImGui::Button("Back", ImVec2(buttonWidth, buttonHeight))) {
+		SetCameraPresetView(DIRECTION_BACK);
+	}
+	ImGui::PopStyleVar();
+	ImGui::EndChild();
+
+	ImGui::SameLine();
+	ImGui::BeginGroup();
+
+	if (ImGui::Button("Look at center")) {
+		SetCameraPresetView(DIRECTION_CENTER);
+	}
+
+	ImGui::EndGroup();
+}
+
 void SimulationView::RenderGUI()
 {
 	// Window
@@ -555,6 +650,10 @@ void SimulationView::RenderGUI()
 
 	// Display settings
 	if (ImGui::CollapsingHeader("Display settings")) {
+		ImGui::SeparatorText("Camera settings");
+		ShowCameraSettings();
+
+		ImGui::SeparatorText("Other display settings");
 		if (ImGui::SliderFloat("Particle size", &scaleFactor, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor()))
 			simulationManager.settings.setScaleFactor(scaleFactor);
 

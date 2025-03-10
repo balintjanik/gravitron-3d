@@ -135,6 +135,7 @@
     <ClInclude Include="Persistence\ParticleDataLoader.h" />
     <ClInclude Include="Persistence\SettingsDataLoader.h" />
     <ClInclude Include="View\Camera.h" />
+    <ClInclude Include="View\CameraDefaultDirections.h" />
     <ClInclude Include="View\CameraManipulator.h" />
     <ClInclude Include="View\GLUtils.hpp" />
     <ClInclude Include="View\SimulationView.h" />
