@@ -63,6 +63,7 @@ void SimulationManager::loadSettings(const std::string& filename) {
 	try {
 		Settings newSettings = SettingsDataLoader::loadFromFile(filename);
 		settings = std::move(newSettings);
+		settings.setNumberOfParticles(particles.size());
 	}
 	catch (const std::exception& e) {
 		throw std::runtime_error(std::string(e.what()));
