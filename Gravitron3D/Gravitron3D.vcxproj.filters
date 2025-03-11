@@ -91,7 +91,7 @@
     <ClInclude Include="Model\SUpdateInfo.h">
       <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="View\CameraDefaultDirections.h">
+    <ClInclude Include="View\CameraPresets.h">
       <Filter>View</Filter>
     </ClInclude>
   </ItemGroup>

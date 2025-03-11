@@ -20,7 +20,7 @@
 #include "GLUtils.hpp"
 #include "Camera.h"
 #include "CameraManipulator.h"
-#include "CameraDefaultDirections.h"
+#include "CameraPresets.h"
 
 // Model
 #include "../Model/SimulationManager.h"
@@ -63,7 +63,7 @@ protected:
 	GLuint m_programID = 0;
 
 	void InitShaders();
-	void CleanShaders();
+	void CleanShaders() const;
 	
 	// Geometry
 	OGLObject m_sphereGPU = {};
@@ -77,7 +77,7 @@ protected:
 	GLuint m_sphereTextureID = 0;
 
 	void InitTextures();
-	void CleanTextures();
+	void CleanTextures() const;
 
 	// ImGui
 	void InitImGuiSettings();
@@ -112,7 +112,10 @@ protected:
 	float lightQuadraticAttenuation = 0.0;
 
 	// Display settings
-	void SetCameraPresetView(CameraDefaultDirections direction);
+	const glm::vec3 DEFAULT_CAMERA_POSITION = glm::vec3(0.0f, 5.0f, 10.0f);
+	const glm::vec3 DEFAULT_CAMERA_TARGET   = glm::vec3(0.0f, 0.0f,  0.0f);
+	const glm::vec3 DEFAULT_CAMERA_WORLDUP  = glm::vec3(0.0f, 1.0f,  0.0f);
+	void SetCameraPresetView(CameraPresets direction);
 	void ShowCameraSettings();
 
 	float scaleFactor = 0.005f;
