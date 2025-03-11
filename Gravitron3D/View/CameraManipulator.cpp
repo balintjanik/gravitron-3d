@@ -3,6 +3,7 @@
 #include "Camera.h"
 
 #include <SDL2/SDL.h>
+#include <utility>
 
 CameraManipulator::CameraManipulator()
 {
@@ -136,6 +137,12 @@ void CameraManipulator::MouseMove(const SDL_MouseMotionEvent& mouse)
 
 void CameraManipulator::MouseWheel(const SDL_MouseWheelEvent& wheel)
 {
-	float dDistance = static_cast<float>( wheel.y ) * m_speed / -100.0f;
+	float zoomFactor = std::max(m_distance * 0.3f, 0.05f);
+
+	float dDistance = static_cast<float>(wheel.y) * m_speed * zoomFactor / -100.0f;
 	m_distance += dDistance;
+	if (m_distance <= MIN_DISTANCE)
+		m_distance = MIN_DISTANCE;
+	else if (m_distance >= MAX_DISTANCE)
+		m_distance = MAX_DISTANCE;
 }

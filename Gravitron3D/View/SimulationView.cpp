@@ -173,6 +173,8 @@ void SimulationView::UpdateData() {
 	lightQuadraticAttenuation = simulationManager.settings.getLightQuadraticAttenuation();
 
 	// Display settings
+	cameraZoom = m_cameraManipulator.GetMaxDistance() + m_cameraManipulator.GetMinDistance() - m_cameraManipulator.GetDistance();
+	scrollZoomSpeed = m_cameraManipulator.GetSpeed();
 	scaleFactor = simulationManager.settings.getScaleFactor();
 
 	// Simulation settings
@@ -597,6 +599,12 @@ void SimulationView::ShowCameraSettings() {
 	if (ImGui::Button("Set back to default")) {
 		SetCameraPresetView(CAMERA_DEFAULT);
 	}
+
+	if (ImGui::SliderFloat("Zoom", &cameraZoom, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance() - m_cameraManipulator.GetMinDistance()))
+		m_cameraManipulator.SetDistance(m_cameraManipulator.GetMaxDistance() - cameraZoom);
+	
+	if (ImGui::SliderFloat("Scroll zoom speed", &scrollZoomSpeed, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed()))
+		m_cameraManipulator.SetSpeed(scrollZoomSpeed);
 
 	ImGui::EndGroup();
 }
