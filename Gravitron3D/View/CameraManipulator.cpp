@@ -53,7 +53,7 @@ void CameraManipulator::Update( float _deltaTime )
     glm::vec3 forward = glm::cross( up, right);
 
 	// Az új elmozdulásat a kamera mozgás irányának és sebességének a segítségével számoljuk ki.
-    glm::vec3 deltaPosition = ( m_goForward * forward + m_goRight * right + m_goUp * up ) * m_speed * _deltaTime;
+    glm::vec3 deltaPosition = ( m_goForward * forward + m_goRight * right + m_goUp * up ) * m_speed * (10.0f * m_distance / MAX_DISTANCE) * _deltaTime;
 
 	// Az új kamera pozíciót és nézési cél pozíciót beállítjuk.
     eye += deltaPosition;
@@ -132,6 +132,26 @@ void CameraManipulator::MouseMove(const SDL_MouseMotionEvent& mouse)
 	{
 		float dDistance = mouse.yrel / 100.0f;
 		m_distance += dDistance;
+	}
+	if (mouse.state & SDL_BUTTON_MMASK)
+	{
+		glm::vec3 up = m_pCamera->GetWorldUp();
+		glm::vec3 lookDirection(
+			cosf(m_u) * sinf(m_v),
+			cosf(m_v),
+			sinf(m_u) * sinf(m_v));
+
+		glm::vec3 right = glm::normalize(glm::cross(lookDirection, up));
+		glm::vec3 forward = glm::cross(up, right);
+
+		float panSpeed = m_distance * 0.002f;
+
+		glm::vec3 moveRight = -right * static_cast<float>(mouse.xrel);
+		glm::vec3 moveUp = forward * static_cast<float>(mouse.yrel);
+
+		glm::vec3 panOffset = (moveRight + moveUp) * panSpeed;
+
+		m_center += panOffset;
 	}
 }
 
