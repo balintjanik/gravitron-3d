@@ -13,7 +13,7 @@ private:
 
 	uint32_t numberOfThreads = 1;
 
-	float theta = 1.0f;
+	float theta = 0.5f;
     static constexpr float minTheta = 0.0f;
     static constexpr float maxTheta = 2.0f;
 	float epsilon = 1.0f;
@@ -36,9 +36,6 @@ private:
     float scaleFactor = 0.005f;
     static constexpr float minScaleFactor = 0.001f;
     static constexpr float maxScaleFactor = 0.1f;
-
-    static constexpr float WORLD_BOUNDS_MIN = -3000.f;
-    static constexpr float WORLD_BOUNDS_MAX =  3000.f;
 
 public:
 	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
@@ -77,9 +74,6 @@ public:
     float getScaleFactor() const { return scaleFactor; }
     float getMinScaleFactor() const { return minScaleFactor; }
     float getMaxScaleFactor() const { return maxScaleFactor; }
-
-    float getMinWorldBounds() const { return WORLD_BOUNDS_MIN; }
-    float getMaxWorldBounds() const { return WORLD_BOUNDS_MAX; }
 
     // Setters
     void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = _numberOfParticles; }

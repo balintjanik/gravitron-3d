@@ -31,6 +31,9 @@ public:
 	void saveParticles(const std::string& filename);
 
 private:
+	const float minWorldBound = -3000.0f;
+	const float maxWorldBound =  3000.0f;
+
 	void updateParticles(float deltaTime);
 	void updateParticlesRange(size_t start, size_t end, float deltaTime);
 	void handleWorldBounds(glm::vec3& r_position, glm::vec3& r_velocity);

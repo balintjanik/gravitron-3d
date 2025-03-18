@@ -48,9 +48,6 @@ void SimulationManager::updateParticlesRange(size_t start, size_t end, float del
 }
 
 void SimulationManager::handleWorldBounds(glm::vec3& r_position, glm::vec3& r_velocity) {
-	float minWorldBound = settings.getMinWorldBounds();
-	float maxWorldBound = settings.getMaxWorldBounds();
-
 	if (r_position.x < minWorldBound) {
 		r_velocity.x *= -1;
 		r_position.x = minWorldBound;
