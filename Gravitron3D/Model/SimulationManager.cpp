@@ -37,8 +37,43 @@ void SimulationManager::updateParticlesRange(size_t start, size_t end, float del
 
 		p.setForce(allForce);
 		p.setAcceleration(acceleration);
-		p.setVelocity(p.getVelocity() + p.getAcceleration() * deltaTime * settings.getSimulationSpeed());
-		p.setPosition(p.getPosition() + p.getVelocity() * deltaTime * settings.getSimulationSpeed());
+
+		glm::vec3 newVelocity = p.getVelocity() + p.getAcceleration() * deltaTime * settings.getSimulationSpeed();
+		glm::vec3 newPosition = p.getPosition() + newVelocity * deltaTime * settings.getSimulationSpeed();
+		handleWorldBounds(newPosition, newVelocity);
+
+		p.setVelocity(newVelocity);
+		p.setPosition(newPosition);
+	}
+}
+
+void SimulationManager::handleWorldBounds(glm::vec3& r_position, glm::vec3& r_velocity) {
+	float minWorldBound = settings.getMinWorldBounds();
+	float maxWorldBound = settings.getMaxWorldBounds();
+
+	if (r_position.x < minWorldBound) {
+		r_velocity.x *= -1;
+		r_position.x = minWorldBound;
+	}
+	else if (r_position.x > maxWorldBound) {
+		r_velocity.x *= -1;
+		r_position.x = maxWorldBound;
+	}
+	if (r_position.y < minWorldBound) {
+		r_velocity.y *= -1;
+		r_position.y = minWorldBound;
+	}
+	else if (r_position.y > maxWorldBound) {
+		r_velocity.y *= -1;
+		r_position.y = maxWorldBound;
+	}
+	if (r_position.z < minWorldBound) {
+		r_velocity.z *= -1;
+		r_position.z = minWorldBound;
+	}
+	else if (r_position.z > maxWorldBound) {
+		r_velocity.z *= -1;
+		r_position.z = maxWorldBound;
 	}
 }
 

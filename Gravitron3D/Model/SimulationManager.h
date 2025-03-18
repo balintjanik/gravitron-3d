@@ -33,4 +33,5 @@ public:
 private:
 	void updateParticles(float deltaTime);
 	void updateParticlesRange(size_t start, size_t end, float deltaTime);
+	void handleWorldBounds(glm::vec3& r_position, glm::vec3& r_velocity);
 };

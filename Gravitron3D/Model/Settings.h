@@ -37,6 +37,8 @@ private:
     static constexpr float minScaleFactor = 0.001f;
     static constexpr float maxScaleFactor = 0.1f;
 
+    static constexpr float WORLD_BOUNDS_MIN = -3000.f;
+    static constexpr float WORLD_BOUNDS_MAX =  3000.f;
 
 public:
 	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
@@ -75,6 +77,9 @@ public:
     float getScaleFactor() const { return scaleFactor; }
     float getMinScaleFactor() const { return minScaleFactor; }
     float getMaxScaleFactor() const { return maxScaleFactor; }
+
+    float getMinWorldBounds() const { return WORLD_BOUNDS_MIN; }
+    float getMaxWorldBounds() const { return WORLD_BOUNDS_MAX; }
 
     // Setters
     void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = _numberOfParticles; }
