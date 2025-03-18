@@ -25,6 +25,5 @@ private:
 	static void calculatePositionsGrid2D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
 
 	static void calculateVelocitiesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
-	static void calculateVelocitiesOrbit(std::vector<Particle>& r_particles);
-	static void calculateVelocitiesTowardCenter(std::vector<Particle>& r_particles);
+	static void calculateVelocitiesOrbit(std::vector<Particle>& r_particles, glm::vec4 center, float velocityScale);
 };

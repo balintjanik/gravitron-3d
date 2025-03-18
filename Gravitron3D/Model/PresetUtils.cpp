@@ -109,56 +109,10 @@ void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, Vel
 		}
 	}
 	else if (velocity == VELOCITY_ORBIT) {
-		float centerX = 0.f;
-		float centerY = 0.f;
-		float centerZ = 0.f;
-		float centerMass = r_particles.size();
+		glm::vec4 center = glm::vec4(0.f, 0.f, 0.f, r_particles.size());
 		float velocityScale = 0.8f;
 
-		for (int i = 1; i < r_particles.size(); i++)
-		{
-			glm::vec3 position = r_particles[i].getPosition();
-			float px = position.x;
-			float py = position.y;
-			float pz = position.z;
-
-			// Calculate the 3D distance from the center to the particle
-			float distance = sqrt((px - centerX) * (px - centerX) + (py - centerY) * (py - centerY) + (pz - centerZ) * (pz - centerZ));
-
-			// Calculate initial velocity magnitude for circular rotation, based on 3D distance
-			float velocityMagnitude = 0.f;
-			if (distance > 0.f)
-				velocityMagnitude = sqrt(centerMass / distance) * velocityScale;
-
-			// Determine a perpendicular vector for the initial velocity
-			// Here, we use a simple approach by crossing the radius vector with an arbitrary vector (1, 0, 0) to get a perpendicular direction
-			float rx = px - centerX;
-			float ry = py - centerY;
-			float rz = pz - centerZ;
-
-			// Use a consistent reference vector for the cross product, e.g., (0, 1, 0)
-			float ref_x = 0.0f;
-			float ref_y = 1.0f;
-			float ref_z = 0.0f;
-
-			// Cross product of radius vector (rx, ry, rz) with reference vector (ref_x, ref_y, ref_z)
-			float vx = ry * ref_z - rz * ref_y;
-			float vy = rz * ref_x - rx * ref_z;
-			float vz = rx * ref_y - ry * ref_x;
-
-			// Normalize the perpendicular vector
-			float length = sqrt(vx * vx + vy * vy + vz * vz);
-			if (length > 0.00001f) {
-				vx = (vx / length) * velocityMagnitude;
-				vy = (vy / length) * velocityMagnitude;
-				vz = (vz / length) * velocityMagnitude;
-			}
-
-			// Add particle to the list
-			r_particles[i].setVelocity(glm::vec3(vx, vy, vz));
-		}
-	}
-	else if (velocity == VELOCITY_TOWARD_CENTER) {
+		calculateVelocitiesOrbit(r_particles, center, velocityScale);
 	}
 	else {
 		throw "Invalid velocity type.";
@@ -166,69 +120,16 @@ void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, Vel
 }
 
 void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
-	float centerX = 0.f;
-	float centerY = 0.f;
-	float centerZ = 0.f;
+	float centerMass = 100000.0f;
+	glm::vec4 center = glm::vec4(0.f, 0.f, 0.f, centerMass);
 	float radiusMin = 20.0f;
 	float radiusMax = 300.0f;
 	float velocityScale = 0.8f;
-	
-	// Set center
-	float centerMass = 100000.0f;
-	r_particles[0].setPosition(glm::vec3(centerX, centerY, centerZ));
+	r_particles[0].setPosition(center);
 	r_particles[0].setMass(centerMass);
-	for (int i = 1; i < r_particles.size(); i++)
-	{
-		// Generate a random position in a sphere
-		float radius = randomFloat(radiusMin, radiusMax); // Random radius between radiusMin and radiusMax
-		float theta = randomFloat(0.0f, 2 * 3.1415f);     // Random angle theta (0 to 2π)
-		float phi = randomFloat(0.0f, 3.1415f);           // Random angle phi (0 to π)
 
-		// Convert spherical to Cartesian coordinates for position
-		float px = centerX + radius * sin(phi) * cos(theta);
-		float py = centerY + radius * sin(phi) * sin(theta);
-		float pz = centerZ + radius * cos(phi);
-
-		// Calculate the 3D distance from the center to the particle
-		float distance = sqrt((px - centerX) * (px - centerX) + (py - centerY) * (py - centerY) + (pz - centerZ) * (pz - centerZ));
-
-		// Calculate initial velocity magnitude for circular rotation, based on 3D distance
-		float velocityMagnitude = 0.0f;
-		if (distance > 0.f)
-			velocityMagnitude = sqrt(centerMass / distance) * velocityScale;
-
-		// Determine a perpendicular vector for the initial velocity
-		// Here, we use a simple approach by crossing the radius vector with an arbitrary vector (1, 0, 0) to get a perpendicular direction
-		float rx = px - centerX;
-		float ry = py - centerY;
-		float rz = pz - centerZ;
-
-		// Use a consistent reference vector for the cross product, e.g., (0, 1, 0)
-		float ref_x = 0.0f;
-		float ref_y = 1.0f;
-		float ref_z = 0.0f;
-
-		// Cross product of radius vector (rx, ry, rz) with reference vector (ref_x, ref_y, ref_z)
-		float vx = ry * ref_z - rz * ref_y;
-		float vy = rz * ref_x - rx * ref_z;
-		float vz = rx * ref_y - ry * ref_x;
-
-		// Normalize the perpendicular vector
-		float length = sqrt(vx * vx + vy * vy + vz * vz);
-		if (length > 0.0001) {
-			vx = (vx / length) * velocityMagnitude;
-			vy = (vy / length) * velocityMagnitude;
-			vz = (vz / length) * velocityMagnitude;
-		}
-
-		// Set particle mass
-		float mass = 1.0f;
-
-		// Add particle to the list
-		r_particles[i].setPosition(glm::vec3(px, py, pz));
-		r_particles[i].setMass(mass);
-		r_particles[i].setVelocity(glm::vec3(vx, vy, vz));
-	}
+	calculatePositionsSphere(r_particles, 1, r_particles.size(), center, radiusMin, radiusMax, false);
+	calculateVelocitiesOrbit(r_particles, center, velocityScale);
 }
 
 void PresetUtils::initPresetSolarSystem(std::vector<Particle>& r_particles) {
@@ -358,10 +259,47 @@ void PresetUtils::calculateVelocitiesRandom(std::vector<Particle>& r_particles, 
 	}
 }
 
-void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles) {
-	// TODO: implement
-}
+void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, glm::vec4 center, float velocityScale) {
+	for (int i = 1; i < r_particles.size(); i++)
+	{
+		glm::vec3 position = r_particles[i].getPosition();
+		float px = position.x;
+		float py = position.y;
+		float pz = position.z;
 
-void PresetUtils::calculateVelocitiesTowardCenter(std::vector<Particle>& r_particles) {
-	// TODO: implement
+		// Calculate the 3D distance from the center to the particle
+		float distance = sqrt((px - center.x) * (px - center.x) + (py - center.y) * (py - center.y) + (pz - center.z) * (pz - center.z));
+
+		// Calculate initial velocity magnitude for circular rotation, based on 3D distance
+		float velocityMagnitude = 0.f;
+		if (distance > 0.f)
+			velocityMagnitude = sqrt(center.w / distance) * velocityScale;
+
+		// Determine a perpendicular vector for the initial velocity
+		// Here, we use a simple approach by crossing the radius vector with an arbitrary vector (1, 0, 0) to get a perpendicular direction
+		float rx = px - center.x;
+		float ry = py - center.y;
+		float rz = pz - center.z;
+
+		// Use a consistent reference vector for the cross product, e.g., (0, 1, 0)
+		float ref_x = 0.0f;
+		float ref_y = 1.0f;
+		float ref_z = 0.0f;
+
+		// Cross product of radius vector (rx, ry, rz) with reference vector (ref_x, ref_y, ref_z)
+		float vx = ry * ref_z - rz * ref_y;
+		float vy = rz * ref_x - rx * ref_z;
+		float vz = rx * ref_y - ry * ref_x;
+
+		// Normalize the perpendicular vector
+		float length = sqrt(vx * vx + vy * vy + vz * vz);
+		if (length > 0.00001f) {
+			vx = (vx / length) * velocityMagnitude;
+			vy = (vy / length) * velocityMagnitude;
+			vz = (vz / length) * velocityMagnitude;
+		}
+
+		// Add particle to the list
+		r_particles[i].setVelocity(glm::vec3(vx, vy, vz));
+	}
 }
