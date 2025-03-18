@@ -600,10 +600,10 @@ void SimulationView::ShowCameraSettings() {
 		SetCameraPresetView(CAMERA_DEFAULT);
 	}
 
-	if (ImGui::SliderFloat("Zoom", &cameraZoom, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance() - m_cameraManipulator.GetMinDistance()))
+	if (ImGui::DragFloat("Zoom", &cameraZoom, 1.0f, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance() - m_cameraManipulator.GetMinDistance()))
 		m_cameraManipulator.SetDistance(m_cameraManipulator.GetMaxDistance() - cameraZoom);
 	
-	if (ImGui::SliderFloat("Scroll zoom speed", &scrollZoomSpeed, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed()))
+	if (ImGui::DragFloat("Scroll zoom speed", &scrollZoomSpeed, 0.5f, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed()))
 		m_cameraManipulator.SetSpeed(scrollZoomSpeed);
 
 	ImGui::EndGroup();
@@ -644,7 +644,7 @@ void SimulationView::RenderGUI()
 		if (lightPos.w == 0.0f) // Directional light
 		{
 			glm::vec3 dir = glm::vec3(lightPos);
-			if (ImGui::SliderFloat3("Light Direction", glm::value_ptr(dir), -1.f, 1.f)) {
+			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(dir), 0.05f, -1.f, 1.f)) {
 				if (dir != glm::vec3(0.0f))
 					dir = glm::normalize(dir);
 				else dir = glm::vec3(0.f, -1.f, 0.f);
@@ -654,14 +654,14 @@ void SimulationView::RenderGUI()
 		}
 		else if (lightPos.w >= 1.f) // Spot light
 		{
-			if (ImGui::SliderFloat3("Light Position", glm::value_ptr(lightPos), -10.f, 10.f))
+			if (ImGui::DragFloat3("Light Position", glm::value_ptr(lightPos), 0.1f, -10.f, 10.f))
 				simulationManager.settings.setLightPos(lightPos);
 
-			if (ImGui::SliderFloat("Constant Att.", &lightConstantAttenuation, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation()))
+			if (ImGui::DragFloat("Constant Att.", &lightConstantAttenuation, 0.05f, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation()))
 				simulationManager.settings.setLightConstantAttenuation(lightConstantAttenuation);
-			if (ImGui::SliderFloat("Linear Att.", &lightLinearAttenuation, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation()))
+			if (ImGui::DragFloat("Linear Att.", &lightLinearAttenuation, 0.05f, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation()))
 				simulationManager.settings.setLightLinearAttenuation(lightLinearAttenuation);
-			if (ImGui::SliderFloat("Quadratic Att.", &lightQuadraticAttenuation, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation()))
+			if (ImGui::DragFloat("Quadratic Att.", &lightQuadraticAttenuation, 0.05f, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation()))
 				simulationManager.settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
 		}
 	}
@@ -672,7 +672,7 @@ void SimulationView::RenderGUI()
 		ShowCameraSettings();
 
 		ImGui::SeparatorText("Other display settings");
-		if (ImGui::SliderFloat("Particle size", &scaleFactor, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor()))
+		if (ImGui::DragFloat("Particle size", &scaleFactor, 0.005f, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor()))
 			simulationManager.settings.setScaleFactor(scaleFactor);
 
 		// TODO: add coloring, etc.
@@ -680,13 +680,13 @@ void SimulationView::RenderGUI()
 
 	// Calculation settings
 	if (ImGui::CollapsingHeader("Calculation settings")) {
-		if (ImGui::SliderFloat("Simulation speed", &simulationSpeed, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed()))
+		if (ImGui::DragFloat("Simulation speed", &simulationSpeed, 0.01f, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed()))
 			simulationManager.settings.setSimulationSpeed(simulationSpeed);
 		
-		if (ImGui::SliderFloat("Theta", &theta, simulationManager.settings.getMinTheta(), simulationManager.settings.getMaxTheta()))
+		if (ImGui::DragFloat("Theta", &theta, 0.05f, simulationManager.settings.getMinTheta(), simulationManager.settings.getMaxTheta()))
 			simulationManager.settings.setTheta(theta);
 
-		if (ImGui::SliderFloat("Epsilon", &epsilon, simulationManager.settings.getMinEpsilon(), simulationManager.settings.getMaxEpsilon()))
+		if (ImGui::DragFloat("Epsilon", &epsilon, 0.05f, simulationManager.settings.getMinEpsilon(), simulationManager.settings.getMaxEpsilon()))
 			simulationManager.settings.setEpsilon(epsilon);
 	}
 
@@ -721,7 +721,7 @@ void SimulationView::RenderGUI()
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {
-		ImGui::SliderInt("Number of particles", &numberOfParticles, 0, 150000);
+		ImGui::DragInt("Number of particles", &numberOfParticles, 50.0f, 0, 150000);
 
 		ShowEnumDropdown("Preset Type", PRESET_TYPE_NAMES, presetType);
 
