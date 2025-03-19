@@ -108,7 +108,7 @@ void SimulationView::InitSimulation() {
 void SimulationView::InitImGuiSettings() {
 	io = ImGui::GetIO();
 
-	windowWidth = 420.0f;
+	windowWidth = 430.0f;
 	windowHeight = io.DisplaySize.y;
 	// ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x - windowWidth, 0)); // Right side
 	ImGui::SetNextWindowPos(ImVec2(0, 0)); // Left side
@@ -592,20 +592,25 @@ void SimulationView::ShowCameraSettings() {
 	ImGui::SameLine();
 	ImGui::BeginGroup();
 
-	if (ImGui::Button("Look at center")) {
+	float itemWidthInGroup = ImGui::GetContentRegionAvail().x * 0.5f;
+
+	if (ImGui::Button("Look at center", ImVec2(itemWidthInGroup, 0))) {
 		SetCameraPresetView(CAMERA_CENTER);
 	}
 
-	if (ImGui::Button("Set back to default")) {
+	if (ImGui::Button("Back to default", ImVec2(itemWidthInGroup, 0))) {
 		SetCameraPresetView(CAMERA_DEFAULT);
 	}
 
-	if (ImGui::DragFloat("Zoom", &cameraZoom, 1.0f, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance() - m_cameraManipulator.GetMinDistance()))
+	ImGui::PushItemWidth(itemWidthInGroup);
+
+	if (ImGui::SliderFloat("Zoom", &cameraZoom, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance() - m_cameraManipulator.GetMinDistance()))
 		m_cameraManipulator.SetDistance(m_cameraManipulator.GetMaxDistance() - cameraZoom);
 	
 	if (ImGui::DragFloat("Scroll zoom speed", &scrollZoomSpeed, 0.5f, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed()))
 		m_cameraManipulator.SetSpeed(scrollZoomSpeed);
 
+	ImGui::PopItemWidth();
 	ImGui::EndGroup();
 }
 

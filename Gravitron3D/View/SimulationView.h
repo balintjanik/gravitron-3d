@@ -124,7 +124,7 @@ protected:
 	float simulationSpeed = 1.0f;
 
 	// Calculation settings
-	float theta = 1.0f;
+	float theta = 0.5f;
 	float epsilon = 1.0f;
 
 	// Load/save settings
