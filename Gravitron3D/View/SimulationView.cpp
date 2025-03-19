@@ -614,6 +614,86 @@ void SimulationView::ShowCameraSettings() {
 	ImGui::EndGroup();
 }
 
+void SimulationView::ShowLightTypeSettings() {
+	float spacing = 5.0f;
+	float buttonWidth = ImGui::GetContentRegionAvail().x * 0.333f - spacing / 2.0f;
+
+	int lightType = 0; // Constant
+	if (lightPos.w == 0.0f)
+		lightType = 1; // Directional light
+	else if (lightPos.w == 1.0f)
+		lightType = 2; // Spot light
+
+	auto ToggleButton = [&](const char* label, int type) {
+		if (lightType == type) {
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 1.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 0.7f, 1.0f, 1.0f));
+		}
+
+		if (ImGui::Button(label, ImVec2(buttonWidth, 0))) {
+			lightType = type;
+		}
+
+		if (lightType == type) {
+			ImGui::PopStyleColor(2);
+		}
+	};
+
+	// Draw buttons
+	ToggleButton("Constant", 0);
+	ImGui::SameLine(0.0f, spacing);
+	ToggleButton("Directional", 1);
+	ImGui::SameLine(0.0f, spacing);
+	ToggleButton("Point", 2);
+
+	// Update light position
+	if (lightType == 0 && lightPos.w != 0.5f) // Constant
+	{
+		lightPos.w = 0.5f;
+		simulationManager.settings.setLightPos(lightPos);
+	}
+	else if (lightType == 1 && lightPos.w != 0.0f) // Directional light
+	{
+		lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
+		simulationManager.settings.setLightPos(lightPos);
+	}
+	else if (lightType == 2 && lightPos.w != 1.0f) // Spot light
+	{
+		lightPos = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		simulationManager.settings.setLightPos(lightPos);
+	}
+}
+
+void SimulationView::ShowLightParameterSettings() {
+	if (lightPos.w == 0.5f) // Constant
+	{
+		ImGui::Text("There are no parameters for this light type.");
+	}
+	else if (lightPos.w == 0.0f) // Directional light
+	{
+		glm::vec3 dir = glm::vec3(lightPos);
+		if (ImGui::DragFloat3("Light Direction", glm::value_ptr(dir), 0.05f, -1.f, 1.f)) {
+			if (dir != glm::vec3(0.0f))
+				dir = glm::normalize(dir);
+			else dir = glm::vec3(0.f, -1.f, 0.f);
+			lightPos = glm::vec4(dir, 0.0f);
+			simulationManager.settings.setLightPos(lightPos);
+		}
+	}
+	else if (lightPos.w >= 1.f) // Spot light
+	{
+		if (ImGui::DragFloat3("Light Position", glm::value_ptr(lightPos), 0.1f, -10.f, 10.f))
+			simulationManager.settings.setLightPos(lightPos);
+
+		if (ImGui::DragFloat("Constant Att.", &lightConstantAttenuation, 0.05f, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation()))
+			simulationManager.settings.setLightConstantAttenuation(lightConstantAttenuation);
+		if (ImGui::DragFloat("Linear Att.", &lightLinearAttenuation, 0.05f, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation()))
+			simulationManager.settings.setLightLinearAttenuation(lightLinearAttenuation);
+		if (ImGui::DragFloat("Quadratic Att.", &lightQuadraticAttenuation, 0.05f, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation()))
+			simulationManager.settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
+	}
+}
+
 void SimulationView::RenderGUI()
 {
 	// Window
@@ -636,39 +716,10 @@ void SimulationView::RenderGUI()
 
 	// Light settings
 	if (ImGui::CollapsingHeader("Light settings")) {
-		bool isPoint = lightPos.w >= 1.0f;
-		if (ImGui::Checkbox("Spot light (on) / Directional light (off)", &isPoint)) {
-			if (lightPos.w == 0.0f && isPoint)
-				lightPos = glm::vec4(0.0f);
-			else if (lightPos.w == 1.0f && !isPoint)
-				lightPos = glm::vec4(0.f, -1.f, 0.f, 0.f);
-			lightPos.w = isPoint ? 1.f : 0.f;
-			simulationManager.settings.setLightPos(lightPos);
-		}
-
-		if (lightPos.w == 0.0f) // Directional light
-		{
-			glm::vec3 dir = glm::vec3(lightPos);
-			if (ImGui::DragFloat3("Light Direction", glm::value_ptr(dir), 0.05f, -1.f, 1.f)) {
-				if (dir != glm::vec3(0.0f))
-					dir = glm::normalize(dir);
-				else dir = glm::vec3(0.f, -1.f, 0.f);
-				lightPos = glm::vec4(dir, 0.0f);
-				simulationManager.settings.setLightPos(lightPos);
-			}
-		}
-		else if (lightPos.w >= 1.f) // Spot light
-		{
-			if (ImGui::DragFloat3("Light Position", glm::value_ptr(lightPos), 0.1f, -10.f, 10.f))
-				simulationManager.settings.setLightPos(lightPos);
-
-			if (ImGui::DragFloat("Constant Att.", &lightConstantAttenuation, 0.05f, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation()))
-				simulationManager.settings.setLightConstantAttenuation(lightConstantAttenuation);
-			if (ImGui::DragFloat("Linear Att.", &lightLinearAttenuation, 0.05f, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation()))
-				simulationManager.settings.setLightLinearAttenuation(lightLinearAttenuation);
-			if (ImGui::DragFloat("Quadratic Att.", &lightQuadraticAttenuation, 0.05f, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation()))
-				simulationManager.settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
-		}
+		ImGui::SeparatorText("Light type");
+		ShowLightTypeSettings();
+		ImGui::SeparatorText("Parameters");
+		ShowLightParameterSettings();
 	}
 
 	// Display settings

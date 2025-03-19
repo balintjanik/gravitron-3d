@@ -20,7 +20,7 @@ private:
     static constexpr float minEpsilon = 0.0f;
     static constexpr float maxEpsilon = 2.0f;
 
-    glm::vec4 lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
+    glm::vec4 lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.5f);
     float lightConstantAttenuation = 0.0;
     static constexpr float minLightConstantAttenuation = 0.0f;
     static constexpr float maxLightConstantAttenuation = 1.0f;

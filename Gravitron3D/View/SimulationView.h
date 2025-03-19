@@ -105,8 +105,9 @@ protected:
 	int currentNumberOfParticles;
 
 	// Light settings
+	void ShowLightTypeSettings();
+	void ShowLightParameterSettings();
 	glm::vec4 lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.0f);
-
 	float lightConstantAttenuation = 0.0;
 	float lightLinearAttenuation = 1.0;
 	float lightQuadraticAttenuation = 0.0;

@@ -87,7 +87,12 @@ void main()
 	float lightDistance = 0.0;
 	float attenuation = 1.0;
 
-	if (lightPos.w == 0.0) //Irány fényforrás, xyz -> irány
+	if (lightPos.w == 0.5)
+	{
+		fs_out_col = vec4((Ka + Kd + Ks) * 0.5, 1.0) * texture(texImage, vs_out_tex);
+		return;
+	}
+	else if (lightPos.w == 0.0) //Irány fényforrás, xyz -> irány
 	{
 		toLight = -normalize(lightPos.xyz);
 	}
