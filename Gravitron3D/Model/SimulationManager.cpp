@@ -27,6 +27,11 @@ void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
 	updateParticles(updateInfo.DeltaTimeInSec);
 }
 
+void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce) {
+	particles.push_back(Particle(positionMass, velocitySize, accelerationForce));
+	settings.setNumberOfParticles(particles.size());
+}
+
 void SimulationManager::updateParticlesRange(size_t start, size_t end, float deltaTime) {
 	for (size_t i = start; i < end; i++) {
 		if (i == 0) continue; //  TODO: remove this to allow center particle to move

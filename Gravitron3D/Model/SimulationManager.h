@@ -23,12 +23,17 @@ public:
 	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity);
 	void updateSimulation(const SUpdateInfo& updateInfo);
 
+	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce);
+
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);
 	void defaultSettings();
 
 	void loadParticles(const std::string& filename);
 	void saveParticles(const std::string& filename);
+
+	float getMinWorldBound() const { return minWorldBound; }
+	float getMaxWorldBound() const { return maxWorldBound; }
 
 private:
 	const float minWorldBound = -3000.0f;

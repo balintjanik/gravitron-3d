@@ -694,6 +694,16 @@ void SimulationView::ShowLightParameterSettings() {
 	}
 }
 
+void SimulationView::ShowSpawnParticleSettings() {
+	ImGui::DragFloat3("Position", glm::value_ptr(spawnParticle_position), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+	ImGui::DragFloat3("Velocity", glm::value_ptr(spawnParticle_velocity), 1.0f, -100.0f, 100.0f);
+	ImGui::DragFloat("Mass", &spawnParticle_mass, 1.0f, 0.0f, 1000000.0f);
+	ImGui::DragFloat("Size", &spawnParticle_size, 1.0f, 0.0f, 100.0f);
+
+	if (ImGui::Button("Spawn"))
+		simulationManager.addParticle(glm::vec4(spawnParticle_position, spawnParticle_mass), glm::vec4(spawnParticle_velocity, spawnParticle_size), glm::vec4(0.0f));
+}
+
 void SimulationView::RenderGUI()
 {
 	// Window
@@ -773,6 +783,11 @@ void SimulationView::RenderGUI()
 
 		// Load particles
 		LoadParticlesUI();
+	}
+
+	// Spawn particle
+	if (ImGui::CollapsingHeader("Spawn particle")) {
+		ShowSpawnParticleSettings();
 	}
 
 	// New simulation

@@ -144,6 +144,13 @@ protected:
 	void SaveParticlesUI();
 	void LoadParticlesUI();
 
+	// Spawn particle
+	void ShowSpawnParticleSettings();
+	glm::vec3 spawnParticle_position = glm::vec3(0.0f);
+	float spawnParticle_mass = 1.0f;
+	glm::vec3 spawnParticle_velocity = glm::vec3(0.0f);
+	float spawnParticle_size = 1.0f;
+
 	// New simulation settings
 	int numberOfParticles = 10000;
 	PresetType presetType = static_cast<PresetType>(0);
