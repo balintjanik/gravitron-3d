@@ -3,8 +3,12 @@
 #include "glm/glm.hpp"
 #include <string>
 
+constexpr int CURRENT_SETTINGS_VERSION = 1;
+
 struct Settings {
 private:
+    int version = CURRENT_SETTINGS_VERSION;
+
 	uint32_t numberOfParticles;
 
 	float simulationSpeed;
@@ -41,6 +45,7 @@ public:
 	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
 
     // Getters
+    int getVersion() const { return version; }
     uint32_t getNumberOfParticles() const { return numberOfParticles; }
 
     float getSimulationSpeed() const { return simulationSpeed; }
