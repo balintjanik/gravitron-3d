@@ -68,6 +68,7 @@ protected:
 	// Geometry
 	OGLObject m_sphereGPU = {};
 	GLuint  instanceVBO = 0;
+	GLuint  instanceSizeVBO = 0;
 
 	void InitGeometry();
 	void CleanGeometry();
@@ -93,7 +94,8 @@ protected:
 	void InitSimulation();
 
 	SimulationManager simulationManager;
-	std::vector<glm::vec4> particlePositions;
+	std::vector<glm::vec4> particlePositionForce;
+	std::vector<float> particleSize;
 
 	// Performance
 	unsigned int fps = 0;

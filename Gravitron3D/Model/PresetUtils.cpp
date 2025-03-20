@@ -130,6 +130,11 @@ void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
 
 	calculatePositionsSphere(r_particles, 1, r_particles.size(), center, radiusMin, radiusMax, false);
 	calculateVelocitiesOrbit(r_particles, center, velocityScale);
+
+	for (auto& p : r_particles) {
+		p.setSize(randomFloat(0.5f, 2.0f));
+	}
+	r_particles[0].setSize(10.0f);
 }
 
 void PresetUtils::initPresetSolarSystem(std::vector<Particle>& r_particles) {

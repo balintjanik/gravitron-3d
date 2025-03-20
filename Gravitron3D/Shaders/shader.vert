@@ -5,6 +5,7 @@ layout( location = 0 ) in vec3 vs_in_pos;
 layout( location = 1 ) in vec3 vs_in_norm;
 layout( location = 2 ) in vec2 vs_in_tex;
 layout( location = 3 ) in vec4 instance_position;
+layout( location = 4 ) in float instance_size;
 
 // a pipeline-ban tovább adandó értékek
 out vec3 vs_out_pos;
@@ -26,9 +27,9 @@ void main()
 
     // Compute world transformation matrix (translation + scale)
     mat4 world = mat4(1.0);
-    world[0][0] = scaleFactor;
-    world[1][1] = scaleFactor;
-    world[2][2] = scaleFactor;
+    world[0][0] = scaleFactor * instance_size;
+    world[1][1] = scaleFactor * instance_size;
+    world[2][2] = scaleFactor * instance_size;
     world[3] = vec4(normalized_instance_position.xyz, 1.0); // Apply translation
 
     // Compute worldIT (transpose of inverse)

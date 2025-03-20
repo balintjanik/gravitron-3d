@@ -4,14 +4,13 @@
 #include <vector>
 
 struct Particle {
-private:
+public:
 	glm::vec4 positionMass;
 	glm::vec4 velocitySize;
 	glm::vec4 accelerationForce;
 
-public:
 	Particle(glm::vec4 positionMass_ = glm::vec4(0.f),
-		glm::vec4 velocitySize_ = glm::vec4(0.f),
+		glm::vec4 velocitySize_ = glm::vec4(0.f, 0.f, 0.f, 1.f),
 		glm::vec4 accelerationForce_ = glm::vec4(0.f))
 		: positionMass(positionMass_),
 		velocitySize(velocitySize_),
