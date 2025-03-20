@@ -56,25 +56,25 @@ void SimulationView::InitGeometry()
 
 	glBindVertexArray(m_sphereGPU.vaoID);
 
-	// 3. Instance VBO (particlePositionForce contains the instance positions and forces, i.e., per-particle positions)
+	// Instance VBO (particles contains the entire particle data)
 	glCreateBuffers(1, &instanceVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, particlePositionForce.size() * sizeof(glm::vec4), particlePositionForce.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, simulationManager.particles.size() * sizeof(Particle), simulationManager.particles.data(), GL_DYNAMIC_DRAW);
 
-	// Setup instance position attribute (location 3, four-component vector)
+	// Setup instance positionMass attribute (location 3, four-component vector)
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::vec4), (void*)0);
-	glVertexAttribDivisor(3, 1);  // Make this attribute update once per instance
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)0);
+	glVertexAttribDivisor(3, 1);
 
-	// 5. Instance VBO (only size)
-	glCreateBuffers(1, &instanceSizeVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, instanceSizeVBO);
-	glBufferData(GL_ARRAY_BUFFER, particleSize.size() * sizeof(float), particleSize.data(), GL_DYNAMIC_DRAW);
-
-	// Setup instance position attribute (location 4, float)
+	// Setup instance velocitySize attribute (location 4, four-component vector)
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void*)0);
-	glVertexAttribDivisor(4, 1); 
+	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)(sizeof(glm::vec4)));
+	glVertexAttribDivisor(4, 1);
+
+	// Setup instance accelerationForce attribute (location 5, four-component vector)
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)(2 * sizeof(glm::vec4)));
+	glVertexAttribDivisor(5, 1);
 
 	glBindVertexArray(0);
 }
@@ -207,18 +207,8 @@ void SimulationView::Update( const SUpdateInfo& updateInfo )
 	// Update data
 	UpdateData();
 
-	// Copy particle positions to display
-	particlePositionForce.clear();
-	particleSize.clear();
-	for (const auto& p : simulationManager.particles)
-	{
-		particlePositionForce.push_back(glm::vec4(p.getPosition(), p.getForce()));
-		particleSize.push_back(p.getSize());
-	}
-
-	// Orphan the old buffer and replace it with the new particle positions
-	glNamedBufferData(instanceVBO, sizeof(glm::vec4) * particlePositionForce.size(), particlePositionForce.data(), GL_DYNAMIC_DRAW);
-	glNamedBufferData(instanceSizeVBO, sizeof(float) * particleSize.size(), particleSize.data(), GL_DYNAMIC_DRAW);
+	// Orphan the old buffer and replace it with the new particles
+	glNamedBufferData(instanceVBO, sizeof(Particle) * simulationManager.particles.size(), simulationManager.particles.data(), GL_DYNAMIC_DRAW);
 }
 
 void SimulationView::Render()
@@ -249,7 +239,7 @@ void SimulationView::Render()
 	glBindVertexArray(m_sphereGPU.vaoID);
 
 	// Draw instanced geometry
-	glDrawElementsInstanced(GL_TRIANGLES, m_sphereGPU.count, GL_UNSIGNED_INT, nullptr, particlePositionForce.size());
+	glDrawElementsInstanced(GL_TRIANGLES, m_sphereGPU.count, GL_UNSIGNED_INT, nullptr, simulationManager.particles.size());
 
 	// Cleanup
 	glUseProgram( 0 );
