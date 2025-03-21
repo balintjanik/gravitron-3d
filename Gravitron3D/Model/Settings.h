@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 #include <string>
 
-constexpr int CURRENT_SETTINGS_VERSION = 1;
+constexpr int CURRENT_SETTINGS_VERSION = 2;
 
 struct Settings {
 private:
@@ -40,6 +40,8 @@ private:
     float scaleFactor = 0.005f;
     static constexpr float minScaleFactor = 0.001f;
     static constexpr float maxScaleFactor = 0.1f;
+
+    bool isForceColor = true;
 
 public:
 	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
@@ -80,6 +82,8 @@ public:
     float getMinScaleFactor() const { return minScaleFactor; }
     float getMaxScaleFactor() const { return maxScaleFactor; }
 
+    bool getIsForceColor() const { return isForceColor; }
+
     // Setters
     void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = _numberOfParticles; }
     void setSimulationSpeed(float _simulationSpeed) { simulationSpeed = _simulationSpeed; }
@@ -110,4 +114,5 @@ public:
     void setScaleFactor(float scale) {
         scaleFactor = glm::clamp(scale, minScaleFactor, maxScaleFactor);
     }
+    void setIsForceColor(int _isForceColor) { isForceColor = _isForceColor; }
 };

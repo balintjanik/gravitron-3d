@@ -43,6 +43,8 @@ float Shininess = 8.0;
 				pow(alap, kitevő);
 */
 
+uniform int colorType;
+
 const float minVal = 0.0;  // Adjust this to the minimum expected value
 const float maxVal = 100.0;  // Adjust this to the maximum expected value
 
@@ -75,9 +77,15 @@ vec3 valueToColor(float value)
 
 void main()
 {
-	Ka = valueToColor(vs_out_allforce);
-	Kd = valueToColor(vs_out_allforce);
-	Ks = valueToColor(vs_out_allforce);
+	if (colorType == 2) {
+		fs_out_col = vec4(1.0, 1.0, 1.0, 0.3);
+		return;
+	}
+	else if (colorType == 1) {
+		Ka = valueToColor(vs_out_allforce);
+		Kd = valueToColor(vs_out_allforce);
+		Ks = valueToColor(vs_out_allforce);
+	}
 
 	vec3 ambient = La * Ka;
 

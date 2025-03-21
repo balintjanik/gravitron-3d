@@ -140,6 +140,8 @@ bool SimulationView::Init()
 	glCullFace(GL_BACK); 
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	m_camera.SetView(
 		DEFAULT_CAMERA_POSITION,  // From
@@ -186,6 +188,7 @@ void SimulationView::UpdateData() {
 	cameraZoom = m_cameraManipulator.GetMaxDistance() + m_cameraManipulator.GetMinDistance() - m_cameraManipulator.GetDistance();
 	scrollZoomSpeed = m_cameraManipulator.GetSpeed();
 	scaleFactor = simulationManager.settings.getScaleFactor();
+	isForceColor = simulationManager.settings.getIsForceColor();
 
 	// Simulation settings
 	simulationSpeed = simulationManager.settings.getSimulationSpeed();
@@ -217,6 +220,8 @@ void SimulationView::Render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Uniforms
+	glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), false);
+	glProgramUniform1i(m_programID, ul(m_programID, "colorType"), isForceColor ? 1 : 0);
 	glProgramUniform1f(m_programID, ul(m_programID, "scaleFactor"), scaleFactor);
 	glProgramUniform3fv(m_programID, ul(m_programID, "cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
 	glProgramUniform4fv(m_programID, ul(m_programID, "lightPos"), 1, glm::value_ptr(lightPos));
@@ -240,6 +245,26 @@ void SimulationView::Render()
 
 	// Draw instanced geometry
 	glDrawElementsInstanced(GL_TRIANGLES, m_sphereGPU.count, GL_UNSIGNED_INT, nullptr, simulationManager.particles.size());
+
+	// Draw individual if necessary
+	if (spawnParticle_show) {
+		glDisableVertexAttribArray(3);
+		glDisableVertexAttribArray(4);
+		glDisableVertexAttribArray(5);
+
+		glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), true);
+		glProgramUniform3fv(m_programID, ul(m_programID, "position"), 1, glm::value_ptr(spawnParticle_position));
+		glProgramUniform1f(m_programID, ul(m_programID, "scale"), spawnParticle_size);
+		glProgramUniform1i(m_programID, ul(m_programID, "colorType"), 2);
+		glDrawElements(GL_TRIANGLES,
+			m_sphereGPU.count,
+			GL_UNSIGNED_INT,
+			nullptr);
+
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
+		glEnableVertexAttribArray(5);
+	}
 
 	// Cleanup
 	glUseProgram( 0 );
@@ -553,7 +578,7 @@ void SimulationView::ShowCameraSettings() {
 	float buttonHeight = 20.0f;
 	float spacing = 5.0f;     
 
-	ImVec2 pos = ImVec2(spacing, spacing);//ImGui::GetCursorPos();
+	ImVec2 pos = ImVec2(spacing, spacing);
 
 	ImGui::BeginChild("Default directions", ImVec2(3 * (buttonWidth + spacing) + spacing, 4 * (buttonHeight + spacing) + spacing), true, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
@@ -744,7 +769,11 @@ void SimulationView::RenderGUI()
 		if (ImGui::DragFloat("Particle size", &scaleFactor, 0.005f, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor()))
 			simulationManager.settings.setScaleFactor(scaleFactor);
 
-		// TODO: add coloring, etc.
+		if (ImGui::Checkbox("Color based on force", &isForceColor)) {
+			if (isForceColor != simulationManager.settings.getIsForceColor())
+				simulationManager.settings.setIsForceColor(isForceColor);
+		}
+		
 	}
 
 	// Calculation settings
@@ -790,8 +819,11 @@ void SimulationView::RenderGUI()
 
 	// Spawn particle
 	if (ImGui::CollapsingHeader("Spawn particle")) {
+		spawnParticle_show = true;
 		ShowSpawnParticleSettings();
 	}
+	else
+		spawnParticle_show = false;
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {

@@ -121,9 +121,10 @@ protected:
 	void ShowCameraSettings();
 
 	float scaleFactor = 0.005f;
-	float simulationSpeed = 1.0f;
+	bool isForceColor = true;
 
 	// Calculation settings
+	float simulationSpeed = 1.0f;
 	float theta = 0.5f;
 	float epsilon = 1.0f;
 
@@ -149,6 +150,7 @@ protected:
 	float spawnParticle_mass = 1.0f;
 	glm::vec3 spawnParticle_velocity = glm::vec3(0.0f);
 	float spawnParticle_size = 1.0f;
+	bool spawnParticle_show = false;
 
 	// New simulation settings
 	int numberOfParticles = 10000;

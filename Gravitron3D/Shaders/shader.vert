@@ -15,23 +15,38 @@ out vec2 vs_out_tex;
 out float vs_out_allforce;
 
 // shader külső paraméterei - most a három transzformációs mátrixot külön-külön vesszük át
-uniform mat4 world;
-uniform mat4 worldIT;
+uniform bool isSingleObject;
+uniform vec3 position;
+uniform float scale;
 uniform mat4 viewProj;
 
 uniform float scaleFactor;
 
 void main()
 {
+    vec3 instancePosition;
+    float instanceScale;
+    float instanceForce;
+    
+    if (isSingleObject) {
+        instancePosition = position;
+        instanceScale = scale;
+        instanceForce = 0;
+    } else {
+        instancePosition = instancePositionMass.xyz;
+        instanceScale = instanceVelocitySize.w;
+        instanceForce = instanceAccelerationForce.w;
+    }
+
     // Normalize positions for better display
-    vec3 normalized_instance_position = vec3(instancePositionMass.xyz / 100);
+    vec3 normalizedInstancePosition = vec3(instancePosition / 100);
 
     // Compute world transformation matrix (translation + scale)
     mat4 world = mat4(1.0);
-    world[0][0] = scaleFactor * instanceVelocitySize.w;
-    world[1][1] = scaleFactor * instanceVelocitySize.w;
-    world[2][2] = scaleFactor * instanceVelocitySize.w;
-    world[3] = vec4(normalized_instance_position, 1.0); // Apply translation
+    world[0][0] = scaleFactor * instanceScale;
+    world[1][1] = scaleFactor * instanceScale;
+    world[2][2] = scaleFactor * instanceScale;
+    world[3] = vec4(normalizedInstancePosition, 1.0); // Apply translation
 
     // Compute worldIT (transpose of inverse)
     mat4 worldIT = transpose(inverse(mat4(world)));
@@ -41,5 +56,5 @@ void main()
 	vs_out_pos  = (world   * vec4(vs_in_pos,  1)).xyz;
 	vs_out_norm = (worldIT * vec4(vs_in_norm, 0)).xyz;
 	vs_out_tex = vs_in_tex;
-    vs_out_allforce = instanceAccelerationForce.w;
+    vs_out_allforce = instanceForce;
 }
