@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 #include <string>
 
-constexpr int CURRENT_SETTINGS_VERSION = 3;
+constexpr int CURRENT_SETTINGS_VERSION = 4;
 
 struct Settings {
 private:
@@ -13,7 +13,7 @@ private:
 
 	float simulationSpeed;
     static constexpr float minSimulationSpeed = 0.0f;
-    static constexpr float maxSimulationSpeed = 5.0f;
+    static constexpr float maxSimulationSpeed = 50.0f;
 
 	uint32_t numberOfThreads = 1;
 
