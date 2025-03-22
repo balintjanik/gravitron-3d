@@ -45,8 +45,8 @@ float Shininess = 8.0;
 
 uniform int colorType;
 
-const float minVal = 0.0;  // Adjust this to the minimum expected value
-const float maxVal = 100.0;  // Adjust this to the maximum expected value
+uniform float minVal = 0.0;  // Adjust this to the minimum expected value
+uniform float maxVal = 100.0;  // Adjust this to the maximum expected value
 
 vec3 valueToColor(float value)
 {

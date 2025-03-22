@@ -122,6 +122,8 @@ protected:
 
 	float scaleFactor = 0.005f;
 	bool isForceColor = true;
+	float minForceColor = 0.0f;
+	float maxForceColor = 100.0f;
 
 	// Calculation settings
 	float simulationSpeed = 1.0f;

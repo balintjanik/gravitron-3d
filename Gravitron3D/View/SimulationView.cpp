@@ -189,6 +189,8 @@ void SimulationView::UpdateData() {
 	scrollZoomSpeed = m_cameraManipulator.GetSpeed();
 	scaleFactor = simulationManager.settings.getScaleFactor();
 	isForceColor = simulationManager.settings.getIsForceColor();
+	minForceColor = simulationManager.settings.getMinForceColor();
+	maxForceColor = simulationManager.settings.getMaxForceColor();
 
 	// Simulation settings
 	simulationSpeed = simulationManager.settings.getSimulationSpeed();
@@ -223,6 +225,8 @@ void SimulationView::Render()
 	glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), false);
 	glProgramUniform1i(m_programID, ul(m_programID, "colorType"), isForceColor ? 1 : 0);
 	glProgramUniform1f(m_programID, ul(m_programID, "scaleFactor"), scaleFactor);
+	glProgramUniform1f(m_programID, ul(m_programID, "minVal"), minForceColor);
+	glProgramUniform1f(m_programID, ul(m_programID, "maxVal"), maxForceColor);
 	glProgramUniform3fv(m_programID, ul(m_programID, "cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
 	glProgramUniform4fv(m_programID, ul(m_programID, "lightPos"), 1, glm::value_ptr(lightPos));
 	glProgramUniform1f(m_programID, ul(m_programID, "lightConstantAttenuation"), lightConstantAttenuation);
@@ -772,6 +776,14 @@ void SimulationView::RenderGUI()
 		if (ImGui::Checkbox("Color based on force", &isForceColor)) {
 			if (isForceColor != simulationManager.settings.getIsForceColor())
 				simulationManager.settings.setIsForceColor(isForceColor);
+		}
+
+		if (isForceColor) {
+			if (ImGui::DragFloat("Minimum force", &minForceColor, 1.0f, 0.0f, maxForceColor))
+				simulationManager.settings.setMinForceColor(minForceColor);
+
+			if (ImGui::DragFloat("Maximum force", &maxForceColor, 1.0f, minForceColor, 1000))
+				simulationManager.settings.setMaxForceColor(maxForceColor);
 		}
 		
 	}

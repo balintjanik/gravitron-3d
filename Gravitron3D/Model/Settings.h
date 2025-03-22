@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 #include <string>
 
-constexpr int CURRENT_SETTINGS_VERSION = 2;
+constexpr int CURRENT_SETTINGS_VERSION = 3;
 
 struct Settings {
 private:
@@ -42,6 +42,8 @@ private:
     static constexpr float maxScaleFactor = 0.1f;
 
     bool isForceColor = true;
+    float minForceColor = 0.0f;
+    float maxForceColor = 100.0f;
 
 public:
 	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
@@ -83,6 +85,8 @@ public:
     float getMaxScaleFactor() const { return maxScaleFactor; }
 
     bool getIsForceColor() const { return isForceColor; }
+    float getMinForceColor() const { return minForceColor; }
+    float getMaxForceColor() const { return maxForceColor; }
 
     // Setters
     void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = _numberOfParticles; }
@@ -115,4 +119,23 @@ public:
         scaleFactor = glm::clamp(scale, minScaleFactor, maxScaleFactor);
     }
     void setIsForceColor(int _isForceColor) { isForceColor = _isForceColor; }
+    void setMinForceColor(float _minForceColor) {
+        if (_minForceColor > maxForceColor) {
+            minForceColor = maxForceColor;
+        }
+        else if (_minForceColor < 0.0f) {
+            minForceColor = 0.0f;
+        }
+        else {
+            minForceColor = _minForceColor;
+        }
+    }
+    void setMaxForceColor(float _maxForceColor) {
+        if (_maxForceColor < minForceColor) {
+            maxForceColor = minForceColor;
+        }
+        else {
+            maxForceColor = _maxForceColor;
+        }
+    }
 };
