@@ -34,8 +34,6 @@ void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySi
 
 void SimulationManager::updateParticlesRange(size_t start, size_t end, float deltaTime) {
 	for (size_t i = start; i < end; i++) {
-		if (i == 0) continue; //  TODO: remove this to allow center particle to move
-
 		Particle& p = particles[i];
 		glm::vec3 acceleration = glm::vec3(0);
 		float allForce = octree.calculateAcceleration(acceleration, p.getPosition(), settings.getTheta(), settings.getEpsilon());
@@ -90,7 +88,6 @@ void SimulationManager::updateParticles(float deltaTime) {
 		threads.emplace_back(&SimulationManager::updateParticlesRange, this, start, end, deltaTime);
 	}
 
-	// Join all threads
 	for (std::thread& thread : threads) {
 		thread.join();
 	}
