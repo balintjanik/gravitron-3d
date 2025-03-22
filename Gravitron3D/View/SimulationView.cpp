@@ -437,11 +437,11 @@ void SimulationView::CollectParticlesFiles() {
 	std::filesystem::create_directories("UserData");
 	std::filesystem::create_directories("UserData/Particles");
 
-	// Collect all .ptc files in the "UserData/Particles" folder
+	// Collect all .csv files in the "UserData/Particles" folder
 	availableParticlesFiles.clear();
 	availableParticlesFiles.push_back("");
 	for (const auto& entry : std::filesystem::directory_iterator("UserData/Particles")) {
-		if (entry.is_regular_file() && entry.path().extension() == ".ptc") {
+		if (entry.is_regular_file() && entry.path().extension() == ".csv") {
 			availableParticlesFiles.push_back(entry.path().stem().string());
 		}
 	}
@@ -454,7 +454,7 @@ void SimulationView::SaveParticlesUI() {
 	if (ImGui::Button("Save Particles")) {
 		try {
 			if (strlen(saveParticlesFileName) > 0) {
-				std::string filePath = "UserData/Particles/" + std::string(saveParticlesFileName) + ".ptc";
+				std::string filePath = "UserData/Particles/" + std::string(saveParticlesFileName) + ".csv";
 
 				if (std::filesystem::exists(filePath)) {
 					UpdateMessage("File already exists. Please choose a different name.", glm::vec3(1.0f, 0.0f, 0.0f));
@@ -504,7 +504,7 @@ void SimulationView::LoadParticlesUI() {
 		if (ImGui::Button("Load Particles")) {
 			try {
 				if (selectedParticlesFileIndex > 0) {
-					std::string filePath = "UserData/Particles/" + availableParticlesFiles[selectedParticlesFileIndex] + ".ptc";
+					std::string filePath = "UserData/Particles/" + availableParticlesFiles[selectedParticlesFileIndex] + ".csv";
 					simulationManager.loadParticles(filePath);
 					UpdateMessage("Particles loaded from " + availableParticlesFiles[selectedParticlesFileIndex] + ".", glm::vec3(1.0f));
 					selectedParticlesFileIndex = -1;

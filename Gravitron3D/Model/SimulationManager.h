@@ -36,8 +36,8 @@ public:
 	float getMaxWorldBound() const { return maxWorldBound; }
 
 private:
-	const float minWorldBound = -3000.0f;
-	const float maxWorldBound =  3000.0f;
+	const float minWorldBound = -10000.0f;
+	const float maxWorldBound =  10000.0f;
 
 	void updateParticles(float deltaTime);
 	void updateParticlesRange(size_t start, size_t end, float deltaTime);
