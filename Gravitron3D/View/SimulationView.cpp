@@ -76,6 +76,11 @@ void SimulationView::InitGeometry()
 	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)(2 * sizeof(glm::vec4)));
 	glVertexAttribDivisor(5, 1);
 
+	// Setup instance colorMovable attribute (location 6, four-component vector)
+	glEnableVertexAttribArray(6);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)(3 * sizeof(glm::vec4)));
+	glVertexAttribDivisor(6, 1);
+
 	glBindVertexArray(0);
 }
 
@@ -256,6 +261,7 @@ void SimulationView::Render()
 		glDisableVertexAttribArray(3);
 		glDisableVertexAttribArray(4);
 		glDisableVertexAttribArray(5);
+		glDisableVertexAttribArray(6);
 
 		glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), true);
 		glProgramUniform3fv(m_programID, ul(m_programID, "position"), 1, glm::value_ptr(spawnParticle_position));
@@ -269,6 +275,7 @@ void SimulationView::Render()
 		glEnableVertexAttribArray(3);
 		glEnableVertexAttribArray(4);
 		glEnableVertexAttribArray(5);
+		glEnableVertexAttribArray(6);
 	}
 
 	// Cleanup
@@ -730,11 +737,17 @@ void SimulationView::ShowLightParameterSettings() {
 void SimulationView::ShowSpawnParticleSettings() {
 	ImGui::DragFloat3("Position", glm::value_ptr(spawnParticle_position), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
 	ImGui::DragFloat3("Velocity", glm::value_ptr(spawnParticle_velocity), 1.0f, -100.0f, 100.0f);
+	ImGui::DragFloat3("Color", glm::value_ptr(spawnParticle_color), 0.05f, 0.0f, 1.0f);
 	ImGui::DragFloat("Mass", &spawnParticle_mass, 1.0f, 0.0f, 1000000.0f);
 	ImGui::DragFloat("Size", &spawnParticle_size, 1.0f, 0.0f, 100.0f);
+	ImGui::Checkbox("Movable", &spawnParticle_movable);
 
 	if (ImGui::Button("Spawn"))
-		simulationManager.addParticle(glm::vec4(spawnParticle_position, spawnParticle_mass), glm::vec4(spawnParticle_velocity, spawnParticle_size), glm::vec4(0.0f));
+		simulationManager.addParticle(
+			glm::vec4(spawnParticle_position, spawnParticle_mass),
+			glm::vec4(spawnParticle_velocity, spawnParticle_size),
+			glm::vec4(0.0f),
+			glm::vec4(spawnParticle_color, spawnParticle_movable ? 1 : 0));
 }
 
 void SimulationView::RenderGUI()

@@ -13,7 +13,8 @@ void ParticleDataLoader::saveToFile(const std::string& filename, const std::vect
         std::string separator = ";";
         outFile << "PositionX" << separator << "PositionY" << separator << "PositionZ" << separator << "Mass" << separator
             << "VelocityX" << separator << "VelocityY" << separator << "VelocityZ" << separator << "Size" << separator
-            << "AccelerationX" << separator << "AccelerationY" << separator << "AccelerationZ" << separator << "Force\n";
+            << "AccelerationX" << separator << "AccelerationY" << separator << "AccelerationZ" << separator << "Force"
+            << "ColorR" << separator << "ColorG" << separator << "ColorB" << separator << "Movable\n";
 
         if (!outFile) {
             throw std::runtime_error("Failed to write header to file.");
@@ -31,7 +32,11 @@ void ParticleDataLoader::saveToFile(const std::string& filename, const std::vect
                 << particle.getAcceleration().x << separator
                 << particle.getAcceleration().y << separator
                 << particle.getAcceleration().z << separator
-                << particle.getForce() << "\n";
+                << particle.getForce() << separator
+                << particle.getColor().r << separator
+                << particle.getColor().g << separator
+                << particle.getColor().b << separator
+                << particle.getMovable() << "\n";
 
             if (!outFile) {
                 throw std::runtime_error("Failed to write particle data to file.");
@@ -72,7 +77,7 @@ std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filena
             values.push_back(std::stof(value));
         }
 
-        if (values.size() != 12) {
+        if (values.size() != 16) {
             throw std::runtime_error("Incorrect number of values in line: " + line);
         }
 
@@ -83,6 +88,8 @@ std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filena
         particle.setSize(values[7]);
         particle.setAcceleration(glm::vec3(values[8], values[9], values[10]));
         particle.setForce(values[11]);
+        particle.setColor(glm::vec3(values[12], values[13], values[14]));
+        particle.setMovable(values[15] != 0.0f);
 
         particles.push_back(particle);
     }

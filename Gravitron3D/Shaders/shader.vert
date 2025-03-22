@@ -7,12 +7,14 @@ layout( location = 2 ) in vec2 vs_in_tex;
 layout( location = 3 ) in vec4 instancePositionMass;
 layout( location = 4 ) in vec4 instanceVelocitySize;
 layout( location = 5 ) in vec4 instanceAccelerationForce;
+layout( location = 6 ) in vec4 instanceColorMovable;
 
 // a pipeline-ban tovább adandó értékek
 out vec3 vs_out_pos;
 out vec3 vs_out_norm;
 out vec2 vs_out_tex;
 out float vs_out_allforce;
+out vec3 vs_out_color;
 
 // shader külső paraméterei - most a három transzformációs mátrixot külön-külön vesszük át
 uniform bool isSingleObject;
@@ -27,15 +29,18 @@ void main()
     vec3 instancePosition;
     float instanceScale;
     float instanceForce;
+    vec3 instanceColor;
     
     if (isSingleObject) {
         instancePosition = position;
         instanceScale = scale;
         instanceForce = 0;
+        instanceColor = vec3(1);
     } else {
         instancePosition = instancePositionMass.xyz;
         instanceScale = instanceVelocitySize.w;
         instanceForce = instanceAccelerationForce.w;
+        instanceColor = instanceColorMovable.xyz;
     }
 
     // Normalize positions for better display
@@ -57,4 +62,5 @@ void main()
 	vs_out_norm = (worldIT * vec4(vs_in_norm, 0)).xyz;
 	vs_out_tex = vs_in_tex;
     vs_out_allforce = instanceForce;
+    vs_out_color = instanceColor;
 }

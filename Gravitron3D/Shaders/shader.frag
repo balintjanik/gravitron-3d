@@ -5,6 +5,7 @@ in vec3 vs_out_pos;
 in vec3 vs_out_norm;
 in vec2 vs_out_tex;
 in float vs_out_allforce;
+in vec3 vs_out_color;
 
 // kimenő érték - a fragment színe
 out vec4 fs_out_col;
@@ -85,6 +86,11 @@ void main()
 		Ka = valueToColor(vs_out_allforce);
 		Kd = valueToColor(vs_out_allforce);
 		Ks = valueToColor(vs_out_allforce);
+	}
+	else {
+		Ka = vs_out_color;
+		Kd = vs_out_color;
+		Ks = vs_out_color;
 	}
 
 	vec3 ambient = La * Ka;

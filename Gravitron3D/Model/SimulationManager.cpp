@@ -27,14 +27,18 @@ void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
 	updateParticles(updateInfo.DeltaTimeInSec);
 }
 
-void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce) {
-	particles.push_back(Particle(positionMass, velocitySize, accelerationForce));
+void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable) {
+	particles.push_back(Particle(positionMass, velocitySize, accelerationForce, colorMovable));
 	settings.setNumberOfParticles(particles.size());
 }
 
 void SimulationManager::updateParticlesRange(size_t start, size_t end, float deltaTime) {
 	for (size_t i = start; i < end; i++) {
 		Particle& p = particles[i];
+
+		if (!p.getMovable())
+			continue;
+
 		glm::vec3 acceleration = glm::vec3(0);
 		float allForce = octree.calculateAcceleration(acceleration, p.getPosition(), settings.getTheta(), settings.getEpsilon());
 

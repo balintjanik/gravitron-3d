@@ -154,6 +154,8 @@ protected:
 	float spawnParticle_mass = 1.0f;
 	glm::vec3 spawnParticle_velocity = glm::vec3(0.0f);
 	float spawnParticle_size = 1.0f;
+	glm::vec3 spawnParticle_color = glm::vec3(1.0f);
+	bool spawnParticle_movable = true;
 	bool spawnParticle_show = false;
 
 	// New simulation settings
