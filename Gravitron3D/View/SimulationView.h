@@ -129,6 +129,8 @@ protected:
 	float simulationSpeed = 1.0f;
 	float theta = 0.5f;
 	float epsilon = 1.0f;
+	float minWorldBound = -10000;
+	float maxWorldBound =  10000;
 
 	// Load/save settings
 	char saveSettingsFileName[128] = "";

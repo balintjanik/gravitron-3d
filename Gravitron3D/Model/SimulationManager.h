@@ -35,9 +35,28 @@ public:
 	float getMinWorldBound() const { return minWorldBound; }
 	float getMaxWorldBound() const { return maxWorldBound; }
 
+	void setMinWorldBound(float _minWorldBound) {
+		if (_minWorldBound < MIN_WORLD_BOUND)
+			minWorldBound = MIN_WORLD_BOUND;
+		else if (_minWorldBound >= maxWorldBound)
+			minWorldBound = maxWorldBound - 10;
+		else
+			minWorldBound = _minWorldBound;
+	}
+	void setMaxWorldBound(float _maxWorldBound) {
+		if (_maxWorldBound > MAX_WORLD_BOUND)
+			maxWorldBound = MAX_WORLD_BOUND;
+		else if (_maxWorldBound <= minWorldBound)
+			maxWorldBound = minWorldBound + 10;
+		else
+			maxWorldBound = _maxWorldBound;
+	}
+
 private:
-	const float minWorldBound = -10000.0f;
-	const float maxWorldBound =  10000.0f;
+	float minWorldBound = -10000.0f;
+	float maxWorldBound =  10000.0f;
+	const float MIN_WORLD_BOUND = -100000.0f;
+	const float MAX_WORLD_BOUND =  100000.0f;
 
 	void updateParticles(float deltaTime);
 	void updateParticlesRange(size_t start, size_t end, float deltaTime);

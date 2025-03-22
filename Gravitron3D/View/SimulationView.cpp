@@ -196,7 +196,8 @@ void SimulationView::UpdateData() {
 	simulationSpeed = simulationManager.settings.getSimulationSpeed();
 	theta = simulationManager.settings.getTheta();
 	epsilon = simulationManager.settings.getEpsilon();
-
+	minWorldBound = simulationManager.getMinWorldBound();
+	maxWorldBound = simulationManager.getMaxWorldBound();
 }
 
 void SimulationView::Update( const SUpdateInfo& updateInfo )
@@ -798,6 +799,12 @@ void SimulationView::RenderGUI()
 
 		if (ImGui::DragFloat("Epsilon", &epsilon, 0.05f, simulationManager.settings.getMinEpsilon(), simulationManager.settings.getMaxEpsilon()))
 			simulationManager.settings.setEpsilon(epsilon);
+
+		if (ImGui::InputFloat("World bound minimum", &minWorldBound, 100.0f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+			simulationManager.setMinWorldBound(minWorldBound);
+
+		if (ImGui::InputFloat("World bound maximum", &maxWorldBound, 100.0f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+			simulationManager.setMaxWorldBound(maxWorldBound);
 	}
 
 	// Load/save settings
