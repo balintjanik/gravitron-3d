@@ -20,6 +20,7 @@ public:
 
 	SimulationManager() { };
 
+	void initSettings();
 	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity);
 	void updateSimulation(const SUpdateInfo& updateInfo);
 

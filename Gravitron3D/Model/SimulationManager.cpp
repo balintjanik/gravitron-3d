@@ -2,10 +2,14 @@
 #include <thread>
 #include <stdexcept>
 
-void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity) {
-	settings = Settings(numberOfParticles);
+void SimulationManager::initSettings() {
+	settings = Settings();
 	settings.setNumberOfThreads(std::thread::hardware_concurrency());
 	if (settings.getNumberOfThreads() == 0) settings.setNumberOfThreads(4); // Fallback to 4 if hardware_concurrency cannot detect
+}
+
+void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity) {
+	settings.setNumberOfParticles(numberOfParticles);
 
 	particles.clear();
 	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity);
