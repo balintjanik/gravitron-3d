@@ -15,7 +15,7 @@ std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, Pres
 
 	for (int i = 0; i < numberOfParticles; i++) {
 		particles.push_back(Particle());
-		particles[i].setMass(1.f); // TODO: mass setting?
+		particles[i].setMass(1.f);
 	}
 
 	switch (preset)
@@ -127,6 +127,7 @@ void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
 	float velocityScale = 0.8f;
 	r_particles[0].setPosition(center);
 	r_particles[0].setMass(centerMass);
+	r_particles[0].setMovable(false);
 
 	calculatePositionsSphere(r_particles, 1, r_particles.size(), center, radiusMin, radiusMax, false);
 	calculateVelocitiesOrbit(r_particles, center, velocityScale);
