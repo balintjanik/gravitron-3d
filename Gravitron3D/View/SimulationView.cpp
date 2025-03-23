@@ -113,11 +113,6 @@ void SimulationView::CleanTextures() const
 
 void SimulationView::InitSimulation() {
 	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
-
-	simulationManager.settings.setTheta(theta);
-	simulationManager.settings.setEpsilon(epsilon);
-	
-	simulationManager.settings.setSimulationSpeed(simulationSpeed);
 }
 
 void SimulationView::InitImGuiSettings() {
@@ -132,6 +127,7 @@ void SimulationView::InitImGuiSettings() {
 
 bool SimulationView::Init()
 {
+	simulationManager.initSettings();
 	InitSimulation();
 
 	SetupDebugCallback();
@@ -190,7 +186,7 @@ void SimulationView::UpdateData() {
 	lightQuadraticAttenuation = simulationManager.settings.getLightQuadraticAttenuation();
 
 	// Display settings
-	cameraZoom = m_cameraManipulator.GetMaxDistance() + m_cameraManipulator.GetMinDistance() - m_cameraManipulator.GetDistance();
+	cameraDistance = m_cameraManipulator.GetDistance();
 	scrollZoomSpeed = m_cameraManipulator.GetSpeed();
 	scaleFactor = simulationManager.settings.getScaleFactor();
 	isForceColor = simulationManager.settings.getIsForceColor();
@@ -644,8 +640,8 @@ void SimulationView::ShowCameraSettings() {
 
 	ImGui::PushItemWidth(itemWidthInGroup);
 
-	if (ImGui::SliderFloat("Zoom", &cameraZoom, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance() - m_cameraManipulator.GetMinDistance()))
-		m_cameraManipulator.SetDistance(m_cameraManipulator.GetMaxDistance() - cameraZoom);
+	if (ImGui::SliderFloat("Camera distance", &cameraDistance, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance()))
+		m_cameraManipulator.SetDistance(cameraDistance);
 	
 	if (ImGui::DragFloat("Scroll zoom speed", &scrollZoomSpeed, 0.5f, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed()))
 		m_cameraManipulator.SetSpeed(scrollZoomSpeed);

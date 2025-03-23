@@ -52,7 +52,7 @@ private:
 	// The distance of the look at point from the camera. 
 	float	m_distance = 0.0f;
 	const float MIN_DISTANCE = 0.015f;
-	const float MAX_DISTANCE = 100.0f;
+	const float MAX_DISTANCE = 200.0f;
 
 	// The center of model sphere.
 	glm::vec3 m_center = glm::vec3( 0.0f );

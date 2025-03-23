@@ -115,7 +115,7 @@ protected:
 	const glm::vec3 DEFAULT_CAMERA_POSITION = glm::vec3(0.0f, 5.0f, 10.0f);
 	const glm::vec3 DEFAULT_CAMERA_TARGET   = glm::vec3(0.0f, 0.0f,  0.0f);
 	const glm::vec3 DEFAULT_CAMERA_WORLDUP  = glm::vec3(0.0f, 1.0f,  0.0f);
-	float cameraZoom = 1.0f;
+	float cameraDistance = 1.0f;
 	float scrollZoomSpeed = 1.0f;
 	void SetCameraPresetView(CameraPresets direction);
 	void ShowCameraSettings();
