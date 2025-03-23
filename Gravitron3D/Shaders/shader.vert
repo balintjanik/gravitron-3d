@@ -15,6 +15,7 @@ out vec3 vs_out_norm;
 out vec2 vs_out_tex;
 out float vs_out_allforce;
 out vec3 vs_out_color;
+out float vs_out_size;
 
 // shader külső paraméterei - most a három transzformációs mátrixot külön-külön vesszük át
 uniform bool isSingleObject;
@@ -30,6 +31,7 @@ void main()
     float instanceScale;
     float instanceForce;
     vec3 instanceColor;
+    float instanceSize;
     
     if (isSingleObject) {
         instancePosition = position;
@@ -42,6 +44,7 @@ void main()
         instanceForce = instanceAccelerationForce.w;
         instanceColor = instanceColorMovable.xyz;
     }
+    instanceSize = scaleFactor * instanceScale;
 
     // Normalize positions for better display
     vec3 normalizedInstancePosition = vec3(instancePosition / 100);
@@ -63,4 +66,5 @@ void main()
 	vs_out_tex = vs_in_tex;
     vs_out_allforce = instanceForce;
     vs_out_color = instanceColor;
+    vs_out_size = instanceSize;
 }

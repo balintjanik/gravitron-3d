@@ -6,6 +6,7 @@ in vec3 vs_out_norm;
 in vec2 vs_out_tex;
 in float vs_out_allforce;
 in vec3 vs_out_color;
+in float vs_out_size;
 
 // kimenő érték - a fragment színe
 out vec4 fs_out_col;
@@ -100,6 +101,7 @@ void main()
 
 	float lightDistance = 0.0;
 	float attenuation = 1.0;
+	float diffuseIntensity = 0.0;
 
 	if (lightPos.w == 0.5)
 	{
@@ -118,10 +120,15 @@ void main()
 			(lightConstantAttenuation +
 			lightLinearAttenuation * lightDistance +
 			lightQuadraticAttenuation * lightDistance * lightDistance);
+
+		if (lightDistance <= vs_out_size + 0.1) {
+			diffuseIntensity = 1.0;
+		}
 	}
 
 	//diffuseFactor
-	float diffuseIntensity = max(dot(toLight, normal), 0) * attenuation;
+	if (diffuseIntensity == 0.0)
+		diffuseIntensity = max(dot(toLight, normal), 0) * attenuation;
 	vec3 diffuse = Ld * Kd * diffuseIntensity;
 
 	//Spekulálris becsillanás
