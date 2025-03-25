@@ -22,7 +22,7 @@ private:
     static constexpr float maxTheta = 2.0f;
 	float epsilon = 1.0f;
     static constexpr float minEpsilon = 0.0f;
-    static constexpr float maxEpsilon = 2.0f;
+    static constexpr float maxEpsilon = 15.0f;
 
     glm::vec4 lightPos = glm::vec4(0.0f, -1.0f, 0.0f, 0.5f);
     float lightConstantAttenuation = 0.0;

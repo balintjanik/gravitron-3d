@@ -110,7 +110,7 @@ void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, Vel
 	}
 	else if (velocity == VELOCITY_ORBIT) {
 		glm::vec4 center = glm::vec4(0.f, 0.f, 0.f, r_particles.size());
-		float velocityScale = 0.8f;
+		float velocityScale = 1.0f;
 
 		calculateVelocitiesOrbit(r_particles, center, velocityScale);
 	}
