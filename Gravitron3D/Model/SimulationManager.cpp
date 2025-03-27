@@ -1,6 +1,7 @@
 #include "SimulationManager.h"
 #include <thread>
 #include <stdexcept>
+#include <algorithm>
 
 void SimulationManager::initSettings() {
 	settings = Settings();
@@ -15,7 +16,14 @@ void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType pr
 	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity);
 }
 
+bool SimulationManager::compareMorton(const Particle& a, const Particle& b) {
+	return a.computeMortonCode() < b.computeMortonCode();
+}
+
 void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
+	// Sort particles
+	std::sort(particles.begin(), particles.end(), compareMorton);
+
 	// Build tree
 	Octant octant = Octant::createNewContaining(particles);
 	octree.clear(octant);
