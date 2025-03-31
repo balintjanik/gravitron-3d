@@ -147,7 +147,19 @@ void PresetUtils::initPresetGalaxyCollision(std::vector<Particle>& r_particles) 
 }
 
 void PresetUtils::initPresetRandom(std::vector<Particle>& r_particles) {
-	// TODO: implement
+	int rangeMin = 0;
+	int rangeMax = r_particles.size();
+	
+	// Position
+	glm::vec3 min = glm::vec3(-500.f, -500.f, -500.f);
+	glm::vec3 max = glm::vec3(500.f, 500.f, 500.f);
+	calculatePositionsRandom(r_particles, rangeMin, rangeMax, min, max);
+
+	// Velocity
+	min = glm::vec3(-50.f, -50.f, -50.f);
+	max = glm::vec3(50.f, 50.f, 50.f);
+	calculateVelocitiesRandom(r_particles, 0, r_particles.size(), min, max);
+
 }
 
 void PresetUtils::calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
