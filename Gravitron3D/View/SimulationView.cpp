@@ -792,7 +792,7 @@ void SimulationView::RenderGUI()
 			if (ImGui::DragFloat("Minimum force", &minForceColor, 1.0f, 0.0f, maxForceColor))
 				simulationManager.settings.setMinForceColor(minForceColor);
 
-			if (ImGui::DragFloat("Maximum force", &maxForceColor, 1.0f, minForceColor, 1000))
+			if (ImGui::DragFloat("Maximum force", &maxForceColor, 1.0f, minForceColor, std::numeric_limits<float>::max()))
 				simulationManager.settings.setMaxForceColor(maxForceColor);
 		}
 		
@@ -803,10 +803,10 @@ void SimulationView::RenderGUI()
 		if (ImGui::DragFloat("Simulation speed", &simulationSpeed, 0.01f, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed()))
 			simulationManager.settings.setSimulationSpeed(simulationSpeed);
 		
-		if (ImGui::DragFloat("Theta", &theta, 0.05f, simulationManager.settings.getMinTheta(), simulationManager.settings.getMaxTheta()))
+		if (ImGui::InputFloat("Theta", &theta, 0.05f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
 			simulationManager.settings.setTheta(theta);
 
-		if (ImGui::DragFloat("Epsilon", &epsilon, 0.05f, simulationManager.settings.getMinEpsilon(), simulationManager.settings.getMaxEpsilon()))
+		if (ImGui::InputFloat("Epsilon", &epsilon, 0.05f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
 			simulationManager.settings.setEpsilon(epsilon);
 
 		if (ImGui::InputFloat("World bound minimum", &minWorldBound, 100.0f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
@@ -855,7 +855,7 @@ void SimulationView::RenderGUI()
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {
-		ImGui::DragInt("Number of particles", &numberOfParticles, 50.0f, 0, 150000);
+		ImGui::InputInt("Number of particles", &numberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue);
 
 		ShowEnumDropdown("Preset Type", PRESET_TYPE_NAMES, presetType);
 

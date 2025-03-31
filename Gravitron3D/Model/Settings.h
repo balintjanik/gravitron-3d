@@ -89,8 +89,8 @@ public:
     float getMaxForceColor() const { return maxForceColor; }
 
     // Setters
-    void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = _numberOfParticles; }
-    void setSimulationSpeed(float _simulationSpeed) { simulationSpeed = _simulationSpeed; }
+    void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = glm::clamp(_numberOfParticles, static_cast<uint32_t>(0), static_cast<uint32_t>(200000)); }
+    void setSimulationSpeed(float _simulationSpeed) { simulationSpeed = glm::clamp(_simulationSpeed, minSimulationSpeed, maxSimulationSpeed); }
     void setNumberOfThreads(uint32_t _numberOfThreads) {
         if (_numberOfThreads < 1) {
             numberOfThreads = 1;
@@ -120,22 +120,9 @@ public:
     }
     void setIsForceColor(int _isForceColor) { isForceColor = _isForceColor; }
     void setMinForceColor(float _minForceColor) {
-        if (_minForceColor > maxForceColor) {
-            minForceColor = maxForceColor;
-        }
-        else if (_minForceColor < 0.0f) {
-            minForceColor = 0.0f;
-        }
-        else {
-            minForceColor = _minForceColor;
-        }
+        minForceColor = glm::clamp(_minForceColor, 0.0f, maxForceColor);
     }
     void setMaxForceColor(float _maxForceColor) {
-        if (_maxForceColor < minForceColor) {
-            maxForceColor = minForceColor;
-        }
-        else {
-            maxForceColor = _maxForceColor;
-        }
+        maxForceColor = glm::clamp(_maxForceColor, minForceColor, std::numeric_limits<float>::max());
     }
 };
