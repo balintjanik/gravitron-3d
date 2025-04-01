@@ -1,47 +1,31 @@
 #include "SettingsDataLoader.h"
 #include <fstream>
 #include <iostream>
+#include <vector>
 
 void SettingsDataLoader::saveToFile(const std::string& filename, const Settings& settings) {
-    std::ofstream out(filename, std::ios::binary);
+    std::ofstream out(filename);
     if (!out) {
         throw std::runtime_error("Failed to open file for saving: " + filename);
     }
 
     // Save version
-    int version = settings.getVersion();
-    out.write(reinterpret_cast<const char*>(&version), sizeof(int));
+    out << "version=" << settings.getVersion() << std::endl;
 
     // Save other members via getters
-    uint32_t numberOfParticles = settings.getNumberOfParticles();
-    out.write(reinterpret_cast<const char*>(&numberOfParticles), sizeof(uint32_t));
-
-    float simulationSpeed = settings.getSimulationSpeed();
-    out.write(reinterpret_cast<const char*>(&simulationSpeed), sizeof(float));
-
-    uint32_t numberOfThreads = settings.getNumberOfThreads();
-    out.write(reinterpret_cast<const char*>(&numberOfThreads), sizeof(uint32_t));
-
-    float theta = settings.getTheta();
-    out.write(reinterpret_cast<const char*>(&theta), sizeof(float));
-
-    float epsilon = settings.getEpsilon();
-    out.write(reinterpret_cast<const char*>(&epsilon), sizeof(float));
+    out << "numberOfParticles=" << settings.getNumberOfParticles() << std::endl;
+    out << "simulationSpeed=" << settings.getSimulationSpeed() << std::endl;
+    out << "numberOfThreads=" << settings.getNumberOfThreads() << std::endl;
+    out << "theta=" << settings.getTheta() << std::endl;
+    out << "epsilon=" << settings.getEpsilon() << std::endl;
 
     glm::vec4 lightPos = settings.getLightPos();
-    out.write(reinterpret_cast<const char*>(&lightPos), sizeof(glm::vec4));
+    out << "lightPos=" << lightPos.x << "," << lightPos.y << "," << lightPos.z << "," << lightPos.w << std::endl;
 
-    float lightConstantAttenuation = settings.getLightConstantAttenuation();
-    out.write(reinterpret_cast<const char*>(&lightConstantAttenuation), sizeof(float));
-
-    float lightLinearAttenuation = settings.getLightLinearAttenuation();
-    out.write(reinterpret_cast<const char*>(&lightLinearAttenuation), sizeof(float));
-
-    float lightQuadraticAttenuation = settings.getLightQuadraticAttenuation();
-    out.write(reinterpret_cast<const char*>(&lightQuadraticAttenuation), sizeof(float));
-
-    float scaleFactor = settings.getScaleFactor();
-    out.write(reinterpret_cast<const char*>(&scaleFactor), sizeof(float));
+    out << "lightConstantAttenuation=" << settings.getLightConstantAttenuation() << std::endl;
+    out << "lightLinearAttenuation=" << settings.getLightLinearAttenuation() << std::endl;
+    out << "lightQuadraticAttenuation=" << settings.getLightQuadraticAttenuation() << std::endl;
+    out << "scaleFactor=" << settings.getScaleFactor() << std::endl;
 
     if (!out) {
         throw std::runtime_error("Failed to write settings data.");
@@ -52,61 +36,91 @@ void SettingsDataLoader::saveToFile(const std::string& filename, const Settings&
 
 Settings SettingsDataLoader::loadFromFile(const std::string& filename) {
     Settings settings;
-    std::ifstream in(filename, std::ios::binary);
+    std::ifstream in(filename);
     if (!in) {
         throw std::runtime_error("Failed to open file for loading: " + filename);
     }
 
-    // Read version first and check it
-    int version;
-    in.read(reinterpret_cast<char*>(&version), sizeof(int));
-    if (version != CURRENT_SETTINGS_VERSION) {
-        throw std::runtime_error("Settings version mismatch. Expected version: " + std::to_string(CURRENT_SETTINGS_VERSION) + ", found: " + std::to_string(version));
+    const std::vector<std::string> keys = {
+        "version", "numberOfParticles", "simulationSpeed", "numberOfThreads", "theta", "epsilon",
+        "lightPos", "lightConstantAttenuation", "lightLinearAttenuation", "lightQuadraticAttenuation", "scaleFactor"
+    };
+
+    int index = 0;
+    const int maxIndex = keys.size();
+    std::string line;
+    while (std::getline(in, line)) {
+        // Skip empty lines
+        if (line.empty()) continue;
+
+        // Skip invalid lines
+        size_t pos = line.find('=');
+        if (pos == std::string::npos) continue;
+
+        // Read key-value pairs
+        std::string key = line.substr(0, pos);
+        std::string value = line.substr(pos + 1);
+
+        // Parse value
+        if (key == keys[index] && index == 0) {
+            int version = std::stoi(value);
+            if (version != CURRENT_SETTINGS_VERSION) {
+                throw std::runtime_error("Settings version mismatch. Expected version: " + std::to_string(CURRENT_SETTINGS_VERSION) + ", found: " + std::to_string(version));
+            }
+        }
+        else if (key == keys[index] && index == 1) {
+            settings.setNumberOfParticles(std::stoi(value));
+        }
+        else if (key == keys[index] && index == 2) {
+            settings.setSimulationSpeed(std::stof(value));
+        }
+        else if (key == keys[index] && index == 3) {
+            settings.setNumberOfThreads(std::stoi(value));
+        }
+        else if (key == keys[index] && index == 4) {
+            settings.setTheta(std::stof(value));
+        }
+        else if (key == keys[index] && index == 5) {
+            settings.setEpsilon(std::stof(value));
+        }
+        else if (key == keys[index] && index == 6) {
+            glm::vec4 lightPos;
+            std::sscanf(value.c_str(), "%f,%f,%f,%f", &lightPos.x, &lightPos.y, &lightPos.z, &lightPos.w);
+            settings.setLightPos(lightPos);
+        }
+        else if (key == keys[index] && index == 7) {
+            settings.setLightConstantAttenuation(std::stof(value));
+        }
+        else if (key == keys[index] && index == 8) {
+            settings.setLightLinearAttenuation(std::stof(value));
+        }
+        else if (key == keys[index] && index == 9) {
+            settings.setLightQuadraticAttenuation(std::stof(value));
+        }
+        else if (key == keys[index] && index == 10) {
+            settings.setScaleFactor(std::stof(value));
+        }
+        else {
+            if (std::find(keys.begin(), keys.end(), key) != keys.end() && index < maxIndex) {
+                throw std::runtime_error("Missing data: " + keys[index]);
+            }
+            else if (index < maxIndex){
+                throw std::runtime_error("Unrecognized key: " + key);
+            }
+        }
+
+        index++;
     }
 
-    // Read other settings data
-    uint32_t numberOfParticles;
-    in.read(reinterpret_cast<char*>(&numberOfParticles), sizeof(uint32_t));
-    settings.setNumberOfParticles(numberOfParticles);
+    if (index < maxIndex) {
+        throw std::runtime_error("Not all settings could be read in");
+    }
+    else if (index > maxIndex) {
+        throw std::runtime_error("Unexpected extra data found");
+    }
 
-    float simulationSpeed;
-    in.read(reinterpret_cast<char*>(&simulationSpeed), sizeof(float));
-    settings.setSimulationSpeed(simulationSpeed);
-
-    uint32_t numberOfThreads;
-    in.read(reinterpret_cast<char*>(&numberOfThreads), sizeof(uint32_t));
-    settings.setNumberOfThreads(numberOfThreads);
-
-    float theta;
-    in.read(reinterpret_cast<char*>(&theta), sizeof(float));
-    settings.setTheta(theta);
-
-    float epsilon;
-    in.read(reinterpret_cast<char*>(&epsilon), sizeof(float));
-    settings.setEpsilon(epsilon);
-
-    glm::vec4 lightPos;
-    in.read(reinterpret_cast<char*>(&lightPos), sizeof(glm::vec4));
-    settings.setLightPos(lightPos);
-
-    float lightConstantAttenuation;
-    in.read(reinterpret_cast<char*>(&lightConstantAttenuation), sizeof(float));
-    settings.setLightConstantAttenuation(lightConstantAttenuation);
-
-    float lightLinearAttenuation;
-    in.read(reinterpret_cast<char*>(&lightLinearAttenuation), sizeof(float));
-    settings.setLightLinearAttenuation(lightLinearAttenuation);
-
-    float lightQuadraticAttenuation;
-    in.read(reinterpret_cast<char*>(&lightQuadraticAttenuation), sizeof(float));
-    settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
-
-    float scaleFactor;
-    in.read(reinterpret_cast<char*>(&scaleFactor), sizeof(float));
-    settings.setScaleFactor(scaleFactor);
-
-    if (!in) {
-        throw std::runtime_error("Failed to read settings data.");
+    if (in.fail() && !in.eof()) {
+        throw std::runtime_error("Failed to read settings data");
     }
 
     in.close();

@@ -3,7 +3,7 @@
 #include "glm/glm.hpp"
 #include <string>
 
-constexpr int CURRENT_SETTINGS_VERSION = 4;
+constexpr int CURRENT_SETTINGS_VERSION = 5;
 
 struct Settings {
 private:
