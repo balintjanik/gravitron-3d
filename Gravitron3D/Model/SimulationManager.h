@@ -25,6 +25,18 @@ public:
 	void updateSimulation(const SUpdateInfo& updateInfo);
 
 	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable);
+	void addGroup(int numberOfParticlesToAdd,
+		PositionType position,
+		glm::vec3 groupCubeMin,
+		glm::vec3 groupCubeMax,
+		glm::vec3 groupSphereCenter,
+		float groupSphereRadiusMin,
+		float groupSphereRadiusMax,
+		VelocityType velocity,
+		float groupVelocityScale,
+		float groupCenterMass,
+		glm::vec3 groupVelocityRandomMin,
+		glm::vec3 groupVelocityRandomMax);
 
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);

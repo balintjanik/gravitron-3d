@@ -112,7 +112,7 @@ void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, Vel
 		glm::vec4 center = glm::vec4(0.f, 0.f, 0.f, r_particles.size());
 		float velocityScale = 1.0f;
 
-		calculateVelocitiesOrbit(r_particles, center, velocityScale);
+		calculateVelocitiesOrbit(r_particles, 0, r_particles.size(), center, velocityScale);
 	}
 	else {
 		throw "Invalid velocity type.";
@@ -130,7 +130,7 @@ void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
 	r_particles[0].setMovable(false);
 
 	calculatePositionsSphere(r_particles, 1, r_particles.size(), center, radiusMin, radiusMax, false);
-	calculateVelocitiesOrbit(r_particles, center, velocityScale);
+	calculateVelocitiesOrbit(r_particles, 1, r_particles.size(), center, velocityScale);
 
 	for (auto& p : r_particles) {
 		p.setSize(randomFloat(0.5f, 2.0f));
@@ -196,8 +196,8 @@ void PresetUtils::calculatePositionsSphere(std::vector<Particle>& r_particles, i
 
 		if (is2D) {
 			px = center.x + radius * cos(theta);
-			py = 0.0f;
-			pz = center.y + radius * sin(theta);
+			py = center.y;
+			pz = center.z + radius * sin(theta);
 		}
 
 		r_particles[i].setPosition(glm::vec3(px, py, pz));
@@ -234,7 +234,7 @@ void PresetUtils::calculatePositionsGrid3D(std::vector<Particle>& r_particles, i
 	}
 }
 
-void PresetUtils::calculatePositionsGrid2D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
+void PresetUtils::calculatePositionsGrid2D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {	
 	if (rangeMin < 0)
 		rangeMin = 0;
 
@@ -254,7 +254,7 @@ void PresetUtils::calculatePositionsGrid2D(std::vector<Particle>& r_particles, i
 	for (int x = 0; x < gridX && count < totalParticles; x++) {
 		for (int z = 0; z < gridZ && count < totalParticles; z++) {
 			int index = rangeMin + count;
-			glm::vec3 position = minValue + glm::vec3(x * stepSize.x, minValue.y, z * stepSize.z);
+			glm::vec3 position = minValue + glm::vec3(x * stepSize.x, 0, z * stepSize.z);
 			r_particles[index].setPosition(position);
 			count++;
 
@@ -277,8 +277,8 @@ void PresetUtils::calculateVelocitiesRandom(std::vector<Particle>& r_particles, 
 	}
 }
 
-void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, glm::vec4 center, float velocityScale) {
-	for (int i = 1; i < r_particles.size(); i++)
+void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec4 center, float velocityScale) {
+	for (int i = rangeMin; i < rangeMax; i++)
 	{
 		glm::vec3 position = r_particles[i].getPosition();
 		float px = position.x;

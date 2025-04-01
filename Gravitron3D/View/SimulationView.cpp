@@ -2,7 +2,6 @@
 #include "SDL_GLDebugMessageCallback.h"
 #include "ObjParser.h"
 
-#include <iostream>
 #include <filesystem>
 
 SimulationView::SimulationView()
@@ -746,6 +745,82 @@ void SimulationView::ShowSpawnParticleSettings() {
 			glm::vec4(spawnParticle_color, spawnParticle_movable ? 1 : 0));
 }
 
+void SimulationView::ShowSpawnGoupPositionSettings(PositionType positionType) {
+	switch (positionType) {
+	case POSITION_RANDOM:
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(groupCubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			groupCubeMin.x = glm::min(groupCubeMin.x, groupCubeMax.x);
+			groupCubeMin.y = glm::min(groupCubeMin.y, groupCubeMax.y);
+			groupCubeMin.z = glm::min(groupCubeMin.z, groupCubeMax.z);
+		}
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(groupCubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			groupCubeMax.x = glm::max(groupCubeMax.x, groupCubeMin.x);
+			groupCubeMax.y = glm::max(groupCubeMax.y, groupCubeMin.y);
+			groupCubeMax.z = glm::max(groupCubeMax.z, groupCubeMin.z);
+		}
+		break;
+	case POSITION_SPHERE:
+		ImGui::DragFloat3("Center##Group", glm::value_ptr(groupSphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+		ImGui::DragFloat("Minimum radius##Group", &groupSphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), groupSphereRadiusMax);
+		ImGui::DragFloat("Maximum radius##Group", &groupSphereRadiusMax, 10.0f, groupSphereRadiusMin, simulationManager.getMaxWorldBound());
+		break;
+	case POSITION_DISK:
+		ImGui::DragFloat3("Center##Group", glm::value_ptr(groupSphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+		ImGui::DragFloat("Minimum radius##Group", &groupSphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), groupSphereRadiusMax);
+		ImGui::DragFloat("Maximum radius##Group", &groupSphereRadiusMax, 10.0f, groupSphereRadiusMin, simulationManager.getMaxWorldBound());
+		break;
+	case POSITION_GRID_2D:
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(groupCubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			groupCubeMin.x = glm::min(groupCubeMin.x, groupCubeMax.x);
+			groupCubeMax.y = groupCubeMin.y;
+			groupCubeMin.z = glm::min(groupCubeMin.z, groupCubeMax.z);
+		}
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(groupCubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			groupCubeMax.x = glm::max(groupCubeMax.x, groupCubeMin.x);
+			groupCubeMin.y = groupCubeMax.y;
+			groupCubeMax.z = glm::max(groupCubeMax.z, groupCubeMin.z);
+		}
+		break;
+	case POSITION_GRID_3D:
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(groupCubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			groupCubeMin.x = glm::min(groupCubeMin.x, groupCubeMax.x);
+			groupCubeMin.y = glm::min(groupCubeMin.y, groupCubeMax.y);
+			groupCubeMin.z = glm::min(groupCubeMin.z, groupCubeMax.z);
+		}
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(groupCubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			groupCubeMax.x = glm::max(groupCubeMax.x, groupCubeMin.x);
+			groupCubeMax.y = glm::max(groupCubeMax.y, groupCubeMin.y);
+			groupCubeMax.z = glm::max(groupCubeMax.z, groupCubeMin.z);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
+void SimulationView::ShowSpawnGoupVelocitySettings(VelocityType velocityType) {
+	switch (velocityType) {
+	case VELOCITY_ORBIT:
+		ImGui::DragFloat("Velocity scale##Group", &groupVelocityScale, 0.1f, -5.0f, 5.0f);
+		ImGui::DragFloat("Center mass##Group", &groupCenterMass, 0.1f, 0.0f, 1000000.0f);
+		break;
+	case VELOCITY_RANDOM:
+		if (ImGui::DragFloat3("Minimum velocity##Group", glm::value_ptr(groupVelocityRandomMin), 1.0f, -1000.0f, 1000.0f)) {
+			groupVelocityRandomMin.x = glm::min(groupVelocityRandomMin.x, groupVelocityRandomMax.x);
+			groupVelocityRandomMin.y = glm::min(groupVelocityRandomMin.y, groupVelocityRandomMax.y);
+			groupVelocityRandomMin.z = glm::min(groupVelocityRandomMin.z, groupVelocityRandomMax.z);
+		}
+		if (ImGui::DragFloat3("Maximum velocity##Group", glm::value_ptr(groupVelocityRandomMax), 1.0f, -1000.0f, 1000.0f)) {
+			groupVelocityRandomMax.x = glm::max(groupVelocityRandomMax.x, groupVelocityRandomMin.x);
+			groupVelocityRandomMax.y = glm::max(groupVelocityRandomMax.y, groupVelocityRandomMin.y);
+			groupVelocityRandomMax.z = glm::max(groupVelocityRandomMax.z, groupVelocityRandomMin.z);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 void SimulationView::RenderGUI()
 {
 	// Window
@@ -852,6 +927,25 @@ void SimulationView::RenderGUI()
 	}
 	else
 		spawnParticle_show = false;
+
+	// Spawn group
+	if (ImGui::CollapsingHeader("Spawn group")) {
+		ImGui::SeparatorText("Parameters");
+		ImGui::InputInt("Number of particles##Group", &groupNumberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue);
+		
+		ImGui::SeparatorText("Position settings");
+		ShowEnumDropdown("Position Type##Group", POSITION_TYPE_NAMES, groupPositionType);
+		ShowSpawnGoupPositionSettings(groupPositionType);
+
+		ImGui::SeparatorText("Velocity settings");
+		ShowEnumDropdown("Velocity Type##Group", VELOCITY_TYPE_NAMES, groupVelocityType);
+		ShowSpawnGoupVelocitySettings(groupVelocityType);
+
+		ImGui::SeparatorText("Finalize");
+		if (ImGui::Button("Add group")) {
+			simulationManager.addGroup(groupNumberOfParticles, groupPositionType, groupCubeMin, groupCubeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, groupVelocityType, groupVelocityScale, groupCenterMass, groupVelocityRandomMin, groupVelocityRandomMax);
+		}
+	}
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {

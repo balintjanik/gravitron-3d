@@ -10,6 +10,14 @@ public:
 	static std::vector<Particle> generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity);
 	static float randomFloat(float min, float max);
 
+	static void calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
+	static void calculatePositionsSphere(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 center, float radiusMin, float radiusMax, bool is2D = false);
+	static void calculatePositionsGrid3D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
+	static void calculatePositionsGrid2D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
+
+	static void calculateVelocitiesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
+	static void calculateVelocitiesOrbit(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec4 center, float velocityScale);
+
 private:
 	static void initParticlePositions(std::vector<Particle>& r_particles, PositionType position);
 	static void initParticleVelocities(std::vector<Particle>& r_particles, VelocityType velocity);
@@ -18,12 +26,4 @@ private:
 	static void initPresetSolarSystem(std::vector<Particle>& r_particles);
 	static void initPresetGalaxyCollision(std::vector<Particle>& r_particles);
 	static void initPresetRandom(std::vector<Particle>& r_particles);
-
-	static void calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
-	static void calculatePositionsSphere(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 center, float radiusMin, float radiusMax, bool is2D = false);
-	static void calculatePositionsGrid3D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
-	static void calculatePositionsGrid2D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
-
-	static void calculateVelocitiesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
-	static void calculateVelocitiesOrbit(std::vector<Particle>& r_particles, glm::vec4 center, float velocityScale);
 };

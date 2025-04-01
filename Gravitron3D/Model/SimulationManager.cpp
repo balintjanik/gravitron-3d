@@ -36,6 +36,84 @@ void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySi
 	settings.setNumberOfParticles(particles.size());
 }
 
+void SimulationManager::addGroup(int numberOfParticlesToAdd,
+	PositionType position,
+	glm::vec3 groupCubeMin,
+	glm::vec3 groupCubeMax,
+	glm::vec3 groupSphereCenter,
+	float groupSphereRadiusMin,
+	float groupSphereRadiusMax,
+	VelocityType velocity,
+	float groupVelocityScale,
+	float groupCenterMass,
+	glm::vec3 groupVelocityRandomMin,
+	glm::vec3 groupVelocityRandomMax)
+{
+	int previousNumberOfParticles = settings.getNumberOfParticles();
+	settings.setNumberOfParticles(previousNumberOfParticles + numberOfParticlesToAdd);
+
+	// Initialize center
+	Particle centerParticle = Particle();
+	if (position == POSITION_RANDOM || position == POSITION_GRID_2D || position == POSITION_GRID_3D)
+		centerParticle.setPosition((groupCubeMin + groupCubeMax) / 2.0f);
+	else
+		centerParticle.setPosition(groupSphereCenter);
+
+	if (velocity == VELOCITY_ORBIT) {
+		centerParticle.setMass(groupCenterMass);
+		centerParticle.setSize(10);
+	}
+	else {
+		centerParticle.setMass(1.0f);
+	}
+	particles.push_back(centerParticle);
+
+	// Add particles
+	for (int i = 1; i < numberOfParticlesToAdd; i++) {
+		particles.push_back(Particle());
+		particles[previousNumberOfParticles + i].setMass(1.f);
+	}
+
+	// Initialize positions
+	int rangeMin = previousNumberOfParticles + 1;
+	int rangeMax = particles.size();
+	switch (position)
+	{
+	case POSITION_RANDOM:
+		PresetUtils::calculatePositionsRandom(particles, rangeMin, rangeMax, groupCubeMin, groupCubeMax);
+		break;
+	case POSITION_SPHERE:
+		PresetUtils::calculatePositionsSphere(particles, rangeMin, rangeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, false);
+		break;
+	case POSITION_DISK:
+		PresetUtils::calculatePositionsSphere(particles, rangeMin, rangeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, true);
+		break;
+	case POSITION_GRID_3D:
+		PresetUtils::calculatePositionsGrid3D(particles, rangeMin, rangeMax, groupCubeMin, groupCubeMax);
+		break;
+	case POSITION_GRID_2D:
+		PresetUtils::calculatePositionsGrid2D(particles, rangeMin, rangeMax, groupCubeMin, groupCubeMax);
+		break;
+	default:
+		throw "Invalid position type.";
+		break;
+	}
+
+	// Initialize velocities
+	switch (velocity)
+	{
+	case VELOCITY_RANDOM:
+		PresetUtils::calculateVelocitiesRandom(particles, rangeMin, rangeMax, groupVelocityRandomMin, groupVelocityRandomMax);
+		break;
+	case VELOCITY_ORBIT:
+		glm::vec4 center = glm::vec4(centerParticle.getPosition(), groupCenterMass);
+		PresetUtils::calculateVelocitiesOrbit(particles, rangeMin, rangeMax, center, groupVelocityScale);
+		break;
+	default:
+		break;
+	}
+}
+
 void SimulationManager::updateParticlesRange(size_t start, size_t end, float deltaTime) {
 	for (size_t i = start; i < end; i++) {
 		Particle& p = particles[i];
