@@ -127,7 +127,10 @@ protected:
 
 	// Calculation settings
 	float simulationSpeed = 1.0f;
+	float threshold_simulationSpeed = 1.0f;
 	float theta = 0.5f;
+	float threshold_lowerTheta = 0.4f;
+	float threshold_higherTheta = 1.0f;
 	float epsilon = 1.0f;
 	float minWorldBound = -10000;
 	float maxWorldBound =  10000;
@@ -176,6 +179,7 @@ protected:
 
 	// New simulation settings
 	int numberOfParticles = 10000;
+	int threshold_numberOfParticles = 50000;
 	PresetType presetType = static_cast<PresetType>(0);
 	PositionType positionType = static_cast<PositionType>(0);
 	VelocityType velocityType = static_cast<VelocityType>(0);

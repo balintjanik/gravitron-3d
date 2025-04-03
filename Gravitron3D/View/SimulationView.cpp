@@ -737,12 +737,15 @@ void SimulationView::ShowSpawnParticleSettings() {
 	ImGui::DragFloat("Size", &spawnParticle_size, 1.0f, 0.0f, 100.0f);
 	ImGui::Checkbox("Movable", &spawnParticle_movable);
 
-	if (ImGui::Button("Spawn"))
+	if (ImGui::Button("Spawn")) {
 		simulationManager.addParticle(
 			glm::vec4(spawnParticle_position, spawnParticle_mass),
 			glm::vec4(spawnParticle_velocity, spawnParticle_size),
 			glm::vec4(0.0f),
 			glm::vec4(spawnParticle_color, spawnParticle_movable ? 1 : 0));
+		if (threshold_numberOfParticles >= threshold_numberOfParticles)
+			UpdateMessage("Warning: adding too many particles might result in lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
+	}
 }
 
 void SimulationView::ShowSpawnGoupPositionSettings(PositionType positionType) {
@@ -875,11 +878,19 @@ void SimulationView::RenderGUI()
 
 	// Calculation settings
 	if (ImGui::CollapsingHeader("Calculation settings")) {
-		if (ImGui::DragFloat("Simulation speed", &simulationSpeed, 0.01f, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed()))
+		if (ImGui::DragFloat("Simulation speed", &simulationSpeed, 0.01f, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed())) {
 			simulationManager.settings.setSimulationSpeed(simulationSpeed);
+			if (simulationSpeed > threshold_simulationSpeed)
+				UpdateMessage("Warning: too large value for simulation speed might result in lower simulation accuracy!", glm::vec3(1.0f, 1.0f, 0.0f));
+		}
 		
-		if (ImGui::InputFloat("Theta", &theta, 0.05f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
+		if (ImGui::InputFloat("Theta", &theta, 0.05f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue)) {
 			simulationManager.settings.setTheta(theta);
+			if (theta < threshold_lowerTheta)
+				UpdateMessage("Warning: too small value for theta will result in significantly lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
+			else if (theta > threshold_higherTheta)
+				UpdateMessage("Warning: too large value for theta might result in lower simulation accuracy!", glm::vec3(1.0f, 1.0f, 0.0f));
+		}
 
 		if (ImGui::InputFloat("Epsilon", &epsilon, 0.05f, 0.0f, "%.3f", ImGuiInputTextFlags_EnterReturnsTrue))
 			simulationManager.settings.setEpsilon(epsilon);
@@ -931,7 +942,10 @@ void SimulationView::RenderGUI()
 	// Spawn group
 	if (ImGui::CollapsingHeader("Spawn group")) {
 		ImGui::SeparatorText("Parameters");
-		ImGui::InputInt("Number of particles##Group", &groupNumberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue);
+		if (ImGui::InputInt("Number of particles##Group", &groupNumberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue)) {
+			if (currentNumberOfParticles + groupNumberOfParticles > threshold_numberOfParticles)
+				UpdateMessage("Warning: adding too many particles might result in lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
+		}
 		
 		ImGui::SeparatorText("Position settings");
 		ShowEnumDropdown("Position Type##Group", POSITION_TYPE_NAMES, groupPositionType);
@@ -949,7 +963,10 @@ void SimulationView::RenderGUI()
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {
-		ImGui::InputInt("Number of particles", &numberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue);
+		if (ImGui::InputInt("Number of particles", &numberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue)) {
+			if (numberOfParticles > threshold_numberOfParticles)
+				UpdateMessage("Warning: adding too many particles might result in lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
+		}
 
 		ShowEnumDropdown("Preset Type", PRESET_TYPE_NAMES, presetType);
 
