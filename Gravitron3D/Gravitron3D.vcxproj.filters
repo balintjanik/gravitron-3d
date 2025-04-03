@@ -96,92 +96,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="imgui.ini" />
-    <None Include="Assets\node.obj">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\rock.jpg">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\rock.obj">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\rockICO.obj">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Shaders\**\*">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Shaders\**\*">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.mtl" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\node.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.mtl" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\node.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.mtl" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\node.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.mtl" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\node.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.mtl" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\node.png" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Shaders\shader.vert" />
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Shaders\**\*">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Assets\node.jpg" />
-    <None Include="Shaders\shader.vert" />
-    <None Include="Shaders\**\*">
-      <Filter>Shaders</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Filter Include="Model">
       <UniqueIdentifier>{8ab5eaae-2796-4f09-9145-186b72c8eec4}</UniqueIdentifier>
     </Filter>
@@ -197,5 +111,51 @@
     <Filter Include="Persistence">
       <UniqueIdentifier>{0243b94b-aff9-49ca-8ab3-6e80d88e5e18}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\node.obj" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\node.obj" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\node.obj" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\node.obj" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Assets\node.obj" />
+    <None Include="Assets\rock.jpg" />
+    <None Include="Assets\rock.obj" />
+    <None Include="Assets\rockICO.obj" />
+    <None Include="Shaders\shader.vert" />
+    <None Include="Shaders\shader.vert" />
+    <None Include="imgui.ini" />
+    <None Include="Assets\**\*">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\**\*">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\**\*">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\**\*">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\**\*">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Shaders\**\*">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\**\*">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
