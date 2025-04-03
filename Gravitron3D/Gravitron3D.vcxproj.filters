@@ -113,49 +113,31 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Assets\node.obj" />
-    <None Include="Assets\rock.jpg" />
-    <None Include="Assets\rock.obj" />
-    <None Include="Assets\rockICO.obj" />
-    <None Include="Shaders\shader.vert" />
-    <None Include="Shaders\shader.vert" />
     <None Include="imgui.ini" />
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Assets\**\*">
-      <Filter>Assets</Filter>
-    </None>
-    <None Include="Shaders\**\*">
+    <None Include="Shaders\shader.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\**\*">
+    <None Include="Shaders\shader.vert">
       <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\node.jpg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rock.jpg">
+      <Filter>Assets</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\node.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rock.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rockICO.obj">
+      <Filter>Assets</Filter>
     </None>
   </ItemGroup>
 </Project>
