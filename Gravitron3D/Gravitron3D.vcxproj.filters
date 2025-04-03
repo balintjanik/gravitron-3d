@@ -100,9 +100,17 @@
     <None Include="Assets\rockICO.obj" />
     <None Include="Assets\rock.obj" />
     <None Include="Assets\rockICO.obj" />
-    <None Include="Shaders\shader.vert" />
     <None Include="imgui.ini" />
-    <None Include="Assets\**\*">
+    <None Include="Assets\node.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rock.jpg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rock.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rockICO.obj">
       <Filter>Assets</Filter>
     </None>
     <None Include="Assets\**\*">
@@ -117,9 +125,7 @@
     <None Include="Shaders\**\*">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Assets\node.mtl" />
     <None Include="Assets\node.obj" />
-    <None Include="Assets\node.png" />
     <None Include="Assets\rock.jpg" />
     <None Include="Assets\rock.obj" />
     <None Include="Assets\rockICO.obj" />
@@ -166,6 +172,11 @@
     <None Include="Assets\**\*">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Shaders\**\*">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Assets\node.jpg" />
+    <None Include="Shaders\shader.vert" />
     <None Include="Shaders\**\*">
       <Filter>Shaders</Filter>
     </None>

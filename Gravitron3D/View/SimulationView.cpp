@@ -314,8 +314,10 @@ void SimulationView::Render()
 		glBindSampler(0, m_SamplerID);
 		glBindVertexArray(m_nodeGPU.vaoID);
 
-		glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), true);
-		glProgramUniform1i(m_programID, ul(m_programID, "colorType"), 0);
+		glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), true); // No instanced drawing
+		glProgramUniform1i(m_programID, ul(m_programID, "colorType"), 0); // Fixed color
+		glProgramUniform1f(m_programID, ul(m_programID, "scaleFactor"), 0.005f); // Fixed scale
+		glProgramUniform4fv(m_programID, ul(m_programID, "lightPos"), 1, glm::value_ptr(glm::vec4(0.5f))); // Fixed constant light
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		for (int i = 0; i < simulationManager.octree.nodes.size(); i++) {
 			if (simulationManager.octree.nodes[i].getMass() == 0) continue;
