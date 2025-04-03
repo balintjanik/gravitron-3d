@@ -67,13 +67,16 @@ protected:
 	
 	// Geometry
 	OGLObject m_sphereGPU = {};
+	OGLObject m_nodeGPU = {};
 	GLuint  instanceVBO = 0;
+	GLuint edgeEBO = 0;
 
 	void InitGeometry();
 	void CleanGeometry();
 
 	// Textures
     GLuint m_SamplerID = 0;
+	GLuint m_nodeTextureID = 0;
 	GLuint m_sphereTextureID = 0;
 
 	void InitTextures();
@@ -120,6 +123,7 @@ protected:
 	void SetCameraPresetView(CameraPresets direction);
 	void ShowCameraSettings();
 
+	bool showOctree = false;
 	float scaleFactor = 0.005f;
 	bool isForceColor = true;
 	float minForceColor = 0.0f;

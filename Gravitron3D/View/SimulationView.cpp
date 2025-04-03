@@ -1,6 +1,7 @@
 #include "SimulationView.h"
 #include "SDL_GLDebugMessageCallback.h"
 #include "ObjParser.h"
+#include "GLUtils.hpp"
 
 #include <filesystem>
 
@@ -48,6 +49,9 @@ void SimulationView::InitGeometry()
 		{ 2, offsetof( Vertex, texcoord ), 2, GL_FLOAT },
 	};
 
+	// Node
+	m_nodeGPU = CreateGLObjectFromMesh(createCube(), vertexAttribList);
+
 	// Sphere
 	MeshObject<Vertex> sphereMeshCPU = ObjParser::parse("Assets/rockICO.obj");
 
@@ -81,10 +85,28 @@ void SimulationView::InitGeometry()
 	glVertexAttribDivisor(6, 1);
 
 	glBindVertexArray(0);
+
+	///////////
+	glBindVertexArray(m_nodeGPU.vaoID);
+
+	const GLuint nodeEdges[] = {
+		// Front face edges
+		0, 1,  1, 2,  2, 3,  3, 0,
+		// Back face edges
+		4, 5,  5, 6,  6, 7,  7, 4,
+		// Side edges connecting front and back
+		0, 5,  2, 7,  3, 6,  4, 1
+	};
+
+	// Upload the edge indices to a separate `EBO`
+	glGenBuffers(1, &edgeEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nodeEdges), nodeEdges, GL_STATIC_DRAW);
 }
 
 void SimulationView::CleanGeometry()
 {
+	CleanOGLObject( m_nodeGPU );
 	CleanOGLObject( m_sphereGPU );
 }
 
@@ -103,10 +125,19 @@ void SimulationView::InitTextures()
 	glTextureSubImage2D( m_sphereTextureID, 0, 0, 0, sphereImage.width, sphereImage.height, GL_RGBA, GL_UNSIGNED_BYTE, sphereImage.data() );
 
 	glGenerateTextureMipmap( m_sphereTextureID );
+
+	ImageRGBA nodeImage = ImageFromFile("Assets/node.jpg");
+
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_nodeTextureID);
+	glTextureStorage2D( m_nodeTextureID, NumberOfMIPLevels(nodeImage), GL_RGBA8, nodeImage.width, nodeImage.height );
+	glTextureSubImage2D( m_nodeTextureID, 0, 0, 0, nodeImage.width, nodeImage.height, GL_RGBA, GL_UNSIGNED_BYTE, nodeImage.data() );
+
+	glGenerateTextureMipmap( m_nodeTextureID );
 }
 
 void SimulationView::CleanTextures() const
 {
+	glDeleteTextures( 1, &m_nodeTextureID );
 	glDeleteTextures( 1, &m_sphereTextureID );
 }
 
@@ -244,11 +275,15 @@ void SimulationView::Render()
 	// Textures
 	glBindSampler( 0, m_SamplerID );
 	glBindTextureUnit(0, m_sphereTextureID);
-	glBindSampler(0, m_SamplerID);
 
 	glBindVertexArray(m_sphereGPU.vaoID);
 
 	// Draw instanced geometry
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnableVertexAttribArray(3);
+	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(5);
+	glEnableVertexAttribArray(6);
 	glDrawElementsInstanced(GL_TRIANGLES, m_sphereGPU.count, GL_UNSIGNED_INT, nullptr, simulationManager.particles.size());
 
 	// Draw individual if necessary
@@ -266,11 +301,31 @@ void SimulationView::Render()
 			m_sphereGPU.count,
 			GL_UNSIGNED_INT,
 			nullptr);
+	}
 
-		glEnableVertexAttribArray(3);
-		glEnableVertexAttribArray(4);
-		glEnableVertexAttribArray(5);
-		glEnableVertexAttribArray(6);
+	// Nodes
+	if (showOctree) {
+		glDisableVertexAttribArray(3);
+		glDisableVertexAttribArray(4);
+		glDisableVertexAttribArray(5);
+		glDisableVertexAttribArray(6);
+
+		glBindTextureUnit(0, m_nodeTextureID);
+		glBindSampler(0, m_SamplerID);
+		glBindVertexArray(m_nodeGPU.vaoID);
+
+		glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), true);
+		glProgramUniform1i(m_programID, ul(m_programID, "colorType"), 0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		for (int i = 0; i < simulationManager.octree.nodes.size(); i++) {
+			if (simulationManager.octree.nodes[i].getMass() == 0) continue;
+
+			glProgramUniform3fv(m_programID, ul(m_programID, "position"), 1, glm::value_ptr(simulationManager.octree.nodes[i].octant.getCenter()));
+			glProgramUniform1f(m_programID, ul(m_programID, "scale"), simulationManager.octree.nodes[i].octant.getSize()*4);
+			
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeEBO);
+			glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, nullptr);
+		}
 	}
 
 	// Cleanup
@@ -860,6 +915,8 @@ void SimulationView::RenderGUI()
 		ImGui::SeparatorText("Other display settings");
 		if (ImGui::DragFloat("Particle size", &scaleFactor, 0.005f, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor()))
 			simulationManager.settings.setScaleFactor(scaleFactor);
+
+		ImGui::Checkbox("Display octree structure", &showOctree);
 
 		if (ImGui::Checkbox("Color based on force", &isForceColor)) {
 			if (isForceColor != simulationManager.settings.getIsForceColor())

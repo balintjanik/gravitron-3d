@@ -51,9 +51,9 @@ void main()
 
     // Compute world transformation matrix (translation + scale)
     mat4 world = mat4(1.0);
-    world[0][0] = scaleFactor * instanceScale;
-    world[1][1] = scaleFactor * instanceScale;
-    world[2][2] = scaleFactor * instanceScale;
+    world[0][0] = instanceSize;
+    world[1][1] = instanceSize;
+    world[2][2] = instanceSize;
     world[3] = vec4(normalizedInstancePosition, 1.0); // Apply translation
 
     // Compute worldIT (transpose of inverse)
