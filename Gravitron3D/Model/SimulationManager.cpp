@@ -165,11 +165,12 @@ void SimulationManager::handleWorldBounds(glm::vec3& r_position, glm::vec3& r_ve
 
 void SimulationManager::updateParticles(float deltaTime) {
 	std::vector<std::thread> threads;
-	size_t chunk_size = settings.getNumberOfParticles() / settings.getNumberOfThreads();
+	size_t numThreads = std::min(1 + settings.getNumberOfParticles() / 200, settings.getNumberOfThreads());
+	size_t chunk_size = settings.getNumberOfParticles() / numThreads;
 
-	for (size_t t = 0; t < settings.getNumberOfThreads(); ++t) {
+	for (size_t t = 0; t < numThreads; ++t) {
 		size_t start = t * chunk_size;
-		size_t end = (t == settings.getNumberOfThreads() - 1) ? settings.getNumberOfParticles() : (t + 1) * chunk_size;
+		size_t end = (t == numThreads - 1) ? settings.getNumberOfParticles() : (t + 1) * chunk_size;
 
 		threads.emplace_back(&SimulationManager::updateParticlesRange, this, start, end, deltaTime);
 	}
