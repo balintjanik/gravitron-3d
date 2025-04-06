@@ -800,7 +800,7 @@ void SimulationView::ShowSpawnParticleSettings() {
 			glm::vec4(spawnParticle_velocity, spawnParticle_size),
 			glm::vec4(0.0f),
 			glm::vec4(spawnParticle_color, spawnParticle_movable ? 1 : 0));
-		if (threshold_numberOfParticles >= threshold_numberOfParticles)
+		if (currentNumberOfParticles >= threshold_numberOfParticles)
 			UpdateMessage("Warning: adding too many particles might result in lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
 	}
 }
