@@ -6,9 +6,6 @@
 #include "Octree.h"
 #include "Settings.h"
 #include "PresetUtils.h"
-#include "PresetType.h"
-#include "PositionType.h"
-#include "VelocityType.h"
 #include "../Persistence/ParticleDataLoader.h"
 #include "../Persistence/SettingsDataLoader.h"
 
@@ -21,7 +18,7 @@ public:
 	SimulationManager() { };
 
 	void initSettings();
-	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass);
+	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass, SizeType size);
 	void updateSimulation(const SUpdateInfo& updateInfo);
 
 	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable);
@@ -41,7 +38,11 @@ public:
 		MassType mass,
 		float massValue,
 		float massRandomMin,
-		float massRandomMax);
+		float massRandomMax,
+		SizeType size,
+		float sizeValue,
+		float sizeRandomMin,
+		float sizeRandomMax);
 
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);

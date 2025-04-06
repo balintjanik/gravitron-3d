@@ -97,6 +97,9 @@
     <ClInclude Include="Model\MassType.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="Model\SizeType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Model">

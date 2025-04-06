@@ -142,7 +142,7 @@ void SimulationView::CleanTextures() const
 }
 
 void SimulationView::InitSimulation() {
-	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType, massType);
+	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType, massType, sizeType);
 }
 
 void SimulationView::InitImGuiSettings() {
@@ -888,8 +888,23 @@ void SimulationView::ShowSpawnGroupMassSettings(MassType massType) {
 		ImGui::DragFloat("Mass value##Group", &group_massValue, 1.0f, 0.1f, 100000.0f);
 		break;
 	case MASS_RANDOM:
-		ImGui::DragFloat("Minimum value##Group", &group_massRandomMin, 1.0f, 0.1f, group_massRandomMax);
-		ImGui::DragFloat("Maximum value##Group", &group_massRandomMax, 1.0f, group_massRandomMin, 10000.0f);
+		ImGui::DragFloat("Minimum value##GroupMass", &group_massRandomMin, 1.0f, 0.1f, group_massRandomMax);
+		ImGui::DragFloat("Maximum value##GroupMass", &group_massRandomMax, 1.0f, group_massRandomMin, 10000.0f);
+		break;
+	default:
+		break;
+	}
+}
+
+void SimulationView::ShowSpawnGroupSizeSettings(SizeType sizeType) {
+	switch (sizeType)
+	{
+	case SIZE_CONSTANT:
+		ImGui::DragFloat("Size value##Group", &group_sizeValue, 0.1f, 0.1f, 100.0f);
+		break;
+	case SIZE_RANDOM:
+		ImGui::DragFloat("Minimum value##GroupSize", &group_sizeRandomMin, 0.1f, 0.1f, group_sizeRandomMax);
+		ImGui::DragFloat("Maximum value##GroupSize", &group_sizeRandomMax, 0.1f, group_sizeRandomMin, 100.0f);
 		break;
 	default:
 		break;
@@ -1036,9 +1051,24 @@ void SimulationView::RenderGUI()
 		ShowEnumDropdown("Mass Type##Group", MASS_TYPE_NAMES, group_massType);
 		ShowSpawnGroupMassSettings(group_massType);
 
+		ImGui::SeparatorText("Size settings");
+		ShowEnumDropdown("Size Type##Group", SIZE_TYPE_NAMES, group_sizeType);
+		ShowSpawnGroupSizeSettings(group_sizeType);
+
 		ImGui::SeparatorText("Finalize");
 		if (ImGui::Button("Add group")) {
-			simulationManager.addGroup(group_numberOfParticles, group_positionType, group_cubeMin, group_cubeMax, group_sphereCenter, group_sphereRadiusMin, group_sphereRadiusMax, group_velocityType, group_velocityScale, group_centerMass, group_velocityRandomMin, group_velocityRandomMax, group_overallVelocity, group_massType, group_massValue, group_massRandomMin, group_massRandomMax);
+			simulationManager.addGroup(group_numberOfParticles,
+				group_positionType,
+				group_cubeMin, group_cubeMax,
+				group_sphereCenter, group_sphereRadiusMin, group_sphereRadiusMax,
+				group_velocityType,
+				group_velocityScale, group_centerMass,
+				group_velocityRandomMin, group_velocityRandomMax,
+				group_overallVelocity,
+				group_massType,
+				group_massValue, group_massRandomMin, group_massRandomMax,
+				group_sizeType,
+				group_sizeValue, group_sizeRandomMin, group_sizeRandomMax);
 		}
 	}
 
@@ -1055,6 +1085,7 @@ void SimulationView::RenderGUI()
 			ShowEnumDropdown("Position Type", POSITION_TYPE_NAMES, positionType);
 			ShowEnumDropdown("Velocity Type", VELOCITY_TYPE_NAMES, velocityType);
 			ShowEnumDropdown("Mass Type", MASS_TYPE_NAMES, massType);
+			ShowEnumDropdown("Size Type", SIZE_TYPE_NAMES, sizeType);
 		}
 
 		if (ImGui::Button("Start New Simulation")) {

@@ -5,10 +5,11 @@
 #include "PositionType.h"
 #include "VelocityType.h"
 #include "MassType.h"
+#include "SizeType.h"
 
 class PresetUtils {
 public:
-	static std::vector<Particle> generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass);
+	static std::vector<Particle> generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass, SizeType size);
 	static float randomFloat(float min, float max);
 
 	static void calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
@@ -21,10 +22,14 @@ public:
 
 	static void calculateMassesConstant(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float value);
 	static void calculateMassesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float minValue, float maxValue);
+
+	static void calculateSizesConstant(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float value);
+	static void calculateSizesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float minValue, float maxValue);
 private:
 	static void initParticlePositions(std::vector<Particle>& r_particles, PositionType position);
 	static void initParticleVelocities(std::vector<Particle>& r_particles, VelocityType velocity);
 	static void initParticleMasses(std::vector<Particle>& r_particles, MassType mass);
+	static void initParticleSizes(std::vector<Particle>& r_particles, SizeType size);
 
 	static void initPresetGalaxy(std::vector<Particle>& r_particles);
 	static void initPresetSolarSystem(std::vector<Particle>& r_particles);

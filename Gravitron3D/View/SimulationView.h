@@ -186,6 +186,11 @@ protected:
 	float group_massValue = 1.0f;
 	float group_massRandomMin = 1.0f;
 	float group_massRandomMax = 1.0f;
+	void ShowSpawnGroupSizeSettings(SizeType sizeType);
+	SizeType group_sizeType = static_cast<SizeType>(0);
+	float group_sizeValue = 1.0f;
+	float group_sizeRandomMin = 1.0f;
+	float group_sizeRandomMax = 1.0f;
 
 	// New simulation settings
 	int numberOfParticles = 10000;
@@ -194,6 +199,7 @@ protected:
 	PositionType positionType = static_cast<PositionType>(0);
 	VelocityType velocityType = static_cast<VelocityType>(0);
 	MassType massType = static_cast<MassType>(0);
+	SizeType sizeType = static_cast<SizeType>(0);
 
 	// Message
 	void UpdateMessage(std::string newMessage, glm::vec3 newMessageColor);

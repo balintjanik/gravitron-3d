@@ -8,7 +8,7 @@ float PresetUtils::randomFloat(float min, float max)
 	return (random * range) + min;
 }
 
-std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass) {
+std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass, SizeType size) {
 	std::vector<Particle> particles;
 
 	if (numberOfParticles == 0) return particles;
@@ -36,6 +36,7 @@ std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, Pres
 		initParticlePositions(particles, position);
 		initParticleVelocities(particles, velocity);
 		initParticleMasses(particles, mass);
+		initParticleSizes(particles, size);
 		break;
 	default:
 		break;
@@ -128,13 +129,34 @@ void PresetUtils::initParticleMasses(std::vector<Particle>& r_particles, MassTyp
 
 		calculateMassesConstant(r_particles, rangeMin, rangeMax, value);
 	}
-	else if (MASS_RANDOM) {
+	else if (mass == MASS_RANDOM) {
+		float minValue = 0.5f;
+		float maxValue = 15.0f;
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+
+		calculateMassesRandom(r_particles, rangeMin, rangeMax, minValue, maxValue);
+	}
+	else {
+		throw "Invalid mass type.";
+	}
+}
+
+void PresetUtils::initParticleSizes(std::vector<Particle>& r_particles, SizeType size) {
+	if (size == SIZE_CONSTANT) {
+		float value = 1.0f;
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+
+		calculateSizesConstant(r_particles, rangeMin, rangeMax, value);
+	}
+	else if (size == SIZE_RANDOM) {
 		float minValue = 0.5f;
 		float maxValue = 2.0f;
 		int rangeMin = 0;
 		int rangeMax = r_particles.size();
 
-		calculateMassesRandom(r_particles, rangeMin, rangeMax, minValue, maxValue);
+		calculateSizesRandom(r_particles, rangeMin, rangeMax, minValue, maxValue);
 	}
 	else {
 		throw "Invalid mass type.";
@@ -148,7 +170,9 @@ void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
 	float radiusMax = 300.0f;
 	float velocityScale = 0.8f;
 	float massMin = 0.5f;
-	float massMax = 2.0f;
+	float massMax = 15.0f;
+	float sizeMin = 0.5f;
+	float sizeMax = 2.0f;
 	r_particles[0].setPosition(center);
 	r_particles[0].setMass(centerMass);
 	r_particles[0].setMovable(false);
@@ -156,9 +180,7 @@ void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
 	calculatePositionsSphere(r_particles, 1, r_particles.size(), center, radiusMin, radiusMax, false);
 	calculateVelocitiesOrbit(r_particles, 1, r_particles.size(), center, velocityScale);
 	calculateMassesRandom(r_particles, 1, r_particles.size(), massMin, massMax);
-	for (auto& p : r_particles) {
-		p.setSize(randomFloat(0.5f, 2.0f));
-	}
+	calculateSizesRandom(r_particles, 1, r_particles.size(), sizeMin, sizeMax);
 	r_particles[0].setSize(10.0f);
 }
 
@@ -184,6 +206,15 @@ void PresetUtils::initPresetRandom(std::vector<Particle>& r_particles) {
 	max = glm::vec3(50.f, 50.f, 50.f);
 	calculateVelocitiesRandom(r_particles, 0, r_particles.size(), min, max);
 
+	// Mass
+	float massMin = 0.5f;
+	float massMax = 15.0f;
+	calculateMassesRandom(r_particles, 1, r_particles.size(), massMin, massMax);
+
+	// Size
+	float sizeMin = 0.5f;
+	float sizeMax = 2.0f;
+	calculateSizesRandom(r_particles, 1, r_particles.size(), sizeMin, sizeMax);
 }
 
 void PresetUtils::calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
@@ -375,5 +406,31 @@ void PresetUtils::calculateMassesRandom(std::vector<Particle>& r_particles, int 
 	for (int i = rangeMin; i < rangeMax; i++) {
 
 		r_particles[i].setMass(randomFloat(minValue, maxValue));
+	}
+}
+
+void PresetUtils::calculateSizesConstant(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float value) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	for (int i = rangeMin; i < rangeMax; i++) {
+
+		r_particles[i].setSize(value);
+	}
+}
+
+void PresetUtils::calculateSizesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float minValue, float maxValue) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	for (int i = rangeMin; i < rangeMax; i++) {
+
+		r_particles[i].setSize(randomFloat(minValue, maxValue));
 	}
 }

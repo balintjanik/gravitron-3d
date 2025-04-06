@@ -8,11 +8,11 @@ void SimulationManager::initSettings() {
 	if (settings.getNumberOfThreads() == 0) settings.setNumberOfThreads(4); // Fallback to 4 if hardware_concurrency cannot detect
 }
 
-void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass) {
+void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass, SizeType size) {
 	settings.setNumberOfParticles(numberOfParticles);
 
 	particles.clear();
-	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity, mass);
+	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity, mass, size);
 }
 
 void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
@@ -52,7 +52,11 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	MassType mass,
 	float massValue,
 	float massRandomMin,
-	float massRandomMax)
+	float massRandomMax,
+	SizeType size,
+	float sizeValue,
+	float sizeRandomMin,
+	float sizeRandomMax)
 {
 	int previousNumberOfParticles = settings.getNumberOfParticles();
 	settings.setNumberOfParticles(previousNumberOfParticles + numberOfParticlesToAdd);
@@ -131,6 +135,19 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 		break;
 	case MASS_RANDOM:
 		PresetUtils::calculateMassesRandom(particles, rangeMin, rangeMax, massRandomMin, massRandomMax);
+		break;
+	default:
+		break;
+	}
+
+	// Initialize sizes
+	switch (size)
+	{
+	case SIZE_CONSTANT:
+		PresetUtils::calculateSizesConstant(particles, rangeMin, rangeMax, sizeValue);
+		break;
+	case SIZE_RANDOM:
+		PresetUtils::calculateSizesRandom(particles, rangeMin, rangeMax, sizeRandomMin, sizeRandomMax);
 		break;
 	default:
 		break;
