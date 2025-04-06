@@ -172,8 +172,8 @@ protected:
 	glm::vec3 group_cubeMin = glm::vec3(0.0f);
 	glm::vec3 group_cubeMax = glm::vec3(0.0f);
 	glm::vec3 group_sphereCenter = glm::vec3(0.0f);
-	float group_sphereRadiusMin = 0.0f;
-	float group_sphereRadiusMax = 0.0f;
+	float group_sphereRadiusMin = 20.0f;
+	float group_sphereRadiusMax = 250.0f;
 	void ShowSpawnGroupVelocitySettings(VelocityType velocityType);
 	VelocityType group_velocityType = static_cast<VelocityType>(0);
 	float group_velocityScale = 1.0f;

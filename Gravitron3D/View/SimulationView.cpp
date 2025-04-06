@@ -699,8 +699,10 @@ void SimulationView::ShowCameraSettings() {
 	if (ImGui::SliderFloat("Camera distance", &cameraDistance, m_cameraManipulator.GetMinDistance(), m_cameraManipulator.GetMaxDistance()))
 		m_cameraManipulator.SetDistance(cameraDistance);
 	
-	if (ImGui::DragFloat("Scroll zoom speed", &scrollZoomSpeed, 0.5f, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed()))
+	if (ImGui::DragFloat("Scroll zoom speed", &scrollZoomSpeed, 0.5f, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed())) {
+		scrollZoomSpeed = glm::clamp(scrollZoomSpeed, m_cameraManipulator.GetMinSpeed(), m_cameraManipulator.GetMaxSpeed());
 		m_cameraManipulator.SetSpeed(scrollZoomSpeed);
+	}
 
 	ImGui::PopItemWidth();
 	ImGui::EndGroup();
@@ -764,7 +766,7 @@ void SimulationView::ShowLightParameterSettings() {
 	else if (lightPos.w == 0.0f) // Directional light
 	{
 		glm::vec3 dir = glm::vec3(lightPos);
-		if (ImGui::DragFloat3("Light Direction", glm::value_ptr(dir), 0.05f, -1.f, 1.f)) {
+		if (ImGui::DragFloat3("Light Direction", glm::value_ptr(dir), 0.05f, -1.0f, 1.0f)) {
 			if (dir != glm::vec3(0.0f))
 				dir = glm::normalize(dir);
 			else dir = glm::vec3(0.f, -1.f, 0.f);
@@ -774,24 +776,37 @@ void SimulationView::ShowLightParameterSettings() {
 	}
 	else if (lightPos.w >= 1.f) // Spot light
 	{
-		if (ImGui::DragFloat3("Light Position", glm::value_ptr(lightPos), 0.1f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+		if (ImGui::DragFloat3("Light Position", glm::value_ptr(lightPos), 0.1f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			lightPos = glm::clamp(lightPos, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
 			simulationManager.settings.setLightPos(lightPos);
+		}
 
-		if (ImGui::DragFloat("Constant Att.", &lightConstantAttenuation, 0.05f, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation()))
+		if (ImGui::DragFloat("Constant Att.", &lightConstantAttenuation, 0.05f, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation())) {
+			lightConstantAttenuation = glm::clamp(lightConstantAttenuation, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation());
 			simulationManager.settings.setLightConstantAttenuation(lightConstantAttenuation);
-		if (ImGui::DragFloat("Linear Att.", &lightLinearAttenuation, 0.05f, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation()))
+		}
+		if (ImGui::DragFloat("Linear Att.", &lightLinearAttenuation, 0.05f, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation())) {
+			lightLinearAttenuation = glm::clamp(lightLinearAttenuation, simulationManager.settings.getMinLightLinearAttenuation(), simulationManager.settings.getMaxLightLinearAttenuation());
 			simulationManager.settings.setLightLinearAttenuation(lightLinearAttenuation);
-		if (ImGui::DragFloat("Quadratic Att.", &lightQuadraticAttenuation, 0.05f, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation()))
+		}
+		if (ImGui::DragFloat("Quadratic Att.", &lightQuadraticAttenuation, 0.05f, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation())) {
+			lightQuadraticAttenuation = glm::clamp(lightQuadraticAttenuation, simulationManager.settings.getMinLightQuadraticAttenuation(), simulationManager.settings.getMaxLightQuadraticAttenuation());
 			simulationManager.settings.setLightQuadraticAttenuation(lightQuadraticAttenuation);
+		}
 	}
 }
 
 void SimulationView::ShowSpawnParticleSettings() {
-	ImGui::DragFloat3("Position", glm::value_ptr(spawnParticle_position), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
-	ImGui::DragFloat3("Velocity", glm::value_ptr(spawnParticle_velocity), 1.0f, -100.0f, 100.0f);
-	ImGui::DragFloat3("Color", glm::value_ptr(spawnParticle_color), 0.05f, 0.0f, 1.0f);
-	ImGui::DragFloat("Mass", &spawnParticle_mass, 1.0f, 0.0f, 1000000.0f);
-	ImGui::DragFloat("Size", &spawnParticle_size, 1.0f, 0.0f, 100.0f);
+	if (ImGui::DragFloat3("Position", glm::value_ptr(spawnParticle_position), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+		spawnParticle_position = glm::clamp(spawnParticle_position, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+	if (ImGui::DragFloat3("Velocity", glm::value_ptr(spawnParticle_velocity), 1.0f, -100.0f, 100.0f))
+		spawnParticle_velocity = glm::clamp(spawnParticle_velocity, -100.0f, 100.0f);
+	if (ImGui::DragFloat3("Color", glm::value_ptr(spawnParticle_color), 0.05f, 0.0f, 1.0f))
+		spawnParticle_color = glm::clamp(spawnParticle_color, 0.0f, 1.0f);
+	if (ImGui::DragFloat("Mass", &spawnParticle_mass, 1.0f, 0.001f, 1000000.0f))
+		spawnParticle_mass = glm::clamp(spawnParticle_mass, 0.001f, 1000000.0f);
+	if (ImGui::DragFloat("Size", &spawnParticle_size, 1.0f, 0.1f, 100.0f))
+		spawnParticle_size = glm::clamp(spawnParticle_size, 0.1f, 100.0f);
 	ImGui::Checkbox("Movable", &spawnParticle_movable);
 
 	if (ImGui::Button("Spawn")) {
@@ -808,50 +823,42 @@ void SimulationView::ShowSpawnParticleSettings() {
 void SimulationView::ShowSpawnGroupPositionSettings(PositionType positionType) {
 	switch (positionType) {
 	case POSITION_RANDOM:
-		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			group_cubeMin.x = glm::min(group_cubeMin.x, group_cubeMax.x);
-			group_cubeMin.y = glm::min(group_cubeMin.y, group_cubeMax.y);
-			group_cubeMin.z = glm::min(group_cubeMin.z, group_cubeMax.z);
-		}
-		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			group_cubeMax.x = glm::max(group_cubeMax.x, group_cubeMin.x);
-			group_cubeMax.y = glm::max(group_cubeMax.y, group_cubeMin.y);
-			group_cubeMax.z = glm::max(group_cubeMax.z, group_cubeMin.z);
-		}
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+			group_cubeMin = glm::clamp(group_cubeMin, glm::vec3(simulationManager.getMinWorldBound()), group_cubeMax);
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+			group_cubeMax = glm::clamp(group_cubeMax, group_cubeMin, glm::vec3(simulationManager.getMaxWorldBound()));
 		break;
 	case POSITION_SPHERE:
-		ImGui::DragFloat3("Center##Group", glm::value_ptr(group_sphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
-		ImGui::DragFloat("Minimum radius##Group", &group_sphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), group_sphereRadiusMax);
-		ImGui::DragFloat("Maximum radius##Group", &group_sphereRadiusMax, 10.0f, group_sphereRadiusMin, simulationManager.getMaxWorldBound());
+		if (ImGui::DragFloat3("Center##Group", glm::value_ptr(group_sphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+			group_sphereCenter = glm::clamp(group_sphereCenter, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+		if (ImGui::DragFloat("Minimum radius##Group", &group_sphereRadiusMin, 10.0f, 0.001f, group_sphereRadiusMax))
+			group_sphereRadiusMin = glm::clamp(group_sphereRadiusMin, 0.001f, group_sphereRadiusMax);
+		if (ImGui::DragFloat("Maximum radius##Group", &group_sphereRadiusMax, 10.0f, group_sphereRadiusMin, simulationManager.getMaxWorldBound()))
+			group_sphereRadiusMax = glm::clamp(group_sphereRadiusMax, group_sphereRadiusMin, simulationManager.getMaxWorldBound());
 		break;
 	case POSITION_DISK:
-		ImGui::DragFloat3("Center##Group", glm::value_ptr(group_sphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
-		ImGui::DragFloat("Minimum radius##Group", &group_sphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), group_sphereRadiusMax);
-		ImGui::DragFloat("Maximum radius##Group", &group_sphereRadiusMax, 10.0f, group_sphereRadiusMin, simulationManager.getMaxWorldBound());
+		if (ImGui::DragFloat3("Center##Group", glm::value_ptr(group_sphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+			group_sphereCenter = glm::clamp(group_sphereCenter, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+		if (ImGui::DragFloat("Minimum radius##Group", &group_sphereRadiusMin, 10.0f, 0.001f, group_sphereRadiusMax))
+			group_sphereRadiusMin = glm::clamp(group_sphereRadiusMin, 0.001f, group_sphereRadiusMax);
+		if (ImGui::DragFloat("Maximum radius##Group", &group_sphereRadiusMax, 10.0f, group_sphereRadiusMin, simulationManager.getMaxWorldBound()))
+			group_sphereRadiusMax = glm::clamp(group_sphereRadiusMax, group_sphereRadiusMin, simulationManager.getMaxWorldBound());
 		break;
 	case POSITION_GRID_2D:
 		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			group_cubeMin.x = glm::min(group_cubeMin.x, group_cubeMax.x);
 			group_cubeMax.y = group_cubeMin.y;
-			group_cubeMin.z = glm::min(group_cubeMin.z, group_cubeMax.z);
+			group_cubeMin = glm::clamp(group_cubeMin, glm::vec3(simulationManager.getMinWorldBound()), group_cubeMax);
 		}
 		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			group_cubeMax.x = glm::max(group_cubeMax.x, group_cubeMin.x);
 			group_cubeMin.y = group_cubeMax.y;
-			group_cubeMax.z = glm::max(group_cubeMax.z, group_cubeMin.z);
+			group_cubeMax = glm::clamp(group_cubeMax, group_cubeMin, glm::vec3(simulationManager.getMaxWorldBound()));
 		}
 		break;
 	case POSITION_GRID_3D:
-		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			group_cubeMin.x = glm::min(group_cubeMin.x, group_cubeMax.x);
-			group_cubeMin.y = glm::min(group_cubeMin.y, group_cubeMax.y);
-			group_cubeMin.z = glm::min(group_cubeMin.z, group_cubeMax.z);
-		}
-		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			group_cubeMax.x = glm::max(group_cubeMax.x, group_cubeMin.x);
-			group_cubeMax.y = glm::max(group_cubeMax.y, group_cubeMin.y);
-			group_cubeMax.z = glm::max(group_cubeMax.z, group_cubeMin.z);
-		}
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+			group_cubeMin = glm::clamp(group_cubeMin, glm::vec3(simulationManager.getMinWorldBound()), group_cubeMax);
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
+			group_cubeMax = glm::clamp(group_cubeMax, group_cubeMin, glm::vec3(simulationManager.getMaxWorldBound()));
 		break;
 	default:
 		break;
@@ -861,19 +868,17 @@ void SimulationView::ShowSpawnGroupPositionSettings(PositionType positionType) {
 void SimulationView::ShowSpawnGroupVelocitySettings(VelocityType velocityType) {
 	switch (velocityType) {
 	case VELOCITY_ORBIT:
-		ImGui::DragFloat("Velocity scale##Group", &group_velocityScale, 0.1f, -5.0f, 5.0f);
-		ImGui::DragFloat("Center mass##Group", &group_centerMass, 0.1f, 0.0f, 1000000.0f);
+		if (ImGui::DragFloat("Velocity scale##Group", &group_velocityScale, 0.1f, -5.0f, 5.0f))
+			group_velocityScale = glm::clamp(group_velocityScale, -5.0f, 5.0f);
+		if (ImGui::DragFloat("Center mass##Group", &group_centerMass, 0.1f, 0.0f, 1000000.0f))
+			group_centerMass = glm::clamp(group_centerMass, 0.0f, 1000000.0f);
 		break;
 	case VELOCITY_RANDOM:
 		if (ImGui::DragFloat3("Minimum velocity##Group", glm::value_ptr(group_velocityRandomMin), 1.0f, -1000.0f, 1000.0f)) {
-			group_velocityRandomMin.x = glm::min(group_velocityRandomMin.x, group_velocityRandomMax.x);
-			group_velocityRandomMin.y = glm::min(group_velocityRandomMin.y, group_velocityRandomMax.y);
-			group_velocityRandomMin.z = glm::min(group_velocityRandomMin.z, group_velocityRandomMax.z);
+			group_velocityRandomMin = glm::clamp(group_velocityRandomMin, glm::vec3(-1000.0f), group_velocityRandomMax);
 		}
 		if (ImGui::DragFloat3("Maximum velocity##Group", glm::value_ptr(group_velocityRandomMax), 1.0f, -1000.0f, 1000.0f)) {
-			group_velocityRandomMax.x = glm::max(group_velocityRandomMax.x, group_velocityRandomMin.x);
-			group_velocityRandomMax.y = glm::max(group_velocityRandomMax.y, group_velocityRandomMin.y);
-			group_velocityRandomMax.z = glm::max(group_velocityRandomMax.z, group_velocityRandomMin.z);
+			group_velocityRandomMax = glm::clamp(group_velocityRandomMax, group_velocityRandomMin, glm::vec3(1000.0f));
 		}
 		break;
 	default:
@@ -885,11 +890,14 @@ void SimulationView::ShowSpawnGroupMassSettings(MassType massType) {
 	switch (massType)
 	{
 	case MASS_CONSTANT:
-		ImGui::DragFloat("Mass value##Group", &group_massValue, 1.0f, 0.1f, 100000.0f);
+		if (ImGui::DragFloat("Mass value##Group", &group_massValue, 1.0f, 0.1f, 100000.0f))
+			group_massValue = glm::clamp(group_massValue, 0.1f, 100000.0f);
 		break;
 	case MASS_RANDOM:
-		ImGui::DragFloat("Minimum value##GroupMass", &group_massRandomMin, 1.0f, 0.1f, group_massRandomMax);
-		ImGui::DragFloat("Maximum value##GroupMass", &group_massRandomMax, 1.0f, group_massRandomMin, 10000.0f);
+		if (ImGui::DragFloat("Minimum value##GroupMass", &group_massRandomMin, 1.0f, 0.1f, group_massRandomMax))
+			group_massRandomMin = glm::clamp(group_massRandomMin, 0.1f, group_massRandomMax);
+		if (ImGui::DragFloat("Maximum value##GroupMass", &group_massRandomMax, 1.0f, group_massRandomMin, 10000.0f))
+			group_massRandomMax = glm::clamp(group_massRandomMax, group_massRandomMin, 10000.0f);
 		break;
 	default:
 		break;
@@ -900,11 +908,14 @@ void SimulationView::ShowSpawnGroupSizeSettings(SizeType sizeType) {
 	switch (sizeType)
 	{
 	case SIZE_CONSTANT:
-		ImGui::DragFloat("Size value##Group", &group_sizeValue, 0.1f, 0.1f, 100.0f);
+		if (ImGui::DragFloat("Size value##Group", &group_sizeValue, 0.1f, 0.1f, 100.0f))
+			group_sizeValue = glm::clamp(group_sizeValue, 0.1f, 100.0f);
 		break;
 	case SIZE_RANDOM:
-		ImGui::DragFloat("Minimum value##GroupSize", &group_sizeRandomMin, 0.1f, 0.1f, group_sizeRandomMax);
-		ImGui::DragFloat("Maximum value##GroupSize", &group_sizeRandomMax, 0.1f, group_sizeRandomMin, 100.0f);
+		if (ImGui::DragFloat("Minimum value##GroupSize", &group_sizeRandomMin, 0.1f, 0.1f, group_sizeRandomMax))
+			group_sizeRandomMin = glm::clamp(group_sizeRandomMin, 0.1f, group_sizeRandomMax);
+		if (ImGui::DragFloat("Maximum value##GroupSize", &group_sizeRandomMax, 0.1f, group_sizeRandomMin, 100.0f))
+			group_sizeRandomMax = glm::clamp(group_sizeRandomMax, group_sizeRandomMin, 100.0f);
 		break;
 	default:
 		break;
@@ -945,8 +956,10 @@ void SimulationView::RenderGUI()
 		ShowCameraSettings();
 
 		ImGui::SeparatorText("Other display settings");
-		if (ImGui::DragFloat("Particle size", &scaleFactor, 0.005f, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor()))
+		if (ImGui::DragFloat("Particle size", &scaleFactor, 0.005f, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor())) {
+			scaleFactor = glm::clamp(scaleFactor, simulationManager.settings.getMinScaleFactor(), simulationManager.settings.getMaxScaleFactor());
 			simulationManager.settings.setScaleFactor(scaleFactor);
+		}
 
 		ImGui::Checkbox("Display octree structure", &showOctree);
 
@@ -956,11 +969,15 @@ void SimulationView::RenderGUI()
 		}
 
 		if (isForceColor) {
-			if (ImGui::DragFloat("Minimum force", &minForceColor, 1.0f, 0.0f, maxForceColor))
+			if (ImGui::DragFloat("Minimum force", &minForceColor, 1.0f, 0.0f, maxForceColor)) {
+				minForceColor = glm::clamp(minForceColor, 0.0f, maxForceColor);
 				simulationManager.settings.setMinForceColor(minForceColor);
+			}
 
-			if (ImGui::DragFloat("Maximum force", &maxForceColor, 1.0f, minForceColor, std::numeric_limits<float>::max()))
+			if (ImGui::DragFloat("Maximum force", &maxForceColor, 1.0f, minForceColor, std::numeric_limits<float>::max())) {
+				maxForceColor = glm::clamp(maxForceColor, minForceColor, std::numeric_limits<float>::max());
 				simulationManager.settings.setMaxForceColor(maxForceColor);
+			}
 		}
 		
 	}
@@ -968,6 +985,7 @@ void SimulationView::RenderGUI()
 	// Calculation settings
 	if (ImGui::CollapsingHeader("Calculation settings")) {
 		if (ImGui::DragFloat("Simulation speed", &simulationSpeed, 0.01f, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed())) {
+			simulationSpeed = glm::clamp(simulationSpeed, simulationManager.settings.getMinSimulationSpeed(), simulationManager.settings.getMaxSimulationSpeed());
 			simulationManager.settings.setSimulationSpeed(simulationSpeed);
 			if (simulationSpeed > threshold_simulationSpeed)
 				UpdateMessage("Warning: too large value for simulation speed might result in lower simulation accuracy!", glm::vec3(1.0f, 1.0f, 0.0f));
@@ -1046,8 +1064,10 @@ void SimulationView::RenderGUI()
 
 		ImGui::SeparatorText("Group velocity settings");
 		ImGui::Checkbox("Movable (center)", &group_movable);
-		if (group_movable)
-			ImGui::DragFloat3("Group velocity##Group", glm::value_ptr(group_overallVelocity), 1.0f, -1000.0f, 1000.0f);
+		if (group_movable) {
+			if (ImGui::DragFloat3("Group velocity##Group", glm::value_ptr(group_overallVelocity), 1.0f, -1000.0f, 1000.0f))
+				group_overallVelocity = glm::clamp(group_overallVelocity, -1000.0f, 1000.0f);
+		}
 
 		ImGui::SeparatorText("Mass settings");
 		ShowEnumDropdown("Mass Type##Group", MASS_TYPE_NAMES, group_massType);
