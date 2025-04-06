@@ -37,6 +37,7 @@ public:
 		float groupCenterMass,
 		glm::vec3 groupVelocityRandomMin,
 		glm::vec3 groupVelocityRandomMax,
+		glm::vec3 groupOverallVelocity,
 		MassType mass,
 		float groupMassValue,
 		float groupMassRandomMin,

@@ -1025,9 +1025,12 @@ void SimulationView::RenderGUI()
 		ShowEnumDropdown("Position Type##Group", POSITION_TYPE_NAMES, groupPositionType);
 		ShowSpawnGroupPositionSettings(groupPositionType);
 
-		ImGui::SeparatorText("Velocity settings");
+		ImGui::SeparatorText("Individual velocity settings");
 		ShowEnumDropdown("Velocity Type##Group", VELOCITY_TYPE_NAMES, groupVelocityType);
 		ShowSpawnGroupVelocitySettings(groupVelocityType);
+
+		ImGui::SeparatorText("Group velocity settings");
+		ImGui::DragFloat3("Group velocity##Group", glm::value_ptr(groupOverallVelocity), 1.0f, -1000.0f, 1000.0f);
 
 		ImGui::SeparatorText("Mass settings");
 		ShowEnumDropdown("Mass Type##Group", MASS_TYPE_NAMES, groupMassType);
@@ -1035,7 +1038,7 @@ void SimulationView::RenderGUI()
 
 		ImGui::SeparatorText("Finalize");
 		if (ImGui::Button("Add group")) {
-			simulationManager.addGroup(groupNumberOfParticles, groupPositionType, groupCubeMin, groupCubeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, groupVelocityType, groupVelocityScale, groupCenterMass, groupVelocityRandomMin, groupVelocityRandomMax, groupMassType, groupMassValue, groupMassRandomMin, groupMassRandomMax);
+			simulationManager.addGroup(groupNumberOfParticles, groupPositionType, groupCubeMin, groupCubeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, groupVelocityType, groupVelocityScale, groupCenterMass, groupVelocityRandomMin, groupVelocityRandomMax, groupOverallVelocity, groupMassType, groupMassValue, groupMassRandomMin, groupMassRandomMax);
 		}
 	}
 

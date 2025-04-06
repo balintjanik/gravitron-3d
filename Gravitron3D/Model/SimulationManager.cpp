@@ -48,6 +48,7 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	float groupCenterMass,
 	glm::vec3 groupVelocityRandomMin,
 	glm::vec3 groupVelocityRandomMax,
+	glm::vec3 groupOverallVelocity,
 	MassType mass,
 	float groupMassValue,
 	float groupMassRandomMin,
@@ -115,6 +116,11 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 		break;
 	default:
 		break;
+	}
+
+	// Add group overall velocity
+	for (int i = previousNumberOfParticles; i < particles.size(); i++) {
+		particles[i].setVelocity(particles[i].getVelocity() + groupOverallVelocity);
 	}
 
 	// Initialize masses

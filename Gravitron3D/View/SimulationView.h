@@ -180,6 +180,7 @@ protected:
 	float groupCenterMass = 1.0f;
 	glm::vec3 groupVelocityRandomMin = glm::vec3(0.0f);
 	glm::vec3 groupVelocityRandomMax = glm::vec3(0.0f);
+	glm::vec3 groupOverallVelocity = glm::vec3(0.0f);
 	void ShowSpawnGroupMassSettings(MassType massType);
 	MassType groupMassType = static_cast<MassType>(0);
 	float groupMassValue = 1.0f;
