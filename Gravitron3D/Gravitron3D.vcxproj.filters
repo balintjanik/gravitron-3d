@@ -100,6 +100,7 @@
     <ClInclude Include="Model\SizeType.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Model">
@@ -126,6 +127,12 @@
     <None Include="Shaders\shader.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Assets\icon.ico">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\icon.png">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\node.jpg">
@@ -145,5 +152,8 @@
     <None Include="Assets\rockICO.obj">
       <Filter>Assets</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
   </ItemGroup>
 </Project>

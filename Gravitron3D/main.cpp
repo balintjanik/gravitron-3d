@@ -4,6 +4,7 @@
 // SDL
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
+#include <SDL2/SDL_image.h>
 
 // ImGui
 #include <imgui.h>
@@ -30,6 +31,11 @@ int WinMain( int argc, char* args[] )
 		// irjuk ki a hibat es termináljon a program
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[SDL initialization] Error during the SDL initialization: %s", SDL_GetError());
 		return 1;
+	}
+
+	// Initialize SDL Image to load an icon
+	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+		SDL_Log("Failed to init SDL_image: %s", IMG_GetError());
 	}
 
 	// Miután az SDL Init lefutott, kilépésnél fusson le az alrendszerek kikapcsolása.
@@ -83,6 +89,16 @@ int WinMain( int argc, char* args[] )
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[Window creation] Error during the SDL initialization: %s", SDL_GetError());
 		return 1;
+	}
+
+	// Set icon to window
+	SDL_Surface* icon = IMG_Load("Assets/icon.png");
+	if (icon == nullptr) {
+		SDL_Log("Failed to load icon: %s", IMG_GetError());
+	}
+	else {
+		SDL_SetWindowIcon(win, icon);
+		SDL_FreeSurface(icon);  // Free after setting, SDL copies it internally
 	}
 
 	//

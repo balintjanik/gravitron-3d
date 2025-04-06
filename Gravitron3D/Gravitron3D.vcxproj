@@ -115,6 +115,12 @@
       <FileType>Document</FileType>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Assets\icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -145,6 +151,7 @@
     <ClInclude Include="Model\VelocityType.h" />
     <ClInclude Include="Persistence\ParticleDataLoader.h" />
     <ClInclude Include="Persistence\SettingsDataLoader.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="View\Camera.h" />
     <ClInclude Include="View\CameraPresets.h" />
     <ClInclude Include="View\CameraManipulator.h" />
@@ -152,5 +159,8 @@
     <ClInclude Include="View\SimulationView.h" />
     <ClInclude Include="View\ObjParser.h" />
     <ClInclude Include="View\SDL_GLDebugMessageCallback.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
   </ItemGroup>
 </Project>
