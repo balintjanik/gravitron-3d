@@ -16,7 +16,7 @@
 
 #include "View/SimulationView.h"
 
-int main( int argc, char* args[] )
+int WinMain( int argc, char* args[] )
 {
 	//
 	// 1. lépés: inicializáljuk az SDL-t
