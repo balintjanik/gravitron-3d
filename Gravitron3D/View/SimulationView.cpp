@@ -1045,7 +1045,9 @@ void SimulationView::RenderGUI()
 		ShowSpawnGroupVelocitySettings(group_velocityType);
 
 		ImGui::SeparatorText("Group velocity settings");
-		ImGui::DragFloat3("Group velocity##Group", glm::value_ptr(group_overallVelocity), 1.0f, -1000.0f, 1000.0f);
+		ImGui::Checkbox("Movable (center)", &group_movable);
+		if (group_movable)
+			ImGui::DragFloat3("Group velocity##Group", glm::value_ptr(group_overallVelocity), 1.0f, -1000.0f, 1000.0f);
 
 		ImGui::SeparatorText("Mass settings");
 		ShowEnumDropdown("Mass Type##Group", MASS_TYPE_NAMES, group_massType);
@@ -1064,7 +1066,7 @@ void SimulationView::RenderGUI()
 				group_velocityType,
 				group_velocityScale, group_centerMass,
 				group_velocityRandomMin, group_velocityRandomMax,
-				group_overallVelocity,
+				group_movable, group_overallVelocity,
 				group_massType,
 				group_massValue, group_massRandomMin, group_massRandomMax,
 				group_sizeType,

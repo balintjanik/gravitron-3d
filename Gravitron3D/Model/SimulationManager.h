@@ -34,6 +34,7 @@ public:
 		float centerMass,
 		glm::vec3 velocityRandomMin,
 		glm::vec3 velocityRandomMax,
+		bool movable,
 		glm::vec3 overallVelocity,
 		MassType mass,
 		float massValue,

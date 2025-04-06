@@ -48,6 +48,7 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	float centerMass,
 	glm::vec3 velocityRandomMin,
 	glm::vec3 velocityRandomMax,
+	bool movable,
 	glm::vec3 overallVelocity,
 	MassType mass,
 	float massValue,
@@ -75,6 +76,14 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	else {
 		centerParticle.setMass(1.0f);
 	}
+
+	if (!movable) {
+		centerParticle.setMovable(false);
+	}
+	else {
+		centerParticle.setVelocity(overallVelocity);
+	}
+
 	particles.push_back(centerParticle);
 
 	// Add particles
@@ -123,8 +132,10 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	}
 
 	// Add group overall velocity
-	for (int i = previousNumberOfParticles; i < particles.size(); i++) {
-		particles[i].setVelocity(particles[i].getVelocity() + overallVelocity);
+	if (movable) {
+		for (int i = rangeMin; i < rangeMax; i++) {
+			particles[i].setVelocity(particles[i].getVelocity() + overallVelocity);
+		}
 	}
 
 	// Initialize masses
