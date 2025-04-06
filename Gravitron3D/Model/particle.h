@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <string>
+#include <stdexcept>
 
 struct Particle {
 private:
@@ -45,11 +47,32 @@ public:
 
 	// Setters
 	void setPosition(const glm::vec3& newPosition) { positionMass = glm::vec4(newPosition, positionMass.w); }
-	void setMass(float newMass) { positionMass.w = newMass; }
+	void setMass(const float newMass) {
+		if (newMass < 0.00001f)
+			throw std::runtime_error("Incorrect value for mass: " + std::to_string(newMass) + ". Value must be larger than 0.00001");
+		else
+			positionMass.w = newMass;
+	}
 	void setVelocity(const glm::vec3& newVelocity) { velocitySize = glm::vec4(newVelocity, velocitySize.w); }
-	void setSize(float newSize) { velocitySize.w = newSize; }
+	void setSize(float newSize) {
+		if (newSize < 0.5f)
+			throw std::runtime_error("Incorrect value for size: " + std::to_string(newSize) + ". Value must be larger than 0.5");
+		else
+			velocitySize.w = newSize;
+	}
 	void setAcceleration(const glm::vec3& newAcceleration) { accelerationForce = glm::vec4(newAcceleration, accelerationForce.w); }
-	void setForce(float newForce) { accelerationForce.w = newForce; }
-	void setColor(const glm::vec3& newColor) { colorMovable = glm::vec4(newColor, colorMovable.w); }
+	void setForce(float newForce) {
+		if (newForce < 0.0f)
+			throw std::runtime_error("Incorrect value for force: " + std::to_string(newForce) + ". Value must be larger than 0");
+		else
+			accelerationForce.w = newForce;
+	}
+	void setColor(glm::vec3& newColor) {
+		if (newColor.r < 0.0f || newColor.g < 0.0f || newColor.b < 0.0f ||
+			newColor.r > 1.0f || newColor.g > 1.0f || newColor.b > 1.0f)
+			throw std::runtime_error("Color component values must be between 0.0 and 1.0");
+		else
+			colorMovable = glm::vec4(newColor, colorMovable.w);
+	}
 	void setMovable(bool newMovable) { colorMovable.w = newMovable ? 1 : 0; }
 };
