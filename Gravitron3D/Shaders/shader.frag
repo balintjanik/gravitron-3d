@@ -79,6 +79,8 @@ vec3 valueToColor(float value)
 
 void main()
 {
+	vec4 normalizedLightPos = vec4(lightPos.xyz / 100, lightPos.w);
+
 	if (colorType == 2) {
 		fs_out_col = vec4(1.0, 1.0, 1.0, 0.3);
 		return;
@@ -103,19 +105,19 @@ void main()
 	float attenuation = 1.0;
 	float diffuseIntensity = 0.0;
 
-	if (lightPos.w == 0.5)
+	if (normalizedLightPos.w == 0.5)
 	{
 		fs_out_col = vec4((Ka + Kd + Ks) * 0.5, 1.0) * texture(texImage, vs_out_tex);
 		return;
 	}
-	else if (lightPos.w == 0.0) //Irány fényforrás, xyz -> irány
+	else if (normalizedLightPos.w == 0.0) //Irány fényforrás, xyz -> irány
 	{
-		toLight = -normalize(lightPos.xyz);
+		toLight = -normalize(normalizedLightPos.xyz);
 	}
-	else if (lightPos.w == 1.0) //Pont fényforrás, xyz -> pont
+	else if (normalizedLightPos.w == 1.0) //Pont fényforrás, xyz -> pont
 	{
-		toLight = normalize(lightPos.xyz - vs_out_pos);
-		lightDistance = length(lightPos.xyz - vs_out_pos);
+		toLight = normalize(normalizedLightPos.xyz - vs_out_pos);
+		lightDistance = length(normalizedLightPos.xyz - vs_out_pos);
 		attenuation = 1.0 /
 			(lightConstantAttenuation +
 			lightLinearAttenuation * lightDistance +

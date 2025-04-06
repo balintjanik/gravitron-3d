@@ -774,7 +774,7 @@ void SimulationView::ShowLightParameterSettings() {
 	}
 	else if (lightPos.w >= 1.f) // Spot light
 	{
-		if (ImGui::DragFloat3("Light Position", glm::value_ptr(lightPos), 0.1f, -10.f, 10.f))
+		if (ImGui::DragFloat3("Light Position", glm::value_ptr(lightPos), 0.1f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
 			simulationManager.settings.setLightPos(lightPos);
 
 		if (ImGui::DragFloat("Constant Att.", &lightConstantAttenuation, 0.05f, simulationManager.settings.getMinLightConstantAttenuation(), simulationManager.settings.getMaxLightConstantAttenuation()))
