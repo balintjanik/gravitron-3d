@@ -8,7 +8,7 @@ float PresetUtils::randomFloat(float min, float max)
 	return (random * range) + min;
 }
 
-std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity) {
+std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass) {
 	std::vector<Particle> particles;
 
 	if (numberOfParticles == 0) return particles;
@@ -35,6 +35,7 @@ std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, Pres
 	case PRESET_CUSTOM:
 		initParticlePositions(particles, position);
 		initParticleVelocities(particles, velocity);
+		initParticleMasses(particles, mass);
 		break;
 	default:
 		break;
@@ -119,19 +120,42 @@ void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, Vel
 	}
 }
 
+void PresetUtils::initParticleMasses(std::vector<Particle>& r_particles, MassType mass) {
+	if (mass == MASS_CONSTANT) {
+		float value = 1.0f;
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+
+		calculateMassesConstant(r_particles, rangeMin, rangeMax, value);
+	}
+	else if (MASS_RANDOM) {
+		float minValue = 0.5f;
+		float maxValue = 2.0f;
+		int rangeMin = 0;
+		int rangeMax = r_particles.size();
+
+		calculateMassesRandom(r_particles, rangeMin, rangeMax, minValue, maxValue);
+	}
+	else {
+		throw "Invalid mass type.";
+	}
+}
+
 void PresetUtils::initPresetGalaxy(std::vector<Particle>& r_particles) {
 	float centerMass = 100000.0f;
 	glm::vec4 center = glm::vec4(0.f, 0.f, 0.f, centerMass);
 	float radiusMin = 20.0f;
 	float radiusMax = 300.0f;
 	float velocityScale = 0.8f;
+	float massMin = 0.5f;
+	float massMax = 2.0f;
 	r_particles[0].setPosition(center);
 	r_particles[0].setMass(centerMass);
 	r_particles[0].setMovable(false);
 
 	calculatePositionsSphere(r_particles, 1, r_particles.size(), center, radiusMin, radiusMax, false);
 	calculateVelocitiesOrbit(r_particles, 1, r_particles.size(), center, velocityScale);
-
+	calculateMassesRandom(r_particles, 1, r_particles.size(), massMin, massMax);
 	for (auto& p : r_particles) {
 		p.setSize(randomFloat(0.5f, 2.0f));
 	}
@@ -278,6 +302,12 @@ void PresetUtils::calculateVelocitiesRandom(std::vector<Particle>& r_particles, 
 }
 
 void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec4 center, float velocityScale) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+	
 	for (int i = rangeMin; i < rangeMax; i++)
 	{
 		glm::vec3 position = r_particles[i].getPosition();
@@ -319,5 +349,31 @@ void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, i
 
 		// Add particle to the list
 		r_particles[i].setVelocity(glm::vec3(vx, vy, vz));
+	}
+}
+
+void PresetUtils::calculateMassesConstant(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float value) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	for (int i = rangeMin; i < rangeMax; i++) {
+
+		r_particles[i].setMass(value);
+	}
+}
+
+void PresetUtils::calculateMassesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float minValue, float maxValue) {
+	if (rangeMin < 0)
+		rangeMin = 0;
+
+	if (rangeMax > r_particles.size())
+		rangeMax = r_particles.size();
+
+	for (int i = rangeMin; i < rangeMax; i++) {
+
+		r_particles[i].setMass(randomFloat(minValue, maxValue));
 	}
 }

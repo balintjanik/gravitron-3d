@@ -142,7 +142,7 @@ void SimulationView::CleanTextures() const
 }
 
 void SimulationView::InitSimulation() {
-	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType);
+	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType, massType);
 }
 
 void SimulationView::InitImGuiSettings() {
@@ -805,7 +805,7 @@ void SimulationView::ShowSpawnParticleSettings() {
 	}
 }
 
-void SimulationView::ShowSpawnGoupPositionSettings(PositionType positionType) {
+void SimulationView::ShowSpawnGroupPositionSettings(PositionType positionType) {
 	switch (positionType) {
 	case POSITION_RANDOM:
 		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(groupCubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
@@ -858,7 +858,7 @@ void SimulationView::ShowSpawnGoupPositionSettings(PositionType positionType) {
 	}
 }
 
-void SimulationView::ShowSpawnGoupVelocitySettings(VelocityType velocityType) {
+void SimulationView::ShowSpawnGroupVelocitySettings(VelocityType velocityType) {
 	switch (velocityType) {
 	case VELOCITY_ORBIT:
 		ImGui::DragFloat("Velocity scale##Group", &groupVelocityScale, 0.1f, -5.0f, 5.0f);
@@ -875,6 +875,21 @@ void SimulationView::ShowSpawnGoupVelocitySettings(VelocityType velocityType) {
 			groupVelocityRandomMax.y = glm::max(groupVelocityRandomMax.y, groupVelocityRandomMin.y);
 			groupVelocityRandomMax.z = glm::max(groupVelocityRandomMax.z, groupVelocityRandomMin.z);
 		}
+		break;
+	default:
+		break;
+	}
+}
+
+void SimulationView::ShowSpawnGroupMassSettings(MassType massType) {
+	switch (massType)
+	{
+	case MASS_CONSTANT:
+		ImGui::DragFloat("Mass value##Group", &groupMassValue, 1.0f, 0.1f, 100000.0f);
+		break;
+	case MASS_RANDOM:
+		ImGui::DragFloat("Minimum value##Group", &groupMassRandomMin, 1.0f, 0.1f, groupMassRandomMax);
+		ImGui::DragFloat("Maximum value##Group", &groupMassRandomMax, 1.0f, groupMassRandomMin, 10000.0f);
 		break;
 	default:
 		break;
@@ -1008,15 +1023,19 @@ void SimulationView::RenderGUI()
 		
 		ImGui::SeparatorText("Position settings");
 		ShowEnumDropdown("Position Type##Group", POSITION_TYPE_NAMES, groupPositionType);
-		ShowSpawnGoupPositionSettings(groupPositionType);
+		ShowSpawnGroupPositionSettings(groupPositionType);
 
 		ImGui::SeparatorText("Velocity settings");
 		ShowEnumDropdown("Velocity Type##Group", VELOCITY_TYPE_NAMES, groupVelocityType);
-		ShowSpawnGoupVelocitySettings(groupVelocityType);
+		ShowSpawnGroupVelocitySettings(groupVelocityType);
+
+		ImGui::SeparatorText("Mass settings");
+		ShowEnumDropdown("Mass Type##Group", MASS_TYPE_NAMES, groupMassType);
+		ShowSpawnGroupMassSettings(groupMassType);
 
 		ImGui::SeparatorText("Finalize");
 		if (ImGui::Button("Add group")) {
-			simulationManager.addGroup(groupNumberOfParticles, groupPositionType, groupCubeMin, groupCubeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, groupVelocityType, groupVelocityScale, groupCenterMass, groupVelocityRandomMin, groupVelocityRandomMax);
+			simulationManager.addGroup(groupNumberOfParticles, groupPositionType, groupCubeMin, groupCubeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, groupVelocityType, groupVelocityScale, groupCenterMass, groupVelocityRandomMin, groupVelocityRandomMax, groupMassType, groupMassValue, groupMassRandomMin, groupMassRandomMax);
 		}
 	}
 
@@ -1032,6 +1051,7 @@ void SimulationView::RenderGUI()
 		if (presetType == PRESET_CUSTOM) {
 			ShowEnumDropdown("Position Type", POSITION_TYPE_NAMES, positionType);
 			ShowEnumDropdown("Velocity Type", VELOCITY_TYPE_NAMES, velocityType);
+			ShowEnumDropdown("Mass Type", MASS_TYPE_NAMES, massType);
 		}
 
 		if (ImGui::Button("Start New Simulation")) {

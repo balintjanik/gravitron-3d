@@ -94,6 +94,9 @@
     <ClInclude Include="View\CameraPresets.h">
       <Filter>View</Filter>
     </ClInclude>
+    <ClInclude Include="Model\MassType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Model">

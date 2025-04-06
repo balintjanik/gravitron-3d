@@ -167,19 +167,24 @@ protected:
 
 	// Spawn group
 	int groupNumberOfParticles = 0;
-	void ShowSpawnGoupPositionSettings(PositionType positionType);
+	void ShowSpawnGroupPositionSettings(PositionType positionType);
 	PositionType groupPositionType = static_cast<PositionType>(0);
 	glm::vec3 groupCubeMin = glm::vec3(0.0f);
 	glm::vec3 groupCubeMax = glm::vec3(0.0f);
 	glm::vec3 groupSphereCenter = glm::vec3(0.0f);
 	float groupSphereRadiusMin = 0.0f;
 	float groupSphereRadiusMax = 0.0f;
-	void ShowSpawnGoupVelocitySettings(VelocityType velocityType);
+	void ShowSpawnGroupVelocitySettings(VelocityType velocityType);
 	VelocityType groupVelocityType = static_cast<VelocityType>(0);
 	float groupVelocityScale = 1.0f;
 	float groupCenterMass = 1.0f;
 	glm::vec3 groupVelocityRandomMin = glm::vec3(0.0f);
 	glm::vec3 groupVelocityRandomMax = glm::vec3(0.0f);
+	void ShowSpawnGroupMassSettings(MassType massType);
+	MassType groupMassType = static_cast<MassType>(0);
+	float groupMassValue = 1.0f;
+	float groupMassRandomMin = 1.0f;
+	float groupMassRandomMax = 1.0f;
 
 	// New simulation settings
 	int numberOfParticles = 10000;
@@ -187,6 +192,7 @@ protected:
 	PresetType presetType = static_cast<PresetType>(0);
 	PositionType positionType = static_cast<PositionType>(0);
 	VelocityType velocityType = static_cast<VelocityType>(0);
+	MassType massType = static_cast<MassType>(0);
 
 	// Message
 	void UpdateMessage(std::string newMessage, glm::vec3 newMessageColor);

@@ -21,7 +21,7 @@ public:
 	SimulationManager() { };
 
 	void initSettings();
-	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity);
+	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass);
 	void updateSimulation(const SUpdateInfo& updateInfo);
 
 	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable);
@@ -36,7 +36,11 @@ public:
 		float groupVelocityScale,
 		float groupCenterMass,
 		glm::vec3 groupVelocityRandomMin,
-		glm::vec3 groupVelocityRandomMax);
+		glm::vec3 groupVelocityRandomMax,
+		MassType mass,
+		float groupMassValue,
+		float groupMassRandomMin,
+		float groupMassRandomMax);
 
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);

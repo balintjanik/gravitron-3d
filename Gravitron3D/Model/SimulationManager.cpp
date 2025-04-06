@@ -8,11 +8,11 @@ void SimulationManager::initSettings() {
 	if (settings.getNumberOfThreads() == 0) settings.setNumberOfThreads(4); // Fallback to 4 if hardware_concurrency cannot detect
 }
 
-void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity) {
+void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass) {
 	settings.setNumberOfParticles(numberOfParticles);
 
 	particles.clear();
-	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity);
+	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity, mass);
 }
 
 void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
@@ -47,7 +47,11 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	float groupVelocityScale,
 	float groupCenterMass,
 	glm::vec3 groupVelocityRandomMin,
-	glm::vec3 groupVelocityRandomMax)
+	glm::vec3 groupVelocityRandomMax,
+	MassType mass,
+	float groupMassValue,
+	float groupMassRandomMin,
+	float groupMassRandomMax)
 {
 	int previousNumberOfParticles = settings.getNumberOfParticles();
 	settings.setNumberOfParticles(previousNumberOfParticles + numberOfParticlesToAdd);
@@ -108,6 +112,19 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	case VELOCITY_ORBIT:
 		glm::vec4 center = glm::vec4(centerParticle.getPosition(), groupCenterMass);
 		PresetUtils::calculateVelocitiesOrbit(particles, rangeMin, rangeMax, center, groupVelocityScale);
+		break;
+	default:
+		break;
+	}
+
+	// Initialize masses
+	switch (mass)
+	{
+	case MASS_CONSTANT:
+		PresetUtils::calculateMassesConstant(particles, rangeMin, rangeMax, groupMassValue);
+		break;
+	case MASS_RANDOM:
+		PresetUtils::calculateMassesRandom(particles, rangeMin, rangeMax, groupMassRandomMin, groupMassRandomMax);
 		break;
 	default:
 		break;
