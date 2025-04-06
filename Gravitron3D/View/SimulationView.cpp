@@ -808,49 +808,49 @@ void SimulationView::ShowSpawnParticleSettings() {
 void SimulationView::ShowSpawnGroupPositionSettings(PositionType positionType) {
 	switch (positionType) {
 	case POSITION_RANDOM:
-		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(groupCubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			groupCubeMin.x = glm::min(groupCubeMin.x, groupCubeMax.x);
-			groupCubeMin.y = glm::min(groupCubeMin.y, groupCubeMax.y);
-			groupCubeMin.z = glm::min(groupCubeMin.z, groupCubeMax.z);
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			group_cubeMin.x = glm::min(group_cubeMin.x, group_cubeMax.x);
+			group_cubeMin.y = glm::min(group_cubeMin.y, group_cubeMax.y);
+			group_cubeMin.z = glm::min(group_cubeMin.z, group_cubeMax.z);
 		}
-		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(groupCubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			groupCubeMax.x = glm::max(groupCubeMax.x, groupCubeMin.x);
-			groupCubeMax.y = glm::max(groupCubeMax.y, groupCubeMin.y);
-			groupCubeMax.z = glm::max(groupCubeMax.z, groupCubeMin.z);
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			group_cubeMax.x = glm::max(group_cubeMax.x, group_cubeMin.x);
+			group_cubeMax.y = glm::max(group_cubeMax.y, group_cubeMin.y);
+			group_cubeMax.z = glm::max(group_cubeMax.z, group_cubeMin.z);
 		}
 		break;
 	case POSITION_SPHERE:
-		ImGui::DragFloat3("Center##Group", glm::value_ptr(groupSphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
-		ImGui::DragFloat("Minimum radius##Group", &groupSphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), groupSphereRadiusMax);
-		ImGui::DragFloat("Maximum radius##Group", &groupSphereRadiusMax, 10.0f, groupSphereRadiusMin, simulationManager.getMaxWorldBound());
+		ImGui::DragFloat3("Center##Group", glm::value_ptr(group_sphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+		ImGui::DragFloat("Minimum radius##Group", &group_sphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), group_sphereRadiusMax);
+		ImGui::DragFloat("Maximum radius##Group", &group_sphereRadiusMax, 10.0f, group_sphereRadiusMin, simulationManager.getMaxWorldBound());
 		break;
 	case POSITION_DISK:
-		ImGui::DragFloat3("Center##Group", glm::value_ptr(groupSphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
-		ImGui::DragFloat("Minimum radius##Group", &groupSphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), groupSphereRadiusMax);
-		ImGui::DragFloat("Maximum radius##Group", &groupSphereRadiusMax, 10.0f, groupSphereRadiusMin, simulationManager.getMaxWorldBound());
+		ImGui::DragFloat3("Center##Group", glm::value_ptr(group_sphereCenter), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
+		ImGui::DragFloat("Minimum radius##Group", &group_sphereRadiusMin, 10.0f, simulationManager.getMinWorldBound(), group_sphereRadiusMax);
+		ImGui::DragFloat("Maximum radius##Group", &group_sphereRadiusMax, 10.0f, group_sphereRadiusMin, simulationManager.getMaxWorldBound());
 		break;
 	case POSITION_GRID_2D:
-		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(groupCubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			groupCubeMin.x = glm::min(groupCubeMin.x, groupCubeMax.x);
-			groupCubeMax.y = groupCubeMin.y;
-			groupCubeMin.z = glm::min(groupCubeMin.z, groupCubeMax.z);
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			group_cubeMin.x = glm::min(group_cubeMin.x, group_cubeMax.x);
+			group_cubeMax.y = group_cubeMin.y;
+			group_cubeMin.z = glm::min(group_cubeMin.z, group_cubeMax.z);
 		}
-		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(groupCubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			groupCubeMax.x = glm::max(groupCubeMax.x, groupCubeMin.x);
-			groupCubeMin.y = groupCubeMax.y;
-			groupCubeMax.z = glm::max(groupCubeMax.z, groupCubeMin.z);
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			group_cubeMax.x = glm::max(group_cubeMax.x, group_cubeMin.x);
+			group_cubeMin.y = group_cubeMax.y;
+			group_cubeMax.z = glm::max(group_cubeMax.z, group_cubeMin.z);
 		}
 		break;
 	case POSITION_GRID_3D:
-		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(groupCubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			groupCubeMin.x = glm::min(groupCubeMin.x, groupCubeMax.x);
-			groupCubeMin.y = glm::min(groupCubeMin.y, groupCubeMax.y);
-			groupCubeMin.z = glm::min(groupCubeMin.z, groupCubeMax.z);
+		if (ImGui::DragFloat3("Minimum position##Group", glm::value_ptr(group_cubeMin), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			group_cubeMin.x = glm::min(group_cubeMin.x, group_cubeMax.x);
+			group_cubeMin.y = glm::min(group_cubeMin.y, group_cubeMax.y);
+			group_cubeMin.z = glm::min(group_cubeMin.z, group_cubeMax.z);
 		}
-		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(groupCubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
-			groupCubeMax.x = glm::max(groupCubeMax.x, groupCubeMin.x);
-			groupCubeMax.y = glm::max(groupCubeMax.y, groupCubeMin.y);
-			groupCubeMax.z = glm::max(groupCubeMax.z, groupCubeMin.z);
+		if (ImGui::DragFloat3("Maximum position##Group", glm::value_ptr(group_cubeMax), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound())) {
+			group_cubeMax.x = glm::max(group_cubeMax.x, group_cubeMin.x);
+			group_cubeMax.y = glm::max(group_cubeMax.y, group_cubeMin.y);
+			group_cubeMax.z = glm::max(group_cubeMax.z, group_cubeMin.z);
 		}
 		break;
 	default:
@@ -861,19 +861,19 @@ void SimulationView::ShowSpawnGroupPositionSettings(PositionType positionType) {
 void SimulationView::ShowSpawnGroupVelocitySettings(VelocityType velocityType) {
 	switch (velocityType) {
 	case VELOCITY_ORBIT:
-		ImGui::DragFloat("Velocity scale##Group", &groupVelocityScale, 0.1f, -5.0f, 5.0f);
-		ImGui::DragFloat("Center mass##Group", &groupCenterMass, 0.1f, 0.0f, 1000000.0f);
+		ImGui::DragFloat("Velocity scale##Group", &group_velocityScale, 0.1f, -5.0f, 5.0f);
+		ImGui::DragFloat("Center mass##Group", &group_centerMass, 0.1f, 0.0f, 1000000.0f);
 		break;
 	case VELOCITY_RANDOM:
-		if (ImGui::DragFloat3("Minimum velocity##Group", glm::value_ptr(groupVelocityRandomMin), 1.0f, -1000.0f, 1000.0f)) {
-			groupVelocityRandomMin.x = glm::min(groupVelocityRandomMin.x, groupVelocityRandomMax.x);
-			groupVelocityRandomMin.y = glm::min(groupVelocityRandomMin.y, groupVelocityRandomMax.y);
-			groupVelocityRandomMin.z = glm::min(groupVelocityRandomMin.z, groupVelocityRandomMax.z);
+		if (ImGui::DragFloat3("Minimum velocity##Group", glm::value_ptr(group_velocityRandomMin), 1.0f, -1000.0f, 1000.0f)) {
+			group_velocityRandomMin.x = glm::min(group_velocityRandomMin.x, group_velocityRandomMax.x);
+			group_velocityRandomMin.y = glm::min(group_velocityRandomMin.y, group_velocityRandomMax.y);
+			group_velocityRandomMin.z = glm::min(group_velocityRandomMin.z, group_velocityRandomMax.z);
 		}
-		if (ImGui::DragFloat3("Maximum velocity##Group", glm::value_ptr(groupVelocityRandomMax), 1.0f, -1000.0f, 1000.0f)) {
-			groupVelocityRandomMax.x = glm::max(groupVelocityRandomMax.x, groupVelocityRandomMin.x);
-			groupVelocityRandomMax.y = glm::max(groupVelocityRandomMax.y, groupVelocityRandomMin.y);
-			groupVelocityRandomMax.z = glm::max(groupVelocityRandomMax.z, groupVelocityRandomMin.z);
+		if (ImGui::DragFloat3("Maximum velocity##Group", glm::value_ptr(group_velocityRandomMax), 1.0f, -1000.0f, 1000.0f)) {
+			group_velocityRandomMax.x = glm::max(group_velocityRandomMax.x, group_velocityRandomMin.x);
+			group_velocityRandomMax.y = glm::max(group_velocityRandomMax.y, group_velocityRandomMin.y);
+			group_velocityRandomMax.z = glm::max(group_velocityRandomMax.z, group_velocityRandomMin.z);
 		}
 		break;
 	default:
@@ -885,11 +885,11 @@ void SimulationView::ShowSpawnGroupMassSettings(MassType massType) {
 	switch (massType)
 	{
 	case MASS_CONSTANT:
-		ImGui::DragFloat("Mass value##Group", &groupMassValue, 1.0f, 0.1f, 100000.0f);
+		ImGui::DragFloat("Mass value##Group", &group_massValue, 1.0f, 0.1f, 100000.0f);
 		break;
 	case MASS_RANDOM:
-		ImGui::DragFloat("Minimum value##Group", &groupMassRandomMin, 1.0f, 0.1f, groupMassRandomMax);
-		ImGui::DragFloat("Maximum value##Group", &groupMassRandomMax, 1.0f, groupMassRandomMin, 10000.0f);
+		ImGui::DragFloat("Minimum value##Group", &group_massRandomMin, 1.0f, 0.1f, group_massRandomMax);
+		ImGui::DragFloat("Maximum value##Group", &group_massRandomMax, 1.0f, group_massRandomMin, 10000.0f);
 		break;
 	default:
 		break;
@@ -1016,29 +1016,29 @@ void SimulationView::RenderGUI()
 	// Spawn group
 	if (ImGui::CollapsingHeader("Spawn group")) {
 		ImGui::SeparatorText("Parameters");
-		if (ImGui::InputInt("Number of particles##Group", &groupNumberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue)) {
-			if (currentNumberOfParticles + groupNumberOfParticles > threshold_numberOfParticles)
+		if (ImGui::InputInt("Number of particles##Group", &group_numberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue)) {
+			if (currentNumberOfParticles + group_numberOfParticles > threshold_numberOfParticles)
 				UpdateMessage("Warning: adding too many particles might result in lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
 		}
 		
 		ImGui::SeparatorText("Position settings");
-		ShowEnumDropdown("Position Type##Group", POSITION_TYPE_NAMES, groupPositionType);
-		ShowSpawnGroupPositionSettings(groupPositionType);
+		ShowEnumDropdown("Position Type##Group", POSITION_TYPE_NAMES, group_positionType);
+		ShowSpawnGroupPositionSettings(group_positionType);
 
 		ImGui::SeparatorText("Individual velocity settings");
-		ShowEnumDropdown("Velocity Type##Group", VELOCITY_TYPE_NAMES, groupVelocityType);
-		ShowSpawnGroupVelocitySettings(groupVelocityType);
+		ShowEnumDropdown("Velocity Type##Group", VELOCITY_TYPE_NAMES, group_velocityType);
+		ShowSpawnGroupVelocitySettings(group_velocityType);
 
 		ImGui::SeparatorText("Group velocity settings");
-		ImGui::DragFloat3("Group velocity##Group", glm::value_ptr(groupOverallVelocity), 1.0f, -1000.0f, 1000.0f);
+		ImGui::DragFloat3("Group velocity##Group", glm::value_ptr(group_overallVelocity), 1.0f, -1000.0f, 1000.0f);
 
 		ImGui::SeparatorText("Mass settings");
-		ShowEnumDropdown("Mass Type##Group", MASS_TYPE_NAMES, groupMassType);
-		ShowSpawnGroupMassSettings(groupMassType);
+		ShowEnumDropdown("Mass Type##Group", MASS_TYPE_NAMES, group_massType);
+		ShowSpawnGroupMassSettings(group_massType);
 
 		ImGui::SeparatorText("Finalize");
 		if (ImGui::Button("Add group")) {
-			simulationManager.addGroup(groupNumberOfParticles, groupPositionType, groupCubeMin, groupCubeMax, groupSphereCenter, groupSphereRadiusMin, groupSphereRadiusMax, groupVelocityType, groupVelocityScale, groupCenterMass, groupVelocityRandomMin, groupVelocityRandomMax, groupOverallVelocity, groupMassType, groupMassValue, groupMassRandomMin, groupMassRandomMax);
+			simulationManager.addGroup(group_numberOfParticles, group_positionType, group_cubeMin, group_cubeMax, group_sphereCenter, group_sphereRadiusMin, group_sphereRadiusMax, group_velocityType, group_velocityScale, group_centerMass, group_velocityRandomMin, group_velocityRandomMax, group_overallVelocity, group_massType, group_massValue, group_massRandomMin, group_massRandomMax);
 		}
 	}
 

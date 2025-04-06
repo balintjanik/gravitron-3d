@@ -166,26 +166,26 @@ protected:
 	bool spawnParticle_show = false;
 
 	// Spawn group
-	int groupNumberOfParticles = 0;
+	int group_numberOfParticles = 0;
 	void ShowSpawnGroupPositionSettings(PositionType positionType);
-	PositionType groupPositionType = static_cast<PositionType>(0);
-	glm::vec3 groupCubeMin = glm::vec3(0.0f);
-	glm::vec3 groupCubeMax = glm::vec3(0.0f);
-	glm::vec3 groupSphereCenter = glm::vec3(0.0f);
-	float groupSphereRadiusMin = 0.0f;
-	float groupSphereRadiusMax = 0.0f;
+	PositionType group_positionType = static_cast<PositionType>(0);
+	glm::vec3 group_cubeMin = glm::vec3(0.0f);
+	glm::vec3 group_cubeMax = glm::vec3(0.0f);
+	glm::vec3 group_sphereCenter = glm::vec3(0.0f);
+	float group_sphereRadiusMin = 0.0f;
+	float group_sphereRadiusMax = 0.0f;
 	void ShowSpawnGroupVelocitySettings(VelocityType velocityType);
-	VelocityType groupVelocityType = static_cast<VelocityType>(0);
-	float groupVelocityScale = 1.0f;
-	float groupCenterMass = 1.0f;
-	glm::vec3 groupVelocityRandomMin = glm::vec3(0.0f);
-	glm::vec3 groupVelocityRandomMax = glm::vec3(0.0f);
-	glm::vec3 groupOverallVelocity = glm::vec3(0.0f);
+	VelocityType group_velocityType = static_cast<VelocityType>(0);
+	float group_velocityScale = 1.0f;
+	float group_centerMass = 1.0f;
+	glm::vec3 group_velocityRandomMin = glm::vec3(0.0f);
+	glm::vec3 group_velocityRandomMax = glm::vec3(0.0f);
+	glm::vec3 group_overallVelocity = glm::vec3(0.0f);
 	void ShowSpawnGroupMassSettings(MassType massType);
-	MassType groupMassType = static_cast<MassType>(0);
-	float groupMassValue = 1.0f;
-	float groupMassRandomMin = 1.0f;
-	float groupMassRandomMax = 1.0f;
+	MassType group_massType = static_cast<MassType>(0);
+	float group_massValue = 1.0f;
+	float group_massRandomMin = 1.0f;
+	float group_massRandomMax = 1.0f;
 
 	// New simulation settings
 	int numberOfParticles = 10000;

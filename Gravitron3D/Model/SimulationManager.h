@@ -27,21 +27,21 @@ public:
 	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable);
 	void addGroup(int numberOfParticlesToAdd,
 		PositionType position,
-		glm::vec3 groupCubeMin,
-		glm::vec3 groupCubeMax,
-		glm::vec3 groupSphereCenter,
-		float groupSphereRadiusMin,
-		float groupSphereRadiusMax,
+		glm::vec3 cubeMin,
+		glm::vec3 cubeMax,
+		glm::vec3 sphereCenter,
+		float sphereRadiusMin,
+		float sphereRadiusMax,
 		VelocityType velocity,
-		float groupVelocityScale,
-		float groupCenterMass,
-		glm::vec3 groupVelocityRandomMin,
-		glm::vec3 groupVelocityRandomMax,
-		glm::vec3 groupOverallVelocity,
+		float velocityScale,
+		float centerMass,
+		glm::vec3 velocityRandomMin,
+		glm::vec3 velocityRandomMax,
+		glm::vec3 overallVelocity,
 		MassType mass,
-		float groupMassValue,
-		float groupMassRandomMin,
-		float groupMassRandomMax);
+		float massValue,
+		float massRandomMin,
+		float massRandomMax);
 
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);
