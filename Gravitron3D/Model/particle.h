@@ -13,15 +13,22 @@ private:
 	glm::vec4 colorMovable;
 
 public:
-	Particle(glm::vec4 positionMass_ = glm::vec4(0.f),
-		glm::vec4 velocitySize_ = glm::vec4(0.f, 0.f, 0.f, 1.f),
-		glm::vec4 accelerationForce_ = glm::vec4(0.f),
-		glm::vec4 colorMovable_ = glm::vec4(1.f))
-		: positionMass(positionMass_),
-		velocitySize(velocitySize_),
-		accelerationForce(accelerationForce_),
-		colorMovable(colorMovable_)
+	Particle(glm::vec4 positionMass_ = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
+		glm::vec4 velocitySize_ = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
+		glm::vec4 accelerationForce_ = glm::vec4(0.0f),
+		glm::vec4 colorMovable_ = glm::vec4(1.0f))
 	{
+		setPosition(positionMass_);
+		setMass(positionMass_.w);
+		
+		setVelocity(velocitySize_);
+		setSize(velocitySize_.w);
+		
+		setAcceleration(accelerationForce_);
+		setForce(accelerationForce_.w);
+		
+		setColor(colorMovable_);
+		setMovable(colorMovable_.w);
 	}
 
 	Particle(glm::vec3 position_, float mass_,
@@ -33,6 +40,17 @@ public:
 		accelerationForce(glm::vec4(acceleration_, force_)),
 		colorMovable(glm::vec4(color_, (movable_ ? 1 : 0)))
 	{
+		setPosition(position_);
+		setMass(mass_);
+
+		setVelocity(velocity_);
+		setSize(size_);
+
+		setAcceleration(acceleration_);
+		setForce(force_);
+
+		setColor(color_);
+		setMovable(movable_ != 0.0f);
 	}
 
 	// Getters
@@ -55,7 +73,7 @@ public:
 	}
 	void setVelocity(const glm::vec3& newVelocity) { velocitySize = glm::vec4(newVelocity, velocitySize.w); }
 	void setSize(float newSize) {
-		if (newSize < 0.5f)
+		if (newSize < 0.1f)
 			throw std::runtime_error("Incorrect value for size: " + std::to_string(newSize) + ". Value must be larger than 0.5");
 		else
 			velocitySize.w = newSize;
@@ -67,7 +85,7 @@ public:
 		else
 			accelerationForce.w = newForce;
 	}
-	void setColor(glm::vec3& newColor) {
+	void setColor(const glm::vec3& newColor) {
 		if (newColor.r < 0.0f || newColor.g < 0.0f || newColor.b < 0.0f ||
 			newColor.r > 1.0f || newColor.g > 1.0f || newColor.b > 1.0f)
 			throw std::runtime_error("Color component values must be between 0.0 and 1.0");
