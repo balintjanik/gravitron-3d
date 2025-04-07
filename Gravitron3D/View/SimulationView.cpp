@@ -202,6 +202,13 @@ void SimulationView::InitImGuiSettings() {
 	colors[ImGuiCol_TabHovered] = ImVec4(0.35f, 0.35f, 0.35f, 1.0f);
 	colors[ImGuiCol_TabActive] = ImVec4(0.28f, 0.28f, 0.28f, 1.0f);
 
+	// Slider
+	colors[ImGuiCol_SliderGrab] = ImVec4(0.50f, 0.50f, 0.50f, 1.0f);
+	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.70f, 0.70f, 0.70f, 1.0f);
+
+	// Checkbox tick
+	colors[ImGuiCol_CheckMark] = ImVec4(0.95f, 0.95f, 0.95f, 1.0f);
+
 	// Separators & Borders
 	colors[ImGuiCol_Border] = ImVec4(0.11f, 0.11f, 0.11f, 1.0f);
 	colors[ImGuiCol_Separator] = ImVec4(0.28f, 0.28f, 0.28f, 1.0f);
