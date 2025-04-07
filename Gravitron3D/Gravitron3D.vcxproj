@@ -121,6 +121,9 @@
     <None Include="Assets\icon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="Assets\Inter.ttc">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

@@ -159,6 +159,15 @@ void SimulationView::InitImGuiSettings() {
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec4* colors = style.Colors;
 
+	// Font
+	ImFontConfig font_cfg;
+	font_cfg.FontNo = 0;
+	font_cfg.OversampleH = 3;
+	font_cfg.OversampleV = 3;
+	font_cfg.PixelSnapH = true;
+	font_cfg.GlyphOffset = ImVec2(0.0f, -1.0f);
+	io.Fonts->AddFontFromFileTTF("Assets/Inter.ttc", 15.0f, &font_cfg);
+
 	// Base Background
 	colors[ImGuiCol_WindowBg] = ImVec4(0.0745f, 0.0745f, 0.0745f, 0.7f);
 	colors[ImGuiCol_ChildBg] = ImVec4(0.09f, 0.09f, 0.09f, 1.0f);
@@ -166,15 +175,15 @@ void SimulationView::InitImGuiSettings() {
 
 	// Window Title Bar
 	colors[ImGuiCol_TitleBg] = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
-	colors[ImGuiCol_TitleBgActive] = ImVec4(0.20f, 0.20f, 0.20f, 1.0f);  // strong but not bright
+	colors[ImGuiCol_TitleBgActive] = ImVec4(0.22f, 0.22f, 0.22f, 1.0f);
 	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
 
 	// Text
-	colors[ImGuiCol_Text] = ImVec4(0.95f, 0.95f, 0.95f, 1.0f);  // almost white
-	colors[ImGuiCol_TextDisabled] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);     // softer but readable
+	colors[ImGuiCol_Text] = ImVec4(0.95f, 0.95f, 0.95f, 1.0f);
+	colors[ImGuiCol_TextDisabled] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
 
 	// Headers
-	colors[ImGuiCol_Header] = ImVec4(0.18f, 0.18f, 0.18f, 1.0f);
+	colors[ImGuiCol_Header] = ImVec4(0.22f, 0.22f, 0.22f, 1.0f);
 	colors[ImGuiCol_HeaderHovered] = ImVec4(0.35f, 0.35f, 0.35f, 1.0f);
 	colors[ImGuiCol_HeaderActive] = ImVec4(0.45f, 0.45f, 0.45f, 1.0f);
 

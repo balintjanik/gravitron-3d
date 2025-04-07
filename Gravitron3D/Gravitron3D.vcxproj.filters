@@ -133,6 +133,9 @@
     <None Include="Assets\icon.png">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Assets\Inter.ttc">
+      <Filter>Assets</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\node.jpg">
