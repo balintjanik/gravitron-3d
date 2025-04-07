@@ -91,6 +91,7 @@ protected:
 	ImGuiIO& io = ImGui::GetIO();
 	float windowWidth;
 	float windowHeight;
+	bool showUI = true;
 
 	// Model
 	void InitSimulation();

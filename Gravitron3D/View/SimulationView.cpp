@@ -987,6 +987,8 @@ void SimulationView::ShowSpawnGroupSizeSettings(SizeType sizeType) {
 
 void SimulationView::RenderGUI()
 {
+	if (!showUI) return;
+
 	// Window
 	windowHeight = io.DisplaySize.y;
 	ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
@@ -1201,6 +1203,10 @@ void SimulationView::KeyboardDown(const SDL_KeyboardEvent& key)
 			GLenum polygonMode = ( polygonModeFrontAndBack[ 0 ] != GL_FILL ? GL_FILL : GL_LINE );
 			// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glPolygonMode.xhtml
 			glPolygonMode( GL_FRONT_AND_BACK, polygonMode );
+		}
+		if (key.keysym.sym == SDLK_h)
+		{
+			showUI = !showUI;
 		}
 	}
 	m_cameraManipulator.KeyboardDown( key );
