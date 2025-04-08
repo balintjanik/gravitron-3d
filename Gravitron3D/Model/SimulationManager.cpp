@@ -59,6 +59,8 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	float sizeRandomMin,
 	float sizeRandomMax)
 {
+	if (numberOfParticlesToAdd == 0) return;
+
 	int previousNumberOfParticles = settings.getNumberOfParticles();
 	settings.setNumberOfParticles(previousNumberOfParticles + numberOfParticlesToAdd);
 
