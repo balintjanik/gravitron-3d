@@ -6,7 +6,7 @@
 void ParticleDataLoader::saveToFile(const std::string& filename, const std::vector<Particle>& particles) {
     std::ofstream outFile(filename);
     if (!outFile) {
-        throw std::runtime_error("Unable to open file for writing.");
+        throw std::runtime_error("Failed to open file for saving: " + filename);
     }
 
     try {
@@ -39,7 +39,7 @@ void ParticleDataLoader::saveToFile(const std::string& filename, const std::vect
                 << particle.getMovable() << "\n";
 
             if (!outFile) {
-                throw std::runtime_error("Failed to write particle data to file.");
+                throw std::runtime_error("Failed to write particle data.");
             }
         }
 
@@ -55,7 +55,7 @@ void ParticleDataLoader::saveToFile(const std::string& filename, const std::vect
 std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filename) {
     std::ifstream inFile(filename);
     if (!inFile) {
-        throw std::runtime_error("Unable to open file for reading.");
+        throw std::runtime_error("Failed to open file for loading: " + filename);
     }
 
     std::vector<Particle> particles;
@@ -95,7 +95,7 @@ std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filena
     }
 
     if (!inFile.eof() && inFile.fail()) {
-        throw std::runtime_error("Error while reading file.");
+        throw std::runtime_error("Failed to read particle data");
     }
 
     inFile.close();
