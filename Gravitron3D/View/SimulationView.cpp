@@ -28,15 +28,23 @@ void SimulationView::SetupDebugCallback()
 
 void SimulationView::InitShaders()
 {
-	m_programID = glCreateProgram();
-	AttachShader( m_programID, GL_VERTEX_SHADER, "Shaders/shader.vert" );
-	AttachShader( m_programID, GL_FRAGMENT_SHADER, "Shaders/shader.frag" );
-	LinkProgram( m_programID );
+	// Instanced Shader Program
+	m_instancedProgramID = glCreateProgram();
+	AttachShader(m_instancedProgramID, GL_VERTEX_SHADER, "Shaders/instanced.vert");
+	AttachShader(m_instancedProgramID, GL_FRAGMENT_SHADER, "Shaders/shader.frag");
+	LinkProgram(m_instancedProgramID);
+
+	// Individual Shader Program
+	m_individualProgramID = glCreateProgram();
+	AttachShader(m_individualProgramID, GL_VERTEX_SHADER, "Shaders/individual.vert");
+	AttachShader(m_individualProgramID, GL_FRAGMENT_SHADER, "Shaders/shader.frag");
+	LinkProgram(m_individualProgramID);
 }
 
 void SimulationView::CleanShaders() const
 {
-	glDeleteProgram( m_programID );
+	glDeleteProgram( m_instancedProgramID );
+	glDeleteProgram( m_individualProgramID );
 }
 
 void SimulationView::InitGeometry()
@@ -318,86 +326,127 @@ void SimulationView::Update( const SUpdateInfo& updateInfo )
 	glNamedBufferData(instanceVBO, sizeof(Particle) * simulationManager.particles.size(), simulationManager.particles.data(), GL_DYNAMIC_DRAW);
 }
 
+void SimulationView::RenderParticlesInstanced() {
+	glUseProgram(m_instancedProgramID);
+
+	// Set uniforms for instanced path
+	glProgramUniform1i(m_instancedProgramID, ul(m_instancedProgramID, "colorType"), isForceColor ? 1 : 0);
+	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "scaleFactor"), scaleFactor);
+	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "minVal"), minForceColor);
+	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "maxVal"), maxForceColor);
+	glProgramUniform3fv(m_instancedProgramID, ul(m_instancedProgramID, "cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
+	glProgramUniform4fv(m_instancedProgramID, ul(m_instancedProgramID, "lightPos"), 1, glm::value_ptr(lightPos));
+	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "lightConstantAttenuation"), lightConstantAttenuation);
+	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "lightLinearAttenuation"), lightLinearAttenuation);
+	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "lightQuadraticAttenuation"), lightQuadraticAttenuation);
+	glProgramUniformMatrix4fv(m_instancedProgramID, ul(m_instancedProgramID, "viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
+
+	glm::mat4 matWorld = glm::identity<glm::mat4>();
+	glProgramUniformMatrix4fv(m_instancedProgramID, ul(m_instancedProgramID, "world"), 1, GL_FALSE, glm::value_ptr(matWorld));
+	glProgramUniform1i(m_instancedProgramID, ul(m_instancedProgramID, "texImage"), 0);
+
+	// Textures and samplers
+	glBindSampler(0, m_SamplerID);
+	glBindTextureUnit(0, m_sphereTextureID);
+
+	// Geometry
+	glBindVertexArray(m_sphereGPU.vaoID);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glDrawElementsInstanced(
+		GL_TRIANGLES,
+		m_sphereGPU.count,
+		GL_UNSIGNED_INT,
+		nullptr,
+		simulationManager.particles.size()
+	);
+}
+
+void SimulationView::RenderParticleSpawnPreview() {
+	glUseProgram(m_individualProgramID);
+
+	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "colorType"), 2); // Fixed color
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scaleFactor"), 0.005f); // Fixed scale
+	glProgramUniform4fv(m_individualProgramID, ul(m_individualProgramID, "lightPos"), 1, glm::value_ptr(glm::vec4(0.5f))); // Fixed constant light
+	glProgramUniformMatrix4fv(m_individualProgramID, ul(m_individualProgramID, "viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
+	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "lightConstantAttenuation"), lightConstantAttenuation);
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "lightLinearAttenuation"), lightLinearAttenuation);
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "lightQuadraticAttenuation"), lightQuadraticAttenuation);
+	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "texImage"), 0);
+	glm::mat4 matWorld = glm::identity<glm::mat4>();
+	glProgramUniformMatrix4fv(m_instancedProgramID, ul(m_instancedProgramID, "world"), 1, GL_FALSE, glm::value_ptr(matWorld));
+
+	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "position"), 1, glm::value_ptr(spawnParticle_position));
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scale"), spawnParticle_size);
+
+	glBindSampler(0, m_SamplerID);
+	glBindTextureUnit(0, m_sphereTextureID);
+	glBindVertexArray(m_sphereGPU.vaoID);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+	glDrawElements(
+		GL_TRIANGLES,
+		m_sphereGPU.count,
+		GL_UNSIGNED_INT,
+		nullptr
+	);
+}
+
+void SimulationView::RenderOctreeNodes() {
+	glUseProgram(m_individualProgramID);
+
+	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "colorType"), 0); // Fixed color
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scaleFactor"), 0.005f); // Fixed scale
+	glProgramUniform4fv(m_individualProgramID, ul(m_individualProgramID, "lightPos"), 1, glm::value_ptr(glm::vec4(0.5f))); // Fixed constant light
+	glProgramUniformMatrix4fv(m_individualProgramID, ul(m_individualProgramID, "viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
+	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "lightConstantAttenuation"), lightConstantAttenuation);
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "lightLinearAttenuation"), lightLinearAttenuation);
+	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "lightQuadraticAttenuation"), lightQuadraticAttenuation);
+	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "texImage"), 0);
+	glm::mat4 matWorld = glm::identity<glm::mat4>();
+	glProgramUniformMatrix4fv(m_instancedProgramID, ul(m_instancedProgramID, "world"), 1, GL_FALSE, glm::value_ptr(matWorld));
+
+	// Bind VAO and texture
+	glBindVertexArray(m_nodeGPU.vaoID);
+	glBindTextureUnit(0, m_nodeTextureID);
+	glBindSampler(0, m_SamplerID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeEBO);
+
+	// Wireframe mode
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	// Loop through all octree nodes
+	for (const auto& node : simulationManager.octree.nodes) {
+		if (node.getMass() == 0) continue;
+
+		glm::vec3 center = node.octant.getCenter();
+		float size = node.octant.getSize() * 4.0f;
+
+		glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "position"), 1, glm::value_ptr(center));
+		glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scale"), size);
+
+		glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, nullptr);
+	}
+}
+
 void SimulationView::Render()
 {
 	// Clear screen
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Uniforms
-	glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), false);
-	glProgramUniform1i(m_programID, ul(m_programID, "colorType"), isForceColor ? 1 : 0);
-	glProgramUniform1f(m_programID, ul(m_programID, "scaleFactor"), scaleFactor);
-	glProgramUniform1f(m_programID, ul(m_programID, "minVal"), minForceColor);
-	glProgramUniform1f(m_programID, ul(m_programID, "maxVal"), maxForceColor);
-	glProgramUniform3fv(m_programID, ul(m_programID, "cameraPos"), 1, glm::value_ptr(m_camera.GetEye()));
-	glProgramUniform4fv(m_programID, ul(m_programID, "lightPos"), 1, glm::value_ptr(lightPos));
-	glProgramUniform1f(m_programID, ul(m_programID, "lightConstantAttenuation"), lightConstantAttenuation);
-	glProgramUniform1f(m_programID, ul(m_programID, "lightLinearAttenuation"), lightLinearAttenuation);
-	glProgramUniform1f(m_programID, ul(m_programID, "lightQuadraticAttenuation"), lightQuadraticAttenuation);
-	glProgramUniformMatrix4fv( m_programID, ul( m_programID, "viewProj"), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
+	// Render particles
+	RenderParticlesInstanced();
 
-	glm::mat4 matWorld = glm::identity<glm::mat4>();
-	glProgramUniformMatrix4fv(m_programID, ul(m_programID, "world"), 1, GL_FALSE, glm::value_ptr(matWorld));
-	glProgramUniform1i( m_programID, ul( m_programID, "texImage" ), 0 );
-
-	glUseProgram( m_programID );
-
-	// Textures
-	glBindSampler( 0, m_SamplerID );
-	glBindTextureUnit(0, m_sphereTextureID);
-
-	glBindVertexArray(m_sphereGPU.vaoID);
-
-	// Draw instanced geometry
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glEnableVertexAttribArray(3);
-	glEnableVertexAttribArray(4);
-	glEnableVertexAttribArray(5);
-	glEnableVertexAttribArray(6);
-	glDrawElementsInstanced(GL_TRIANGLES, m_sphereGPU.count, GL_UNSIGNED_INT, nullptr, simulationManager.particles.size());
-
-	// Draw individual if necessary
+	// Render spawn particle preview
 	if (spawnParticle_show) {
-		glDisableVertexAttribArray(3);
-		glDisableVertexAttribArray(4);
-		glDisableVertexAttribArray(5);
-		glDisableVertexAttribArray(6);
-
-		glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), true);
-		glProgramUniform3fv(m_programID, ul(m_programID, "position"), 1, glm::value_ptr(spawnParticle_position));
-		glProgramUniform1f(m_programID, ul(m_programID, "scale"), spawnParticle_size);
-		glProgramUniform1i(m_programID, ul(m_programID, "colorType"), 2);
-		glDrawElements(GL_TRIANGLES,
-			m_sphereGPU.count,
-			GL_UNSIGNED_INT,
-			nullptr);
+		RenderParticleSpawnPreview();
 	}
 
-	// Nodes
+	// Render octree
 	if (showOctree) {
-		glDisableVertexAttribArray(3);
-		glDisableVertexAttribArray(4);
-		glDisableVertexAttribArray(5);
-		glDisableVertexAttribArray(6);
-
-		glBindTextureUnit(0, m_nodeTextureID);
-		glBindSampler(0, m_SamplerID);
-		glBindVertexArray(m_nodeGPU.vaoID);
-
-		glProgramUniform1i(m_programID, ul(m_programID, "isSingleObject"), true); // No instanced drawing
-		glProgramUniform1i(m_programID, ul(m_programID, "colorType"), 0); // Fixed color
-		glProgramUniform1f(m_programID, ul(m_programID, "scaleFactor"), 0.005f); // Fixed scale
-		glProgramUniform4fv(m_programID, ul(m_programID, "lightPos"), 1, glm::value_ptr(glm::vec4(0.5f))); // Fixed constant light
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		for (int i = 0; i < simulationManager.octree.nodes.size(); i++) {
-			if (simulationManager.octree.nodes[i].getMass() == 0) continue;
-
-			glProgramUniform3fv(m_programID, ul(m_programID, "position"), 1, glm::value_ptr(simulationManager.octree.nodes[i].octant.getCenter()));
-			glProgramUniform1f(m_programID, ul(m_programID, "scale"), simulationManager.octree.nodes[i].octant.getSize()*4);
-			
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeEBO);
-			glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, nullptr);
-		}
+		RenderOctreeNodes();
 	}
 
 	// Cleanup

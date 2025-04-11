@@ -136,6 +136,12 @@
     <None Include="Assets\Inter.ttc">
       <Filter>Assets</Filter>
     </None>
+    <None Include="Shaders\individual.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\instanced.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\node.jpg">

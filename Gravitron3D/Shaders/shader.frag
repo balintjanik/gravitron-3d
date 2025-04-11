@@ -34,17 +34,6 @@ vec3 Kd = vec3( 1.0 );
 vec3 Ks = vec3( 1.0 );
 
 float Shininess = 8.0;
-
-/* segítség:
-	    - normalizálás: http://www.opengl.org/sdk/docs/manglsl/xhtml/normalize.xml
-	    - skaláris szorzat: http://www.opengl.org/sdk/docs/manglsl/xhtml/dot.xml
-	    - clamp: http://www.opengl.org/sdk/docs/manglsl/xhtml/clamp.xml
-		- reflect: http://www.opengl.org/sdk/docs/manglsl/xhtml/reflect.xml
-				reflect(beérkező_vektor, normálvektor);
-		- pow: http://www.opengl.org/sdk/docs/manglsl/xhtml/pow.xml
-				pow(alap, kitevő);
-*/
-
 uniform int colorType;
 
 uniform float minVal = 0.0;  // Adjust this to the minimum expected value

@@ -37,6 +37,9 @@ public:
 	
 	void UpdateData();
 	void Update( const SUpdateInfo& );
+	void RenderParticlesInstanced();
+	void RenderParticleSpawnPreview();
+	void RenderOctreeNodes();
 	void Render();
 	void RenderGUI();
 
@@ -60,7 +63,8 @@ protected:
 	CameraManipulator m_cameraManipulator;
 
 	// Shaders
-	GLuint m_programID = 0;
+	GLuint m_instancedProgramID = 0;
+	GLuint m_individualProgramID = 0;
 
 	void InitShaders();
 	void CleanShaders() const;
