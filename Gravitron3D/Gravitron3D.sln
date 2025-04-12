@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gravitron3D", "Gravitron3D.vcxproj", "{DFBA4000-DA2F-5DA7-8ECF-69C4FF381AEF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gravitron3DUnitTests", "..\Gravitron3DUnitTests\Gravitron3DUnitTests.vcxproj", "{8906BB98-227E-A39B-1902-64DFDF759103}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{DFBA4000-DA2F-5DA7-8ECF-69C4FF381AEF}.Debug|x64.Build.0 = Debug|x64
 		{DFBA4000-DA2F-5DA7-8ECF-69C4FF381AEF}.Release|x64.ActiveCfg = Release|x64
 		{DFBA4000-DA2F-5DA7-8ECF-69C4FF381AEF}.Release|x64.Build.0 = Release|x64
+		{8906BB98-227E-A39B-1902-64DFDF759103}.Debug|x64.ActiveCfg = Debug|x64
+		{8906BB98-227E-A39B-1902-64DFDF759103}.Debug|x64.Build.0 = Debug|x64
+		{8906BB98-227E-A39B-1902-64DFDF759103}.Release|x64.ActiveCfg = Release|x64
+		{8906BB98-227E-A39B-1902-64DFDF759103}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
