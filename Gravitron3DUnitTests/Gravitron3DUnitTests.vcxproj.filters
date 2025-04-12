@@ -21,6 +21,12 @@
     <ClCompile Include="OctreeTests.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OctantTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NodeTests.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
