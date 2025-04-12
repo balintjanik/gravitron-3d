@@ -7,13 +7,13 @@ struct Octant {
 private:
 	glm::vec4 centerSize;
 
-	Octant intoOctant(uint32_t i);
 
 public:
 	Octant(glm::vec4 centerSize_ = glm::vec4(0)) : centerSize(centerSize_) {}
 	Octant(glm::vec3 center_, float size_) : centerSize(glm::vec4(center_, size_)) { }
 
 	uint32_t getOctantFromPosition(glm::vec3 position);
+	Octant intoOctant(uint32_t i);
 	std::vector<Octant> intoOctants();
 	static Octant createNewContaining(std::vector<Particle>& particles);
 
