@@ -16,6 +16,8 @@ void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType pr
 }
 
 void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
+	if (settings.getSimulationSpeed() == 0.0f) return;
+
 	// Build tree
 	Octant octant = Octant::createNewContaining(particles);
 	octree.clear(octant);
