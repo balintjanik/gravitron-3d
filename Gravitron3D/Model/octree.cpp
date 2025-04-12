@@ -33,6 +33,9 @@ std::vector<Octant> Octant::intoOctants(){
 
 Octant Octant::createNewContaining(std::vector<Particle>& particles)
 {
+    if (particles.size() == 0)
+        return Octant(glm::vec4(0.0f));
+
     float min_x = FLT_MAX;
     float min_y = FLT_MAX;
     float min_z = FLT_MAX;
