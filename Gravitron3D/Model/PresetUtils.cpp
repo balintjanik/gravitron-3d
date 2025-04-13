@@ -236,6 +236,12 @@ void PresetUtils::calculatePositionsSphere(std::vector<Particle>& r_particles, i
 	if (rangeMax > r_particles.size())
 		rangeMax = r_particles.size();
 
+	if (radiusMin < 0)
+		throw std::runtime_error("Minimum radius must be a non-negative number");
+
+	if (radiusMax < radiusMin)
+		throw std::runtime_error("Maximum radius must not be smaller than minimum radius");
+
 	for (int i = rangeMin; i < rangeMax; i++)
 	{
 		// Generate a random position in a sphere
