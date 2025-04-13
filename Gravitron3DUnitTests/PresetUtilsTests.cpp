@@ -193,5 +193,167 @@ namespace Gravitron3DUnitTests
                 Assert::AreEqual(expectedPositionZ, particles[i].getPosition().z);
             }
         }
+
+        TEST_METHOD(CalculatePositionsGrid2D_AllProperties)
+        {
+            int n = 8;
+            std::vector<Particle> particles;
+            for (int i = 0; i < n; i++) {
+                particles.push_back(Particle());
+            }
+
+            glm::vec3 particlePositionDefaultValue = glm::vec3(0.0f);
+            int rangeMin = n / 2;
+            int rangeMax = n;
+            glm::vec3 minValue = glm::vec3(0.0f);
+            glm::vec3 maxValue = glm::vec3(1.0f);
+
+            PresetUtils::calculatePositionsGrid2D(particles, rangeMin, rangeMax, minValue, maxValue);
+            for (int i = 0; i < rangeMin; i++) {
+                Assert::AreEqual(particlePositionDefaultValue.x, particles[i].getPosition().x);
+                Assert::AreEqual(particlePositionDefaultValue.y, particles[i].getPosition().y);
+                Assert::AreEqual(particlePositionDefaultValue.z, particles[i].getPosition().z);
+            }
+
+            Assert::AreEqual(0.0f, particles[4].getPosition().x);
+            Assert::AreEqual(0.0f, particles[4].getPosition().y);
+            Assert::AreEqual(0.0f, particles[4].getPosition().z);
+            Assert::AreEqual(0.0f, particles[5].getPosition().x);
+            Assert::AreEqual(0.0f, particles[5].getPosition().y);
+            Assert::AreEqual(1.0f, particles[5].getPosition().z);
+            Assert::AreEqual(1.0f, particles[6].getPosition().x);
+            Assert::AreEqual(0.0f, particles[6].getPosition().y);
+            Assert::AreEqual(0.0f, particles[6].getPosition().z);
+            Assert::AreEqual(1.0f, particles[7].getPosition().x);
+            Assert::AreEqual(0.0f, particles[7].getPosition().y);
+            Assert::AreEqual(1.0f, particles[7].getPosition().z);
+        }
+
+        TEST_METHOD(CalculateVelocitiesRandom_AllProperties)
+        {
+            int n = 10000;
+            std::vector<Particle> particles;
+            for (int i = 0; i < n; i++) {
+                particles.push_back(Particle());
+            }
+
+            glm::vec3 particleVelocityDefaultValue = glm::vec3(0.0f);
+            int rangeMin = n / 2;
+            int rangeMax = n;
+            glm::vec3 minValue = glm::vec3(-10.0f, 0.0f, 10.0f);
+            glm::vec3 maxValue = glm::vec3(-5.0f, 2.0f, 15.0f);
+
+            PresetUtils::calculateVelocitiesRandom(particles, rangeMin, rangeMax, minValue, maxValue);
+            for (int i = 0; i < rangeMin; i++) {
+                Assert::AreEqual(particleVelocityDefaultValue.x, particles[i].getVelocity().x);
+                Assert::AreEqual(particleVelocityDefaultValue.y, particles[i].getVelocity().y);
+                Assert::AreEqual(particleVelocityDefaultValue.z, particles[i].getVelocity().z);
+            }
+
+            for (int i = rangeMin; i < rangeMax; i++) {
+                Assert::IsTrue(particles[i].getVelocity().x >= minValue.x);
+                Assert::IsTrue(particles[i].getVelocity().y >= minValue.y);
+                Assert::IsTrue(particles[i].getVelocity().z >= minValue.z);
+                Assert::IsTrue(particles[i].getVelocity().x <= maxValue.x);
+                Assert::IsTrue(particles[i].getVelocity().y <= maxValue.y);
+                Assert::IsTrue(particles[i].getVelocity().z <= maxValue.z);
+            }
+        }
+
+        TEST_METHOD(CalculateMassesConstant_AllProperties)
+        {
+            int n = 10000;
+            std::vector<Particle> particles;
+            for (int i = 0; i < n; i++) {
+                particles.push_back(Particle());
+            }
+
+            float particleMassDefaultValue = 1.0f;
+            int rangeMin = n / 2;
+            int rangeMax = n;
+            float value = 10.0f;
+
+            PresetUtils::calculateMassesConstant(particles, rangeMin, rangeMax, value);
+            for (int i = 0; i < rangeMin; i++) {
+                Assert::AreEqual(particleMassDefaultValue, particles[i].getMass());
+            }
+
+            for (int i = rangeMin; i < rangeMax; i++) {
+                Assert::AreEqual(value, particles[i].getMass());
+            }
+        }
+
+        TEST_METHOD(CalculateMassesRandom_AllProperties)
+        {
+            int n = 10000;
+            std::vector<Particle> particles;
+            for (int i = 0; i < n; i++) {
+                particles.push_back(Particle());
+            }
+
+            float particleMassDefaultValue = 1.0f;
+            int rangeMin = n / 2;
+            int rangeMax = n;
+            float minValue = 10.0f;
+            float maxValue = 20.0f;
+
+            PresetUtils::calculateMassesRandom(particles, rangeMin, rangeMax, minValue, maxValue);
+            for (int i = 0; i < rangeMin; i++) {
+                Assert::AreEqual(particleMassDefaultValue, particles[i].getMass());
+            }
+
+            for (int i = rangeMin; i < rangeMax; i++) {
+                Assert::IsTrue(particles[i].getMass() >= minValue);
+                Assert::IsTrue(particles[i].getMass() <= maxValue);
+            }
+        }
+
+        TEST_METHOD(CalculateSizesConstant_AllProperties)
+        {
+            int n = 10000;
+            std::vector<Particle> particles;
+            for (int i = 0; i < n; i++) {
+                particles.push_back(Particle());
+            }
+
+            float particleSizeDefaultValue = 1.0f;
+            int rangeMin = n / 2;
+            int rangeMax = n;
+            float value = 10.0f;
+
+            PresetUtils::calculateSizesConstant(particles, rangeMin, rangeMax, value);
+            for (int i = 0; i < rangeMin; i++) {
+                Assert::AreEqual(particleSizeDefaultValue, particles[i].getSize());
+            }
+
+            for (int i = rangeMin; i < rangeMax; i++) {
+                Assert::AreEqual(value, particles[i].getSize());
+            }
+        }
+
+        TEST_METHOD(CalculateSizesRandom_AllProperties)
+        {
+            int n = 10000;
+            std::vector<Particle> particles;
+            for (int i = 0; i < n; i++) {
+                particles.push_back(Particle());
+            }
+
+            float particleSizeDefaultValue = 1.0f;
+            int rangeMin = n / 2;
+            int rangeMax = n;
+            float minValue = 10.0f;
+            float maxValue = 20.0f;
+
+            PresetUtils::calculateSizesRandom(particles, rangeMin, rangeMax, minValue, maxValue);
+            for (int i = 0; i < rangeMin; i++) {
+                Assert::AreEqual(particleSizeDefaultValue, particles[i].getSize());
+            }
+
+            for (int i = rangeMin; i < rangeMax; i++) {
+                Assert::IsTrue(particles[i].getSize() >= minValue);
+                Assert::IsTrue(particles[i].getSize() <= maxValue);
+            }
+        }
     };
 }
