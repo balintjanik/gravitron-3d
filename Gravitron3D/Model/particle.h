@@ -35,22 +35,13 @@ public:
 		glm::vec3 velocity_, float size_,
 		glm::vec3 acceleration_, float force_,
 		glm::vec3 color_, bool movable_)
-		: positionMass(glm::vec4(position_, mass_)),
-		velocitySize(glm::vec4(velocity_, size_)),
-		accelerationForce(glm::vec4(acceleration_, force_)),
-		colorMovable(glm::vec4(color_, (movable_ ? 1 : 0)))
+		: Particle(
+			glm::vec4(position_, mass_),
+			glm::vec4(velocity_, size_),
+			glm::vec4(acceleration_, force_),
+			glm::vec4(color_, movable_)
+		)
 	{
-		setPosition(position_);
-		setMass(mass_);
-
-		setVelocity(velocity_);
-		setSize(size_);
-
-		setAcceleration(acceleration_);
-		setForce(force_);
-
-		setColor(color_);
-		setMovable(movable_ != 0.0f);
 	}
 
 	// Getters
