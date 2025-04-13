@@ -1,8 +1,11 @@
 ﻿#include "PresetUtils.h"
+#include <stdexcept>
 
 float PresetUtils::randomFloat(float min, float max)
 {
-	// TODO: this assumes max>min
+	if (max < min)
+		throw std::runtime_error("Minimum value must not be larger than maximum value");
+
 	float random = ((float)rand()) / (float)RAND_MAX;
 	float range = max - min;
 	return (random * range) + min;
@@ -46,7 +49,6 @@ std::vector<Particle> PresetUtils::generateParticles(int numberOfParticles, Pres
 }
 
 void PresetUtils::initParticlePositions(std::vector<Particle>& r_particles, PositionType position) {
-	// TODO: specify range?
 	if (position == POSITION_RANDOM) {
 		int rangeMin = 0;
 		int rangeMax = r_particles.size();
@@ -55,7 +57,6 @@ void PresetUtils::initParticlePositions(std::vector<Particle>& r_particles, Posi
 		
 		calculatePositionsRandom(r_particles, rangeMin, rangeMax, min, max);
 	}
-	// TODO: specify radius?
 	else if (position == POSITION_SPHERE) {
 		int rangeMin = 0;
 		int rangeMax = r_particles.size();
@@ -65,7 +66,6 @@ void PresetUtils::initParticlePositions(std::vector<Particle>& r_particles, Posi
 
 		calculatePositionsSphere(r_particles, rangeMin, rangeMax, center, radiusMin, radiusMax, false);
 	}
-	// TODO: specify radius?
 	else if (position == POSITION_DISK) {
 		int rangeMin = 0;
 		int rangeMax = r_particles.size();
@@ -97,7 +97,6 @@ void PresetUtils::initParticlePositions(std::vector<Particle>& r_particles, Posi
 }
 
 void PresetUtils::initParticleVelocities(std::vector<Particle>& r_particles, VelocityType velocity) {
-	// TODO: specify range?
 	if (velocity == VELOCITY_RANDOM) {
 		glm::vec3 min = glm::vec3(-50.f, -50.f, -50.f);
 		glm::vec3 max = glm::vec3(50.f, 50.f, 50.f);
