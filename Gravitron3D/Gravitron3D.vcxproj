@@ -150,6 +150,7 @@
     <ClInclude Include="Model\MassType.h" />
     <ClInclude Include="Model\Octree.h" />
     <ClInclude Include="Model\Particle.h" />
+    <ClInclude Include="Model\ParticleGroupConfig.h" />
     <ClInclude Include="Model\PositionType.h" />
     <ClInclude Include="Model\PresetType.h" />
     <ClInclude Include="Model\PresetUtils.h" />

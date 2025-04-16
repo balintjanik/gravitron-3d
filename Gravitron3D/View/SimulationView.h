@@ -175,32 +175,11 @@ protected:
 	bool spawnParticle_show = false;
 
 	// Spawn group
-	int group_numberOfParticles = 0;
 	void ShowSpawnGroupPositionSettings(PositionType positionType);
-	PositionType group_positionType = static_cast<PositionType>(0);
-	glm::vec3 group_cubeMin = glm::vec3(0.0f);
-	glm::vec3 group_cubeMax = glm::vec3(0.0f);
-	glm::vec3 group_sphereCenter = glm::vec3(0.0f);
-	float group_sphereRadiusMin = 20.0f;
-	float group_sphereRadiusMax = 250.0f;
 	void ShowSpawnGroupVelocitySettings(VelocityType velocityType);
-	VelocityType group_velocityType = static_cast<VelocityType>(0);
-	float group_velocityScale = 1.0f;
-	float group_centerMass = 1.0f;
-	glm::vec3 group_velocityRandomMin = glm::vec3(0.0f);
-	glm::vec3 group_velocityRandomMax = glm::vec3(0.0f);
-	bool group_movable = true;
-	glm::vec3 group_overallVelocity = glm::vec3(0.0f);
 	void ShowSpawnGroupMassSettings(MassType massType);
-	MassType group_massType = static_cast<MassType>(0);
-	float group_massValue = 1.0f;
-	float group_massRandomMin = 1.0f;
-	float group_massRandomMax = 1.0f;
 	void ShowSpawnGroupSizeSettings(SizeType sizeType);
-	SizeType group_sizeType = static_cast<SizeType>(0);
-	float group_sizeValue = 1.0f;
-	float group_sizeRandomMin = 1.0f;
-	float group_sizeRandomMax = 1.0f;
+	ParticleGroupConfig spawnGroupConfig;
 
 	// New simulation settings
 	int numberOfParticles = 10000;

@@ -101,6 +101,9 @@
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="Model\ParticleGroupConfig.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Model">

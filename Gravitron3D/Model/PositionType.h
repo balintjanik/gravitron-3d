@@ -15,3 +15,11 @@ static const char* POSITION_TYPE_NAMES[] = {
 	"Grid 3D",
 	"Grid 2D"
 };
+
+struct SpawnRegion {
+	glm::vec3 cubeMin = glm::vec3(0.0f);
+	glm::vec3 cubeMax = glm::vec3(0.0f);
+	glm::vec3 sphereCenter = glm::vec3(0.0f);
+	float sphereRadiusMin = 25.0f;
+	float sphereRadiusMax = 250.0f;
+};

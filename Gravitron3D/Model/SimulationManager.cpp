@@ -38,60 +38,39 @@ void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySi
 	settings.setNumberOfParticles(particles.size());
 }
 
-void SimulationManager::addGroup(int numberOfParticlesToAdd,
-	PositionType position,
-	glm::vec3 cubeMin,
-	glm::vec3 cubeMax,
-	glm::vec3 sphereCenter,
-	float sphereRadiusMin,
-	float sphereRadiusMax,
-	VelocityType velocity,
-	float velocityScale,
-	float centerMass,
-	glm::vec3 velocityRandomMin,
-	glm::vec3 velocityRandomMax,
-	bool movable,
-	glm::vec3 overallVelocity,
-	MassType mass,
-	float massValue,
-	float massRandomMin,
-	float massRandomMax,
-	SizeType size,
-	float sizeValue,
-	float sizeRandomMin,
-	float sizeRandomMax)
+void SimulationManager::addGroup(const ParticleGroupConfig& config)
 {
-	if (numberOfParticlesToAdd == 0) return;
+	if (config.numberOfParticlesToAdd == 0) return;
 
 	int previousNumberOfParticles = settings.getNumberOfParticles();
-	settings.setNumberOfParticles(previousNumberOfParticles + numberOfParticlesToAdd);
+	settings.setNumberOfParticles(previousNumberOfParticles + config.numberOfParticlesToAdd);
 
 	// Initialize center
 	Particle centerParticle = Particle();
-	if (position == POSITION_RANDOM || position == POSITION_GRID_2D || position == POSITION_GRID_3D)
-		centerParticle.setPosition((cubeMin + cubeMax) / 2.0f);
+	if (config.position == POSITION_RANDOM || config.position == POSITION_GRID_2D || config.position == POSITION_GRID_3D)
+		centerParticle.setPosition((config.region.cubeMin + config.region.cubeMax) / 2.0f);
 	else
-		centerParticle.setPosition(sphereCenter);
+		centerParticle.setPosition(config.region.sphereCenter);
 
-	if (velocity == VELOCITY_ORBIT) {
-		centerParticle.setMass(centerMass);
+	if (config.velocity.type == VELOCITY_ORBIT) {
+		centerParticle.setMass(config.centerMass);
 		centerParticle.setSize(10);
 	}
 	else {
 		centerParticle.setMass(1.0f);
 	}
 
-	if (!movable) {
+	if (!config.movable) {
 		centerParticle.setMovable(false);
 	}
 	else {
-		centerParticle.setVelocity(overallVelocity);
+		centerParticle.setVelocity(config.velocity.overallVelocity);
 	}
 
 	particles.push_back(centerParticle);
 
 	// Add particles
-	for (int i = 1; i < numberOfParticlesToAdd; i++) {
+	for (int i = 1; i < config.numberOfParticlesToAdd; i++) {
 		particles.push_back(Particle());
 		particles[previousNumberOfParticles + i].setMass(1.f);
 	}
@@ -99,22 +78,22 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	// Initialize positions
 	int rangeMin = previousNumberOfParticles + 1;
 	int rangeMax = particles.size();
-	switch (position)
+	switch (config.position)
 	{
 	case POSITION_RANDOM:
-		PresetUtils::calculatePositionsRandom(particles, rangeMin, rangeMax, cubeMin, cubeMax);
+		PresetUtils::calculatePositionsRandom(particles, rangeMin, rangeMax, config.region.cubeMin, config.region.cubeMax);
 		break;
 	case POSITION_SPHERE:
-		PresetUtils::calculatePositionsSphere(particles, rangeMin, rangeMax, sphereCenter, sphereRadiusMin, sphereRadiusMax, false);
+		PresetUtils::calculatePositionsSphere(particles, rangeMin, rangeMax, config.region.sphereCenter, config.region.sphereRadiusMin, config.region.sphereRadiusMax, false);
 		break;
 	case POSITION_DISK:
-		PresetUtils::calculatePositionsSphere(particles, rangeMin, rangeMax, sphereCenter, sphereRadiusMin, sphereRadiusMax, true);
+		PresetUtils::calculatePositionsSphere(particles, rangeMin, rangeMax, config.region.sphereCenter, config.region.sphereRadiusMin, config.region.sphereRadiusMax, true);
 		break;
 	case POSITION_GRID_3D:
-		PresetUtils::calculatePositionsGrid3D(particles, rangeMin, rangeMax, cubeMin, cubeMax);
+		PresetUtils::calculatePositionsGrid3D(particles, rangeMin, rangeMax, config.region.cubeMin, config.region.cubeMax);
 		break;
 	case POSITION_GRID_2D:
-		PresetUtils::calculatePositionsGrid2D(particles, rangeMin, rangeMax, cubeMin, cubeMax);
+		PresetUtils::calculatePositionsGrid2D(particles, rangeMin, rangeMax, config.region.cubeMin, config.region.cubeMax);
 		break;
 	default:
 		throw "Invalid position type.";
@@ -122,47 +101,47 @@ void SimulationManager::addGroup(int numberOfParticlesToAdd,
 	}
 
 	// Initialize velocities
-	switch (velocity)
+	switch (config.velocity.type)
 	{
 	case VELOCITY_RANDOM:
-		PresetUtils::calculateVelocitiesRandom(particles, rangeMin, rangeMax, velocityRandomMin, velocityRandomMax);
+		PresetUtils::calculateVelocitiesRandom(particles, rangeMin, rangeMax, config.velocity.randomMin, config.velocity.randomMax);
 		break;
 	case VELOCITY_ORBIT:
-		glm::vec4 center = glm::vec4(centerParticle.getPosition(), centerMass);
-		PresetUtils::calculateVelocitiesOrbit(particles, rangeMin, rangeMax, center, velocityScale);
+		glm::vec4 center = glm::vec4(centerParticle.getPosition(), config.centerMass);
+		PresetUtils::calculateVelocitiesOrbit(particles, rangeMin, rangeMax, center, config.velocity.scale);
 		break;
 	default:
 		break;
 	}
 
 	// Add group overall velocity
-	if (movable) {
+	if (config.movable) {
 		for (int i = rangeMin; i < rangeMax; i++) {
-			particles[i].setVelocity(particles[i].getVelocity() + overallVelocity);
+			particles[i].setVelocity(particles[i].getVelocity() + config.velocity.overallVelocity);
 		}
 	}
 
 	// Initialize masses
-	switch (mass)
+	switch (config.mass.type)
 	{
 	case MASS_CONSTANT:
-		PresetUtils::calculateMassesConstant(particles, rangeMin, rangeMax, massValue);
+		PresetUtils::calculateMassesConstant(particles, rangeMin, rangeMax, config.mass.value);
 		break;
 	case MASS_RANDOM:
-		PresetUtils::calculateMassesRandom(particles, rangeMin, rangeMax, massRandomMin, massRandomMax);
+		PresetUtils::calculateMassesRandom(particles, rangeMin, rangeMax, config.mass.randomMin, config.mass.randomMax);
 		break;
 	default:
 		break;
 	}
 
 	// Initialize sizes
-	switch (size)
+	switch (config.size.type)
 	{
 	case SIZE_CONSTANT:
-		PresetUtils::calculateSizesConstant(particles, rangeMin, rangeMax, sizeValue);
+		PresetUtils::calculateSizesConstant(particles, rangeMin, rangeMax, config.size.value);
 		break;
 	case SIZE_RANDOM:
-		PresetUtils::calculateSizesRandom(particles, rangeMin, rangeMax, sizeRandomMin, sizeRandomMax);
+		PresetUtils::calculateSizesRandom(particles, rangeMin, rangeMax, config.size.randomMin, config.size.randomMax);
 		break;
 	default:
 		break;

@@ -11,3 +11,11 @@ static const char* VELOCITY_TYPE_NAMES[] = {
 	"Zero",
 	"Orbit"
 };
+
+struct VelocityProperties {
+	VelocityType type = VelocityType::VELOCITY_ZERO;
+	float scale = 1.0f;
+	glm::vec3 randomMin = glm::vec3(0.0f);
+	glm::vec3 randomMax = glm::vec3(0.0f);
+	glm::vec3 overallVelocity = glm::vec3(0.0f);
+};

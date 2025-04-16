@@ -6,6 +6,7 @@
 #include "Octree.h"
 #include "Settings.h"
 #include "PresetUtils.h"
+#include "ParticleGroupConfig.h"
 #include "../Persistence/ParticleDataLoader.h"
 #include "../Persistence/SettingsDataLoader.h"
 
@@ -22,28 +23,7 @@ public:
 	void updateSimulation(const SUpdateInfo& updateInfo);
 
 	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable);
-	void addGroup(int numberOfParticlesToAdd,
-		PositionType position,
-		glm::vec3 cubeMin,
-		glm::vec3 cubeMax,
-		glm::vec3 sphereCenter,
-		float sphereRadiusMin,
-		float sphereRadiusMax,
-		VelocityType velocity,
-		float velocityScale,
-		float centerMass,
-		glm::vec3 velocityRandomMin,
-		glm::vec3 velocityRandomMax,
-		bool movable,
-		glm::vec3 overallVelocity,
-		MassType mass,
-		float massValue,
-		float massRandomMin,
-		float massRandomMax,
-		SizeType size,
-		float sizeValue,
-		float sizeRandomMin,
-		float sizeRandomMax);
+	void addGroup(const ParticleGroupConfig& config);
 
 	void loadSettings(const std::string& filename);
 	void saveSettings(const std::string& filename);
