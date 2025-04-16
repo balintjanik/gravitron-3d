@@ -307,6 +307,7 @@ void SimulationView::UpdateData() {
 	if (simulationManager.settings.getBackgroundColor() != backgroundColor) {
 		backgroundColor = simulationManager.settings.getBackgroundColor();
 		SetBackgroundColor(backgroundColor);
+		negativeColor = glm::vec3(1.0f) - backgroundColor;
 	}
 
 	// Simulation settings
@@ -374,6 +375,7 @@ void SimulationView::RenderParticleSpawnPreview() {
 	glUseProgram(m_individualProgramID);
 
 	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "colorType"), 2); // Fixed color
+	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "negativeColor"), 1, glm::value_ptr(negativeColor)); // Fixed negative color relative to background
 	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scaleFactor"), 0.005f); // Fixed scale
 	glProgramUniform4fv(m_individualProgramID, ul(m_individualProgramID, "lightPos"), 1, glm::value_ptr(glm::vec4(0.5f))); // Fixed constant light
 	glProgramUniformMatrix4fv(m_individualProgramID, ul(m_individualProgramID, "viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
@@ -405,6 +407,7 @@ void SimulationView::RenderOctreeNodes() {
 	glUseProgram(m_individualProgramID);
 
 	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "colorType"), 0); // Fixed color
+	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "color"), 1, glm::value_ptr(negativeColor)); // Fixed negative color relative to background
 	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scaleFactor"), 0.005f); // Fixed scale
 	glProgramUniform4fv(m_individualProgramID, ul(m_individualProgramID, "lightPos"), 1, glm::value_ptr(glm::vec4(0.5f))); // Fixed constant light
 	glProgramUniformMatrix4fv(m_individualProgramID, ul(m_individualProgramID, "viewProj"), 1, GL_FALSE, glm::value_ptr(m_camera.GetViewProj()));
@@ -1113,6 +1116,7 @@ void SimulationView::RenderGUI()
 			backgroundColor = glm::clamp(backgroundColor, 0.0f, 1.0f);
 			SetBackgroundColor(backgroundColor);
 			simulationManager.settings.setBackgroundColor(backgroundColor);
+			negativeColor = glm::vec3(1.0f) - backgroundColor;
 		}
 		
 	}

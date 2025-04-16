@@ -16,18 +16,15 @@ out float vs_out_size;
 // Uniforms
 uniform mat4 viewProj;
 uniform vec3 position;
+uniform vec3 color;
 uniform float scale;
 uniform float scaleFactor;
 
 void main()
 {
-    vec3 instancePosition = position;
-    float instanceScale = scale;
-    float instanceSize = scaleFactor * instanceScale;
-    float instanceForce = 0.0;
-    vec3 instanceColor = vec3(1.0);
+    float instanceSize = scaleFactor * scale;
 
-    vec3 normalizedInstancePosition = instancePosition / 100.0;
+    vec3 normalizedInstancePosition = position / 100.0;
 
     mat4 world = mat4(1.0);
     world[0][0] = instanceSize;
@@ -41,7 +38,7 @@ void main()
     vs_out_pos  = (world   * vec4(vs_in_pos, 1)).xyz;
     vs_out_norm = (worldIT * vec4(vs_in_norm, 0)).xyz;
     vs_out_tex = vs_in_tex;
-    vs_out_allforce = instanceForce;
-    vs_out_color = instanceColor;
+    vs_out_allforce = 0.0;
+    vs_out_color = color;
     vs_out_size = instanceSize;
 }

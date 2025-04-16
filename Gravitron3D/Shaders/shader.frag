@@ -35,6 +35,7 @@ vec3 Ks = vec3( 1.0 );
 
 float Shininess = 8.0;
 uniform int colorType;
+uniform vec3 negativeColor;
 
 uniform float minVal = 0.0;  // Adjust this to the minimum expected value
 uniform float maxVal = 100.0;  // Adjust this to the maximum expected value
@@ -71,7 +72,7 @@ void main()
 	vec4 normalizedLightPos = vec4(lightPos.xyz / 100, lightPos.w);
 
 	if (colorType == 2) {
-		fs_out_col = vec4(1.0, 1.0, 1.0, 0.3);
+		fs_out_col = vec4(negativeColor, 0.4);
 		return;
 	}
 	else if (colorType == 1) {

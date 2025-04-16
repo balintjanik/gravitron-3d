@@ -136,6 +136,7 @@ protected:
 
 	void SetBackgroundColor(glm::vec3 color);
 	glm::vec3 backgroundColor = glm::vec3(0.0f);
+	glm::vec3 negativeColor = glm::vec3(1.0f);
 
 	// Calculation settings
 	float simulationSpeed = 1.0f;
