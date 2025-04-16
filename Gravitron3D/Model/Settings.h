@@ -3,24 +3,24 @@
 #include "glm/glm.hpp"
 #include <string>
 
-constexpr int CURRENT_SETTINGS_VERSION = 5;
+constexpr int CURRENT_SETTINGS_VERSION = 6;
 
 struct Settings {
 private:
     int version = CURRENT_SETTINGS_VERSION;
 
-	uint32_t numberOfParticles;
+    uint32_t numberOfParticles;
 
-	float simulationSpeed;
+    float simulationSpeed;
     static constexpr float minSimulationSpeed = 0.0f;
     static constexpr float maxSimulationSpeed = 50.0f;
 
-	uint32_t numberOfThreads = 1;
+    uint32_t numberOfThreads = 1;
 
-	float theta = 0.5f;
+    float theta = 0.5f;
     static constexpr float minTheta = 0.0f;
     static constexpr float maxTheta = 2.0f;
-	float epsilon = 1.0f;
+    float epsilon = 1.0f;
     static constexpr float minEpsilon = 0.0f;
     static constexpr float maxEpsilon = 15.0f;
 
@@ -45,8 +45,10 @@ private:
     float minForceColor = 0.0f;
     float maxForceColor = 100.0f;
 
+    glm::vec3 backgroundColor = glm::vec3(0.0f);
+
 public:
-	Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
+    Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
 
     // Getters
     int getVersion() const { return version; }
@@ -87,6 +89,7 @@ public:
     bool getIsForceColor() const { return isForceColor; }
     float getMinForceColor() const { return minForceColor; }
     float getMaxForceColor() const { return maxForceColor; }
+    glm::vec3 getBackgroundColor() const { return backgroundColor; }
 
     // Setters
     void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = glm::clamp(_numberOfParticles, static_cast<uint32_t>(0), static_cast<uint32_t>(200000)); }
@@ -124,5 +127,8 @@ public:
     }
     void setMaxForceColor(float _maxForceColor) {
         maxForceColor = glm::clamp(_maxForceColor, minForceColor, std::numeric_limits<float>::max());
+    }
+    void setBackgroundColor(glm::vec3 _backgroundColor) {
+        backgroundColor = glm::clamp(_backgroundColor, 0.0f, 1.0f);
     }
 };

@@ -27,6 +27,12 @@ void SettingsDataLoader::saveToFile(const std::string& filename, const Settings&
     out << "lightQuadraticAttenuation=" << settings.getLightQuadraticAttenuation() << std::endl;
     out << "scaleFactor=" << settings.getScaleFactor() << std::endl;
 
+    out << "isForceColor=" << settings.getIsForceColor() << std::endl;
+    out << "minForceColor=" << settings.getMinForceColor() << std::endl;
+    out << "maxForceColor=" << settings.getMaxForceColor() << std::endl;
+    glm::vec3 backgroundColor = settings.getBackgroundColor();
+    out << "backgroundColor=" << backgroundColor.x << "," << backgroundColor.y << "," << backgroundColor.z << std::endl;
+
     if (!out) {
         throw std::runtime_error("Failed to write settings data.");
     }
@@ -43,7 +49,8 @@ Settings SettingsDataLoader::loadFromFile(const std::string& filename) {
 
     const std::vector<std::string> keys = {
         "version", "numberOfParticles", "simulationSpeed", "numberOfThreads", "theta", "epsilon",
-        "lightPos", "lightConstantAttenuation", "lightLinearAttenuation", "lightQuadraticAttenuation", "scaleFactor"
+        "lightPos", "lightConstantAttenuation", "lightLinearAttenuation", "lightQuadraticAttenuation", "scaleFactor",
+        "isForceColor", "minForceColor", "maxForceColor", "backgroundColor"
     };
 
     int index = 0;
@@ -99,6 +106,20 @@ Settings SettingsDataLoader::loadFromFile(const std::string& filename) {
         }
         else if (key == keys[index] && index == 10) {
             settings.setScaleFactor(std::stof(value));
+        }
+        else if (key == keys[index] && index == 11) {
+            settings.setIsForceColor(std::stof(value));
+        }
+        else if (key == keys[index] && index == 12) {
+            settings.setMinForceColor(std::stof(value));
+        }
+        else if (key == keys[index] && index == 13) {
+            settings.setMaxForceColor(std::stof(value));
+        }
+        else if (key == keys[index] && index == 14) {
+            glm::vec3 backgroundColor;
+            std::sscanf(value.c_str(), "%f,%f,%f", &backgroundColor.x, &backgroundColor.y, &backgroundColor.z);
+            settings.setBackgroundColor(backgroundColor);
         }
         else {
             if (std::find(keys.begin(), keys.end(), key) != keys.end() && index < maxIndex) {

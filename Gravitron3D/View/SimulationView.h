@@ -73,7 +73,7 @@ protected:
 	OGLObject m_sphereGPU = {};
 	OGLObject m_nodeGPU = {};
 	GLuint  instanceVBO = 0;
-	GLuint edgeEBO = 0;
+	GLuint edgeIBO = 0;
 
 	void InitGeometry();
 	void CleanGeometry();
@@ -133,6 +133,9 @@ protected:
 	bool isForceColor = true;
 	float minForceColor = 0.0f;
 	float maxForceColor = 100.0f;
+
+	void SetBackgroundColor(glm::vec3 color);
+	glm::vec3 backgroundColor = glm::vec3(0.0f);
 
 	// Calculation settings
 	float simulationSpeed = 1.0f;

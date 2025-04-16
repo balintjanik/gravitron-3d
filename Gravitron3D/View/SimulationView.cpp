@@ -94,7 +94,7 @@ void SimulationView::InitGeometry()
 
 	glBindVertexArray(0);
 
-	///////////
+	// Setup cube edges
 	glBindVertexArray(m_nodeGPU.vaoID);
 
 	const GLuint nodeEdges[] = {
@@ -106,9 +106,9 @@ void SimulationView::InitGeometry()
 		0, 5,  2, 7,  3, 6,  4, 1
 	};
 
-	// Upload the edge indices to a separate `EBO`
-	glGenBuffers(1, &edgeEBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeEBO);
+	// Upload the edge indices to a separate ibo
+	glGenBuffers(1, &edgeIBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeIBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nodeEdges), nodeEdges, GL_STATIC_DRAW);
 }
 
@@ -233,13 +233,17 @@ void SimulationView::InitImGuiSettings() {
 	style.ScrollbarRounding = 6.0f;
 }
 
+void SimulationView::SetBackgroundColor(glm::vec3 color) {
+	glClearColor(color.x, color.y, color.z, 1.0f);
+}
+
 bool SimulationView::Init()
 {
 	simulationManager.initSettings();
 	InitSimulation();
 
 	SetupDebugCallback();
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	SetBackgroundColor(backgroundColor);
 
 	InitShaders();
 	InitGeometry();
@@ -300,6 +304,10 @@ void SimulationView::UpdateData() {
 	isForceColor = simulationManager.settings.getIsForceColor();
 	minForceColor = simulationManager.settings.getMinForceColor();
 	maxForceColor = simulationManager.settings.getMaxForceColor();
+	if (simulationManager.settings.getBackgroundColor() != backgroundColor) {
+		backgroundColor = simulationManager.settings.getBackgroundColor();
+		SetBackgroundColor(backgroundColor);
+	}
 
 	// Simulation settings
 	simulationSpeed = simulationManager.settings.getSimulationSpeed();
@@ -412,7 +420,7 @@ void SimulationView::RenderOctreeNodes() {
 	glBindVertexArray(m_nodeGPU.vaoID);
 	glBindTextureUnit(0, m_nodeTextureID);
 	glBindSampler(0, m_SamplerID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, edgeIBO);
 
 	// Wireframe mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -1099,6 +1107,12 @@ void SimulationView::RenderGUI()
 				maxForceColor = glm::clamp(maxForceColor, minForceColor, std::numeric_limits<float>::max());
 				simulationManager.settings.setMaxForceColor(maxForceColor);
 			}
+		}
+
+		if (ImGui::DragFloat3("Background color", glm::value_ptr(backgroundColor), 0.05f, 0.0f, 1.0f)) {
+			backgroundColor = glm::clamp(backgroundColor, 0.0f, 1.0f);
+			SetBackgroundColor(backgroundColor);
+			simulationManager.settings.setBackgroundColor(backgroundColor);
 		}
 		
 	}
