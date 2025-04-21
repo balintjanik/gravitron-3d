@@ -19,7 +19,7 @@ public:
 	SimulationManager() { };
 
 	void initSettings();
-	void initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass, SizeType size);
+	void initSimulation(PresetType preset);
 	void updateSimulation(const SUpdateInfo& updateInfo);
 
 	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable);

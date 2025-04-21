@@ -8,11 +8,36 @@ void SimulationManager::initSettings() {
 	if (settings.getNumberOfThreads() == 0) settings.setNumberOfThreads(4); // Fallback to 4 if hardware_concurrency cannot detect
 }
 
-void SimulationManager::initSimulation(uint32_t numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass, SizeType size) {
-	settings.setNumberOfParticles(numberOfParticles);
-
+void SimulationManager::initSimulation(PresetType preset) {
 	particles.clear();
-	particles = PresetUtils::generateParticles(numberOfParticles, preset, position, velocity, mass, size);
+	settings.setNumberOfParticles(0);
+	
+	try {
+		switch (preset)
+		{
+		case PRESET_GALAXY:
+			loadParticles("Presets/Galaxy.csv");
+			break;
+		case PRESET_SOLAR_SYSTEM:
+			loadParticles("Presets/SolarSystem.csv");
+			break;
+		case PRESET_GALAXY_COLLISION:
+			loadParticles("Presets/GalaxyCollision.csv");
+			break;
+		case PRESET_GALAXY_COLLISION2:
+			loadParticles("Presets/GalaxyCollision2.csv");
+			break;
+		case PRESET_EMPTY:
+			break;
+		default:
+			break;
+		}
+	}
+	catch (const std::exception& e) {
+		throw std::runtime_error(std::string(e.what()));
+	}
+
+	settings.setNumberOfParticles(particles.size());
 }
 
 void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {

@@ -150,7 +150,7 @@ void SimulationView::CleanTextures() const
 }
 
 void SimulationView::InitSimulation() {
-	simulationManager.initSimulation(numberOfParticles, presetType, positionType, velocityType, massType, sizeType);
+	simulationManager.initSimulation(presetType);
 }
 
 void SimulationView::InitImGuiSettings() {
@@ -1224,22 +1224,18 @@ void SimulationView::RenderGUI()
 
 	// New simulation
 	if (ImGui::CollapsingHeader("New simulation")) {
-		if (ImGui::InputInt("Number of particles", &numberOfParticles, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue)) {
-			if (numberOfParticles > threshold_numberOfParticles)
-				UpdateMessage("Warning: adding too many particles might result in lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
-		}
-
 		ShowEnumDropdown("Preset Type", PRESET_TYPE_NAMES, presetType);
 
-		if (presetType == PRESET_CUSTOM) {
-			ShowEnumDropdown("Position Type", POSITION_TYPE_NAMES, positionType);
-			ShowEnumDropdown("Velocity Type", VELOCITY_TYPE_NAMES, velocityType);
-			ShowEnumDropdown("Mass Type", MASS_TYPE_NAMES, massType);
-			ShowEnumDropdown("Size Type", SIZE_TYPE_NAMES, sizeType);
-		}
-
 		if (ImGui::Button("Start New Simulation")) {
-			InitSimulation();
+			try {
+				InitSimulation();
+			}
+			catch (const std::exception& e) {
+				UpdateMessage("Error while starting new simulation: " + std::string(e.what()) + ".", glm::vec3(1.0f, 0.0f, 0.0f));
+			}
+			catch (...) {
+				UpdateMessage("An unknown error occured while starting new simulation.", glm::vec3(1.0f, 0.0f, 0.0f));
+			}
 		}
 	}
 

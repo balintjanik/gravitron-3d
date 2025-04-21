@@ -182,13 +182,8 @@ protected:
 	ParticleGroupConfig spawnGroupConfig;
 
 	// New simulation settings
-	int numberOfParticles = 10000;
 	int threshold_numberOfParticles = 50000;
 	PresetType presetType = static_cast<PresetType>(0);
-	PositionType positionType = static_cast<PositionType>(0);
-	VelocityType velocityType = static_cast<VelocityType>(0);
-	MassType massType = static_cast<MassType>(0);
-	SizeType sizeType = static_cast<SizeType>(0);
 
 	// Message
 	void UpdateMessage(std::string newMessage, glm::vec3 newMessageColor);

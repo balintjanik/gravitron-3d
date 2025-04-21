@@ -9,7 +9,6 @@
 
 class PresetUtils {
 public:
-	static std::vector<Particle> generateParticles(int numberOfParticles, PresetType preset, PositionType position, VelocityType velocity, MassType mass, SizeType size);
 	static float randomFloat(float min, float max);
 
 	static void calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue);
@@ -25,14 +24,4 @@ public:
 
 	static void calculateSizesConstant(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float value);
 	static void calculateSizesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float minValue, float maxValue);
-private:
-	static void initParticlePositions(std::vector<Particle>& r_particles, PositionType position);
-	static void initParticleVelocities(std::vector<Particle>& r_particles, VelocityType velocity);
-	static void initParticleMasses(std::vector<Particle>& r_particles, MassType mass);
-	static void initParticleSizes(std::vector<Particle>& r_particles, SizeType size);
-
-	static void initPresetGalaxy(std::vector<Particle>& r_particles);
-	static void initPresetSolarSystem(std::vector<Particle>& r_particles);
-	static void initPresetGalaxyCollision(std::vector<Particle>& r_particles);
-	static void initPresetRandom(std::vector<Particle>& r_particles);
 };
