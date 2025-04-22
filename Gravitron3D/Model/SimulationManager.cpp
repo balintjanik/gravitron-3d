@@ -1,6 +1,11 @@
 #include "SimulationManager.h"
 #include <thread>
 #include <stdexcept>
+#include <chrono>
+#include <iostream>
+#include <fstream>
+
+std::ofstream logFile;
 
 void SimulationManager::initSettings() {
 	settings = Settings();
@@ -9,6 +14,7 @@ void SimulationManager::initSettings() {
 }
 
 void SimulationManager::initSimulation(PresetType preset) {
+	logFile.close();
 	particles.clear();
 	settings.setNumberOfParticles(0);
 	
@@ -38,9 +44,12 @@ void SimulationManager::initSimulation(PresetType preset) {
 	}
 
 	settings.setNumberOfParticles(particles.size());
+	logFile.open("frame_times_" + std::to_string(particles.size()) + ".csv");
 }
 
 void SimulationManager::updateSimulation(const float deltaTime) {
+	auto start = std::chrono::high_resolution_clock::now();
+
 	if (settings.getSimulationSpeed() == 0.0f) return;
 
 	// Build tree
@@ -56,6 +65,11 @@ void SimulationManager::updateSimulation(const float deltaTime) {
 
 	// Update particles
 	updateParticles(deltaTime);
+
+	auto end = std::chrono::high_resolution_clock::now();
+
+	double duration = std::chrono::duration<double, std::milli>(end - start).count();
+	logFile << duration << "\n";
 }
 
 void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable) {
@@ -171,6 +185,9 @@ void SimulationManager::addGroup(const ParticleGroupConfig& config)
 	default:
 		break;
 	}
+
+	logFile.close();
+	logFile.open("frame_times_" + std::to_string(particles.size()) + ".csv");
 }
 
 void SimulationManager::updateParticlesRange(const size_t start, const size_t end, const float deltaTime) {
