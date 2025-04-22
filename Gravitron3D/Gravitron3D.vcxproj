@@ -160,7 +160,6 @@
     <ClInclude Include="Model\Settings.h" />
     <ClInclude Include="Model\SimulationManager.h" />
     <ClInclude Include="Model\SizeType.h" />
-    <ClInclude Include="Model\SUpdateInfo.h" />
     <ClInclude Include="Model\VelocityType.h" />
     <ClInclude Include="Persistence\ParticleDataLoader.h" />
     <ClInclude Include="Persistence\SettingsDataLoader.h" />
@@ -172,6 +171,7 @@
     <ClInclude Include="View\SimulationView.h" />
     <ClInclude Include="View\ObjParser.h" />
     <ClInclude Include="View\SDL_GLDebugMessageCallback.h" />
+    <ClInclude Include="View\SUpdateInfo.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

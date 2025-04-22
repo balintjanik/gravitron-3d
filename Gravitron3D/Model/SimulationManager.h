@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include "SUpdateInfo.h"
 #include "Particle.h"
 #include "Octree.h"
 #include "Settings.h"
@@ -20,7 +19,7 @@ public:
 
 	void initSettings();
 	void initSimulation(PresetType preset);
-	void updateSimulation(const SUpdateInfo& updateInfo);
+	void updateSimulation(const float deltaTime);
 
 	void addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable);
 	void addGroup(const ParticleGroupConfig& config);
@@ -58,7 +57,7 @@ private:
 	const float MIN_WORLD_BOUND = -100000.0f;
 	const float MAX_WORLD_BOUND =  100000.0f;
 
-	void updateParticles(float deltaTime);
-	void updateParticlesRange(size_t start, size_t end, float deltaTime);
+	void updateParticles(const float deltaTime);
+	void updateParticlesRange(const size_t start, const size_t end, const float deltaTime);
 	void handleWorldBounds(glm::vec3& r_position, glm::vec3& r_velocity);
 };

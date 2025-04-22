@@ -40,7 +40,7 @@ void SimulationManager::initSimulation(PresetType preset) {
 	settings.setNumberOfParticles(particles.size());
 }
 
-void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
+void SimulationManager::updateSimulation(const float deltaTime) {
 	if (settings.getSimulationSpeed() == 0.0f) return;
 
 	// Build tree
@@ -55,7 +55,7 @@ void SimulationManager::updateSimulation(const SUpdateInfo& updateInfo) {
 	octree.propagate();
 
 	// Update particles
-	updateParticles(updateInfo.DeltaTimeInSec);
+	updateParticles(deltaTime);
 }
 
 void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable) {
@@ -173,7 +173,7 @@ void SimulationManager::addGroup(const ParticleGroupConfig& config)
 	}
 }
 
-void SimulationManager::updateParticlesRange(size_t start, size_t end, float deltaTime) {
+void SimulationManager::updateParticlesRange(const size_t start, const size_t end, const float deltaTime) {
 	for (size_t i = start; i < end; i++) {
 		Particle& p = particles[i];
 
@@ -222,7 +222,7 @@ void SimulationManager::handleWorldBounds(glm::vec3& r_position, glm::vec3& r_ve
 	}
 }
 
-void SimulationManager::updateParticles(float deltaTime) {
+void SimulationManager::updateParticles(const float deltaTime) {
 	std::vector<std::thread> threads;
 	size_t numThreads = std::min(1 + settings.getNumberOfParticles() / 200, settings.getNumberOfThreads());
 	size_t chunk_size = settings.getNumberOfParticles() / numThreads;

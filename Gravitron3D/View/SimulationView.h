@@ -21,10 +21,10 @@
 #include "Camera.h"
 #include "CameraManipulator.h"
 #include "CameraPresets.h"
+#include "SUpdateInfo.h"
 
 // Model
 #include "../Model/SimulationManager.h"
-#include "../Model/SUpdateInfo.h"
 
 class SimulationView
 {

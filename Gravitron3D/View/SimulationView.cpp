@@ -320,13 +320,11 @@ void SimulationView::UpdateData() {
 
 void SimulationView::Update( const SUpdateInfo& updateInfo )
 {
-	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
-	m_DeltaTimeInSec = updateInfo.DeltaTimeInSec;
-
+	// Update camera
 	m_cameraManipulator.Update( updateInfo.DeltaTimeInSec );
 
 	// Update model
-	simulationManager.updateSimulation(updateInfo);
+	simulationManager.updateSimulation( updateInfo.DeltaTimeInSec );
 
 	// Update data
 	UpdateData();
