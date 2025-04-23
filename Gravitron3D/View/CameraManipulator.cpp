@@ -144,7 +144,7 @@ void CameraManipulator::MouseMove(const SDL_MouseMotionEvent& mouse)
 		glm::vec3 right = glm::normalize(glm::cross(lookDirection, up));
 		glm::vec3 forward = glm::cross(up, right);
 
-		float panSpeed = m_distance * 0.002f;
+		float panSpeed = m_distance * 0.0005f;
 
 		glm::vec3 moveRight = -right * static_cast<float>(mouse.xrel);
 		glm::vec3 moveUp = forward * static_cast<float>(mouse.yrel);
