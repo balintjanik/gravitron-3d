@@ -260,7 +260,8 @@ void SimulationManager::saveSettings(const std::string& filename) {
 }
 
 void SimulationManager::defaultSettings() {
-	settings = Settings(particles.size());
+	initSettings();
+	settings.setNumberOfParticles(particles.size());
 }
 
 void SimulationManager::loadParticles(const std::string& filename) {

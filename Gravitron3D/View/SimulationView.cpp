@@ -941,6 +941,10 @@ void SimulationView::ShowSpawnParticleSettings() {
 	ImGui::Checkbox("Movable", &spawnParticle_movable);
 
 	if (ImGui::Button("Spawn")) {
+		if (currentNumberOfParticles >= simulationManager.settings.getMaxNumberOfParticles()) {
+			UpdateMessage("Error: maximum particle limit reached!", glm::vec3(1.0f, 0.0f, 0.0f));
+			return;
+		}
 		simulationManager.addParticle(
 			glm::vec4(spawnParticle_position, spawnParticle_mass),
 			glm::vec4(spawnParticle_velocity, spawnParticle_size),
@@ -1190,6 +1194,7 @@ void SimulationView::RenderGUI()
 	if (ImGui::CollapsingHeader("Spawn group")) {
 		ImGui::SeparatorText("Parameters");
 		if (ImGui::InputInt("Number of particles##Group", &spawnGroupConfig.numberOfParticlesToAdd, 50, 1000, ImGuiInputTextFlags_EnterReturnsTrue)) {
+			spawnGroupConfig.numberOfParticlesToAdd = glm::clamp(spawnGroupConfig.numberOfParticlesToAdd, 0, static_cast<int>(simulationManager.settings.getMaxNumberOfParticles() - currentNumberOfParticles));
 			if (currentNumberOfParticles + spawnGroupConfig.numberOfParticlesToAdd > threshold_numberOfParticles)
 				UpdateMessage("Warning: adding too many particles might result in lower performance!", glm::vec3(1.0f, 1.0f, 0.0f));
 		}

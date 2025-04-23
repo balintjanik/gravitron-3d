@@ -9,9 +9,11 @@ struct Settings {
 private:
     int version = CURRENT_SETTINGS_VERSION;
 
-    uint32_t numberOfParticles;
+    uint32_t numberOfParticles = 0;
+    static constexpr uint32_t minNumberOfParticles = 0;
+    static constexpr uint32_t maxNumberOfParticles = 1000000;
 
-    float simulationSpeed;
+    float simulationSpeed = 0.5f;
     static constexpr float minSimulationSpeed = 0.0f;
     static constexpr float maxSimulationSpeed = 50.0f;
 
@@ -48,11 +50,13 @@ private:
     glm::vec3 backgroundColor = glm::vec3(0.0f);
 
 public:
-    Settings(uint32_t _numberOfParticles = 0, float _simulationSpeed = 0.5f) : numberOfParticles(_numberOfParticles), simulationSpeed(_simulationSpeed) {};
+    Settings() {};
 
     // Getters
     int getVersion() const { return version; }
     uint32_t getNumberOfParticles() const { return numberOfParticles; }
+    uint32_t getMinNumberOfParticles() const { return minNumberOfParticles; }
+    uint32_t getMaxNumberOfParticles() const { return maxNumberOfParticles; }
 
     float getSimulationSpeed() const { return simulationSpeed; }
     float getMinSimulationSpeed() const { return minSimulationSpeed; }
@@ -92,7 +96,7 @@ public:
     glm::vec3 getBackgroundColor() const { return backgroundColor; }
 
     // Setters
-    void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = glm::clamp(_numberOfParticles, static_cast<uint32_t>(0), static_cast<uint32_t>(1000000)); }
+    void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = glm::clamp(_numberOfParticles, minNumberOfParticles, maxNumberOfParticles); }
     void setSimulationSpeed(float _simulationSpeed) { simulationSpeed = glm::clamp(_simulationSpeed, minSimulationSpeed, maxSimulationSpeed); }
     void setNumberOfThreads(uint32_t _numberOfThreads) {
         if (_numberOfThreads < 1) {
