@@ -17,8 +17,47 @@
 
 #include "View/SimulationView.h"
 
-int WinMain( int argc, char* args[] )
+#include <windows.h>
+#include <psapi.h>
+#include <iostream>
+#include <fstream>
+#include <thread>
+#include <chrono>
+#include <ctime>
+
+
+void LogRAMUsageToFile(const std::string& filename) {
+	PROCESS_MEMORY_COUNTERS_EX pmc;
+	if (GetProcessMemoryInfo(GetCurrentProcess(), (PROCESS_MEMORY_COUNTERS*)&pmc, sizeof(pmc))) {
+		SIZE_T ramUsageMB = pmc.WorkingSetSize / (1024 * 1024);
+
+		// Get current time
+		auto now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+		char timeStr[26];
+		ctime_s(timeStr, sizeof(timeStr), &now);
+		timeStr[strcspn(timeStr, "\n")] = '\0';  // Remove newline
+
+		// Write to file
+		std::ofstream logFile(filename, std::ios::app);
+		if (logFile.is_open()) {
+			logFile << "[" << timeStr << "] RAM Usage: " << ramUsageMB << " MB" << std::endl;
+		}
+	}
+}
+
+void MemoryLoggingLoop(const std::string& filename) {
+	while (true) {
+		LogRAMUsageToFile(filename);
+		std::this_thread::sleep_for(std::chrono::seconds(30));
+	}
+}
+
+int main( int argc, char* args[] )
 {
+	std::string logFile = "ram_log.txt";
+	std::thread ramLogger(MemoryLoggingLoop, logFile);
+	ramLogger.detach(); // Keep logging in the background
+
 	//
 	// 1. lépés: inicializáljuk az SDL-t
 	//
