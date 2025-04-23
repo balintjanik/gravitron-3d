@@ -30,7 +30,8 @@ namespace Gravitron3DUnitTests
             Assert::AreEqual(static_cast<size_t>(3), octree.nodes.size());
             Assert::AreEqual(static_cast<size_t>(2), octree.parents.size());
 
-            Octant octant = Octant::createNewContaining(std::vector<Particle>());
+            std::vector<Particle> particles;
+            Octant octant = Octant::createNewContaining(particles);
             octree.clear(octant);
 
             Assert::AreEqual(static_cast<size_t>(1), octree.nodes.size());
