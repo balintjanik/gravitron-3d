@@ -1,0 +1,10 @@
+version=5
+numberOfParticles=10000
+simulationSpeed=1
+numberOfThreads=12
+theta=2
+epsilon=15
+lightConstantAttenuation=0
+lightLinearAttenuation=1
+lightQuadraticAttenuation=0
+scaleFactor=0.026

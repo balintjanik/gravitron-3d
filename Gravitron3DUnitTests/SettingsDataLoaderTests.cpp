@@ -62,7 +62,7 @@ namespace Gravitron3DUnitTests
 
         TEST_METHOD(SaveToFile_WritesCorrectContent)
         {
-            // Arrange
+            // Setup
             SettingsDataLoader loader;
             Settings settings;
             int version = settings.getVersion();
@@ -97,7 +97,7 @@ namespace Gravitron3DUnitTests
 
             std::string filename = "test_output.txt";
 
-            // Act
+            // Save
             SettingsDataLoader::saveToFile(filename, settings);
 
             // Assert
@@ -157,6 +157,63 @@ namespace Gravitron3DUnitTests
 
             // Cleanup
             std::filesystem::remove(filename);
+        }
+
+        TEST_METHOD(LoadFromFile_ReadsCorrectContent)
+        {
+            Settings actual = SettingsDataLoader::loadFromFile("Settings/defaultTest.stg");
+            Settings expected = Settings();
+            expected.setNumberOfParticles(25000);
+            expected.setNumberOfThreads(12);
+
+            Assert::AreEqual(expected.getVersion(), actual.getVersion());
+            Assert::AreEqual(expected.getNumberOfParticles(), actual.getNumberOfParticles());
+            Assert::AreEqual(expected.getSimulationSpeed(), actual.getSimulationSpeed());
+            Assert::AreEqual(expected.getNumberOfThreads(), actual.getNumberOfThreads());
+            Assert::AreEqual(expected.getTheta(), actual.getTheta());
+            Assert::AreEqual(expected.getEpsilon(), actual.getEpsilon());
+            Assert::AreEqual(expected.getLightPos().x, actual.getLightPos().x);
+            Assert::AreEqual(expected.getLightPos().y, actual.getLightPos().y);
+            Assert::AreEqual(expected.getLightPos().z, actual.getLightPos().z);
+            Assert::AreEqual(expected.getLightPos().w, actual.getLightPos().w);
+            Assert::AreEqual(expected.getLightConstantAttenuation(), actual.getLightConstantAttenuation());
+            Assert::AreEqual(expected.getLightLinearAttenuation(), actual.getLightLinearAttenuation());
+            Assert::AreEqual(expected.getLightQuadraticAttenuation(), actual.getLightQuadraticAttenuation());
+            Assert::AreEqual(expected.getScaleFactor(), actual.getScaleFactor());
+            Assert::AreEqual(expected.getIsForceColor(), actual.getIsForceColor());
+            Assert::AreEqual(expected.getMinForceColor(), actual.getMinForceColor());
+            Assert::AreEqual(expected.getMaxForceColor(), actual.getMaxForceColor());
+            Assert::AreEqual(expected.getBackgroundColor().r, actual.getBackgroundColor().r);
+            Assert::AreEqual(expected.getBackgroundColor().g, actual.getBackgroundColor().g);
+            Assert::AreEqual(expected.getBackgroundColor().b, actual.getBackgroundColor().b);
+        }
+
+        TEST_METHOD(LoadFromFile_InvalidBinaryInput)
+        {
+            Assert::ExpectException<std::runtime_error>([&]() {
+                SettingsDataLoader::loadFromFile("Settings/invalidTestBinary.stg");
+            }); 
+        }
+
+        TEST_METHOD(LoadFromFile_InvalidLessData)
+        {
+            Assert::ExpectException<std::runtime_error>([&]() {
+                SettingsDataLoader::loadFromFile("Settings/invalidTestLessData.stg");
+            });
+        }
+
+        TEST_METHOD(LoadFromFile_InvalidMoreData)
+        {
+            Assert::ExpectException<std::runtime_error>([&]() {
+                SettingsDataLoader::loadFromFile("Settings/invalidTestMoreData.stg");
+            });
+        }
+
+        TEST_METHOD(LoadFromFile_InvalidVersionMismatch)
+        {
+            Assert::ExpectException<std::runtime_error>([&]() {
+                SettingsDataLoader::loadFromFile("Settings/invalidTestVersionMismatch.stg");
+            });
         }
     };
 }
