@@ -5,7 +5,7 @@
 
 class ParticleDataLoader {
 public:
-    static void ParticleDataLoader::saveToFile(const std::string& filename, const std::vector<Particle>& particles);
+    static void saveToFile(const std::string& filename, const std::vector<Particle>& particles);
 
-    static std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filename);
+    static std::vector<Particle> loadFromFile(const std::string& filename);
 };
