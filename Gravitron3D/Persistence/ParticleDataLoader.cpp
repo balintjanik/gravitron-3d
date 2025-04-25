@@ -13,7 +13,7 @@ void ParticleDataLoader::saveToFile(const std::string& filename, const std::vect
         std::string separator = ";";
         outFile << "PositionX" << separator << "PositionY" << separator << "PositionZ" << separator << "Mass" << separator
             << "VelocityX" << separator << "VelocityY" << separator << "VelocityZ" << separator << "Size" << separator
-            << "AccelerationX" << separator << "AccelerationY" << separator << "AccelerationZ" << separator << "Force"
+            << "AccelerationX" << separator << "AccelerationY" << separator << "AccelerationZ" << separator << "Force" << separator
             << "ColorR" << separator << "ColorG" << separator << "ColorB" << separator << "Movable\n";
 
         if (!outFile) {
