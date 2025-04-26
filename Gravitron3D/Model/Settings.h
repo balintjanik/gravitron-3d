@@ -124,7 +124,7 @@ public:
     void setScaleFactor(float scale) {
         scaleFactor = glm::clamp(scale, minScaleFactor, maxScaleFactor);
     }
-    void setIsForceColor(int _isForceColor) { isForceColor = _isForceColor; }
+    void setIsForceColor(bool _isForceColor) { isForceColor = _isForceColor; }
     void setMinForceColor(float _minForceColor) {
         minForceColor = glm::clamp(_minForceColor, 0.0f, maxForceColor);
     }
