@@ -177,6 +177,7 @@ xcopy "$(ProjectDir)Particles" "$(OutDir)Particles" /E /I /Y</Command>
     </ClCompile>
     <ClCompile Include="PresetUtilsTests.cpp" />
     <ClCompile Include="SettingsDataLoaderTests.cpp" />
+    <ClCompile Include="SettingsTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
