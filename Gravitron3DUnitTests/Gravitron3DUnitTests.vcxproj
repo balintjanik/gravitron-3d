@@ -111,7 +111,9 @@
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Settings" "$(OutDir)Settings" /E /I /Y
 
-xcopy "$(ProjectDir)Particles" "$(OutDir)Particles" /E /I /Y</Command>
+xcopy "$(ProjectDir)Particles" "$(OutDir)Particles" /E /I /Y
+
+xcopy "$(ProjectDir)Presets" "$(OutDir)Presets" /E /I /Y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -178,6 +180,7 @@ xcopy "$(ProjectDir)Particles" "$(OutDir)Particles" /E /I /Y</Command>
     <ClCompile Include="PresetUtilsTests.cpp" />
     <ClCompile Include="SettingsDataLoaderTests.cpp" />
     <ClCompile Include="SettingsTests.cpp" />
+    <ClCompile Include="SimulationManagerTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
