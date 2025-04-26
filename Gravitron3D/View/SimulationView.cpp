@@ -1005,8 +1005,8 @@ void SimulationView::ShowSpawnGroupVelocitySettings(VelocityType velocityType) {
 	case VELOCITY_ORBIT:
 		if (ImGui::DragFloat("Velocity scale##Group", &spawnGroupConfig.velocity.scale, 0.1f, -5.0f, 5.0f))
 			spawnGroupConfig.velocity.scale = glm::clamp(spawnGroupConfig.velocity.scale, -5.0f, 5.0f);
-		if (ImGui::DragFloat("Center mass##Group", &spawnGroupConfig.centerMass, 0.1f, 0.0f, 1000000.0f))
-			spawnGroupConfig.centerMass = glm::clamp(spawnGroupConfig.centerMass, 0.0f, 1000000.0f);
+		if (ImGui::DragFloat("Center mass##Group", &spawnGroupConfig.centerMass, 0.1f, 0.001f, 1000000.0f))
+			spawnGroupConfig.centerMass = glm::clamp(spawnGroupConfig.centerMass, 0.001f, 1000000.0f);
 		break;
 	case VELOCITY_RANDOM:
 		if (ImGui::DragFloat3("Minimum velocity##Group", glm::value_ptr(spawnGroupConfig.velocity.randomMin), 1.0f, -1000.0f, 1000.0f)) {

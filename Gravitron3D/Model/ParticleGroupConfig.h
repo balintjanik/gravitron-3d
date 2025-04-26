@@ -11,7 +11,7 @@ struct ParticleGroupConfig {
     SpawnRegion region;
     VelocityProperties velocity;
     bool movable = true;
-    float centerMass = 0.0f;
+    float centerMass = 1.0f;
     MassProperties mass;
     SizeProperties size;
 };
