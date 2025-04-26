@@ -96,15 +96,14 @@ public:
     glm::vec3 getBackgroundColor() const { return backgroundColor; }
 
     // Setters
-    void setNumberOfParticles(uint32_t _numberOfParticles) { numberOfParticles = glm::clamp(_numberOfParticles, minNumberOfParticles, maxNumberOfParticles); }
+    void setNumberOfParticles(int _numberOfParticles) {
+        numberOfParticles = static_cast<uint32_t>(glm::clamp(_numberOfParticles, static_cast<int>(minNumberOfParticles), static_cast<int>(maxNumberOfParticles)));
+    }
     void setSimulationSpeed(float _simulationSpeed) { simulationSpeed = glm::clamp(_simulationSpeed, minSimulationSpeed, maxSimulationSpeed); }
-    void setNumberOfThreads(uint32_t _numberOfThreads) {
-        if (_numberOfThreads < 1) {
-            numberOfThreads = 1;
-        }
-        else {
-            numberOfThreads = _numberOfThreads;
-        }
+    void setNumberOfThreads(int _numberOfThreads) {
+        if (_numberOfThreads < 1)
+            _numberOfThreads = 1;
+        numberOfThreads = static_cast<uint32_t>(_numberOfThreads);
     }
     void setTheta(float _theta) {
         theta = glm::clamp(_theta, minTheta, maxTheta);
