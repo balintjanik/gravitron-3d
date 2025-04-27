@@ -317,5 +317,34 @@ namespace Gravitron3DUnitTests
                 i++;
             }
         }
+
+        TEST_METHOD(DefaultSettings_SetBackCorrectly)
+        {
+            SimulationManager simulationManager;
+            int n = 10;
+            for (int i = 0; i < n; i++)
+                simulationManager.addParticle(glm::vec4(1.0f), glm::vec4(1.0f), glm::vec4(1.0f), glm::vec4(1.0f));
+            float defaultTheta = simulationManager.settings.getTheta();
+            float defaultEpsilon = simulationManager.settings.getEpsilon();
+            bool defaultIsForceColor = simulationManager.settings.getIsForceColor();
+
+            float newTheta = 0.9f;
+            float newEpsilon = 1.5f;
+            simulationManager.settings.setTheta(newTheta);
+            simulationManager.settings.setEpsilon(newEpsilon);
+            simulationManager.settings.setIsForceColor(!defaultIsForceColor);
+
+            Assert::AreEqual(static_cast<uint32_t>(n), simulationManager.settings.getNumberOfParticles());
+            Assert::AreEqual(newTheta, simulationManager.settings.getTheta());
+            Assert::AreEqual(newEpsilon, simulationManager.settings.getEpsilon());
+            Assert::AreEqual(!defaultIsForceColor, simulationManager.settings.getIsForceColor());
+
+            simulationManager.defaultSettings();
+
+            Assert::AreEqual(static_cast<uint32_t>(n), simulationManager.settings.getNumberOfParticles());
+            Assert::AreEqual(defaultTheta, simulationManager.settings.getTheta());
+            Assert::AreEqual(defaultEpsilon, simulationManager.settings.getEpsilon());
+            Assert::AreEqual(defaultIsForceColor, simulationManager.settings.getIsForceColor());
+        }
     };
 }
