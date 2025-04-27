@@ -160,7 +160,43 @@ namespace Gravitron3DUnitTests
 
         TEST_METHOD(UpdateSimulation_UpdatesCorrectly)
         {
-            // TODO
+            SimulationManager simulationManager;
+            simulationManager.settings.setTheta(0.0f);
+            simulationManager.settings.setEpsilon(0.0f);
+            simulationManager.settings.setSimulationSpeed(1.0f);
+            simulationManager.addParticle(
+                glm::vec4(0.0f, 0.0f, 0.0f, 2.0f),
+                glm::vec4(0.0f, 0.0f, 0.0f, 1.0f),
+                glm::vec4(0.0f, 0.0f, 0.0f, 0.0f),
+                glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)
+            );
+            simulationManager.addParticle(
+                glm::vec4(1.0f, 0.0f, 0.0f, 2.0f),
+                glm::vec4( 0.0f, 0.0f, 0.0f, 1.0f),
+                glm::vec4( 0.0f, 0.0f, 0.0f, 0.0f),
+                glm::vec4( 1.0f, 1.0f, 1.0f, 1.0f)
+            );
+
+            simulationManager.updateSimulation(1.0f);
+
+            Assert::AreEqual(2.0f, simulationManager.particles[0].getPosition().x);
+            Assert::AreEqual(0.0f, simulationManager.particles[0].getPosition().y);
+            Assert::AreEqual(0.0f, simulationManager.particles[0].getPosition().z);
+            Assert::AreEqual(2.0f, simulationManager.particles[0].getVelocity().x);
+            Assert::AreEqual(0.0f, simulationManager.particles[0].getVelocity().y);
+            Assert::AreEqual(0.0f, simulationManager.particles[0].getVelocity().z);
+            Assert::AreEqual(2.0f, simulationManager.particles[0].getAcceleration().x);
+            Assert::AreEqual(0.0f, simulationManager.particles[0].getAcceleration().y);
+            Assert::AreEqual(0.0f, simulationManager.particles[0].getAcceleration().z);
+            Assert::AreEqual(-1.0f, simulationManager.particles[1].getPosition().x);
+            Assert::AreEqual(0.0f, simulationManager.particles[1].getPosition().y);
+            Assert::AreEqual(0.0f, simulationManager.particles[1].getPosition().z);
+            Assert::AreEqual(-2.0f, simulationManager.particles[1].getVelocity().x);
+            Assert::AreEqual(0.0f, simulationManager.particles[1].getVelocity().y);
+            Assert::AreEqual(0.0f, simulationManager.particles[1].getVelocity().z);
+            Assert::AreEqual(-2.0f, simulationManager.particles[1].getAcceleration().x);
+            Assert::AreEqual(0.0f, simulationManager.particles[1].getAcceleration().y);
+            Assert::AreEqual(0.0f, simulationManager.particles[1].getAcceleration().z);
         }
 
         TEST_METHOD(AddParticle_AllParticlesDataCorrect)
@@ -318,6 +354,33 @@ namespace Gravitron3DUnitTests
             }
         }
 
+        TEST_METHOD(LoadSettings_ReadsCorrectContent)
+        {
+            SimulationManager simulationManager;
+            simulationManager.loadSettings("Settings/customTest.stg");
+
+            Assert::AreEqual(6, simulationManager.settings.getVersion());
+            Assert::AreEqual(static_cast<uint32_t>(0), simulationManager.settings.getNumberOfParticles());
+            Assert::AreEqual(0.35f, simulationManager.settings.getSimulationSpeed());
+            Assert::AreEqual(static_cast<uint32_t>(8), simulationManager.settings.getNumberOfThreads());
+            Assert::AreEqual(0.3f, simulationManager.settings.getTheta());
+            Assert::AreEqual(5.0f, simulationManager.settings.getEpsilon());
+            Assert::AreEqual(0.0f, simulationManager.settings.getLightPos().x);
+            Assert::AreEqual(-1.0f, simulationManager.settings.getLightPos().y);
+            Assert::AreEqual(0.0f, simulationManager.settings.getLightPos().z);
+            Assert::AreEqual(0.5f, simulationManager.settings.getLightPos().w);
+            Assert::AreEqual(0.1f, simulationManager.settings.getLightConstantAttenuation());
+            Assert::AreEqual(0.2f, simulationManager.settings.getLightLinearAttenuation());
+            Assert::AreEqual(0.3f, simulationManager.settings.getLightQuadraticAttenuation());
+            Assert::AreEqual(0.01f, simulationManager.settings.getScaleFactor());
+            Assert::AreEqual(true, simulationManager.settings.getIsForceColor());
+            Assert::AreEqual(10.0f, simulationManager.settings.getMinForceColor());
+            Assert::AreEqual(90.0f, simulationManager.settings.getMaxForceColor());
+            Assert::AreEqual(0.1f, simulationManager.settings.getBackgroundColor().r);
+            Assert::AreEqual(0.1f, simulationManager.settings.getBackgroundColor().g);
+            Assert::AreEqual(0.1f, simulationManager.settings.getBackgroundColor().b);
+        }
+
         TEST_METHOD(DefaultSettings_SetBackCorrectly)
         {
             SimulationManager simulationManager;
@@ -345,6 +408,77 @@ namespace Gravitron3DUnitTests
             Assert::AreEqual(defaultTheta, simulationManager.settings.getTheta());
             Assert::AreEqual(defaultEpsilon, simulationManager.settings.getEpsilon());
             Assert::AreEqual(defaultIsForceColor, simulationManager.settings.getIsForceColor());
+        }
+
+        TEST_METHOD(LoadParticles_ReadsCorrectContent)
+        {
+            SimulationManager simulationManager;
+            simulationManager.loadParticles("Particles/SolarSystem.csv");
+            std::vector<Particle> expected;
+            expected.push_back(Particle(
+                glm::vec4(10000.00f, -227.70f, -130.4f, 102.41f),
+                glm::vec4(0.09f, -0.28f, 13.46f, 12.30f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.25f, 0.47f, 0.85f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(3628.00f, -26.8f, 5441.00f, 86.81f),
+                glm::vec4(-14.07f, 0.21f, 8.52f, 12.70f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.60f, 0.80f, 0.85f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(3181.00f, -118.80f, -447.50f, 568.34f),
+                glm::vec4(1.99f, -0.49f, 23.52f, 29.10f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.85f, 0.72f, 0.53f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(152.00f, -10.50f, 1700.00f, 1898.19f),
+                glm::vec4(-32.38f, 0.71f, 4.40f, 34.95f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.80f, 0.67f, 0.50f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(-453.90f, 17.90f, 321.80f, 0.64f),
+                glm::vec4(-32.43f, -0.11f, -43.35f, 1.70f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.79f, 0.36f, 0.21f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(-335.00f, 0.10f, -3.30f, 5.97f),
+                glm::vec4(-0.84f, 0.00f, -73.51f, 3.20f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.27f, 0.50f, 0.75f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(-242.20f, 14.00f, 2.50f, 4.87f),
+                glm::vec4(-1.98f, -1.07f, -86.57f, 3.05f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.90f, 0.76f, 0.52f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(-122.90f, 13.20f, 23.20f, 0.33f),
+                glm::vec4(-48.98f, -4.68f, -112.20f, 1.20f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(0.42f, 0.38f, 0.35f, 1.00f)
+            ));
+            expected.push_back(Particle(
+                glm::vec4(-1.70f, 0.06f, -1.70f, 1988410.00f),
+                glm::vec4(0.03f, 0.00f, -0.01f, 84.75f),
+                glm::vec4(0.00f, 0.00f, 0.00f, 0.00f),
+                glm::vec4(1.00f, 0.85f, 0.00f, 1.00f)
+            ));
+
+            size_t n = expected.size();
+            Assert::AreEqual(n, simulationManager.particles.size());
+            Assert::AreEqual(static_cast<uint32_t>(n), simulationManager.settings.getNumberOfParticles());
+            for (int i = 0; i < n; i++) {
+                AssertVec4Equal(glm::vec4(expected[i].getPosition(), expected[i].getMass()), glm::vec4(simulationManager.particles[i].getPosition(), simulationManager.particles[i].getMass()));
+                AssertVec4Equal(glm::vec4(expected[i].getVelocity(), expected[i].getSize()), glm::vec4(simulationManager.particles[i].getVelocity(), simulationManager.particles[i].getSize()));
+                AssertVec4Equal(glm::vec4(expected[i].getAcceleration(), expected[i].getForce()), glm::vec4(simulationManager.particles[i].getAcceleration(), simulationManager.particles[i].getForce()));
+                AssertVec4Equal(glm::vec4(expected[i].getColor(), expected[i].getMovable() ? 1.0f : 0.0f), glm::vec4(simulationManager.particles[i].getColor(), simulationManager.particles[i].getMovable() ? 1.0f : 0.0f));
+            }
         }
     };
 }
