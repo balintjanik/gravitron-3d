@@ -157,5 +157,165 @@ namespace Gravitron3DUnitTests
                 AssertParticleFromLine(line, particle);
             }
         }
+
+        TEST_METHOD(UpdateSimulation_UpdatesCorrectly)
+        {
+            // TODO
+        }
+
+        TEST_METHOD(AddParticle_AllParticlesDataCorrect)
+        {
+            SimulationManager simulationManager;
+            simulationManager.initSimulation(PresetType::PRESET_SOLAR_SYSTEM);
+            std::vector<Particle> originalParticles = simulationManager.particles;
+
+            glm::vec4 positionMass = glm::vec4(-500.0f, 0.0f, 500.0f, 115.5f);
+            glm::vec4 velocitySize = glm::vec4(-50.0f, 0.0f, 50.0f, 12.5f);
+            glm::vec4 accelerationForce = glm::vec4(-5.0f, 0.0f, 5.0f, 1.5f);
+            glm::vec4 colorMovable = glm::vec4(0.0f, 0.5f, 1.0f, 1.0f);
+            simulationManager.addParticle(
+                positionMass,
+                velocitySize,
+                accelerationForce,
+                colorMovable
+            );
+
+            Assert::AreEqual(originalParticles.size() + 1, simulationManager.particles.size());
+            Assert::AreEqual(static_cast<uint32_t>(originalParticles.size() + 1), simulationManager.settings.getNumberOfParticles());
+
+            int i = 0;
+            while (i < originalParticles.size()) {
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getPosition(), originalParticles[i].getMass()),
+                    glm::vec4(simulationManager.particles[i].getPosition(), simulationManager.particles[i].getMass()));
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getVelocity(), originalParticles[i].getSize()),
+                    glm::vec4(simulationManager.particles[i].getVelocity(), simulationManager.particles[i].getSize()));
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getAcceleration(), originalParticles[i].getForce()),
+                    glm::vec4(simulationManager.particles[i].getAcceleration(), simulationManager.particles[i].getForce()));
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getColor(), originalParticles[i].getMovable() ? 1.0f : 0.0f),
+                    glm::vec4(simulationManager.particles[i].getColor(), simulationManager.particles[i].getMovable() ? 1.0f : 0.0f));
+                i++;
+            }
+
+            AssertVec4Equal(
+                positionMass,
+                glm::vec4(simulationManager.particles[i].getPosition(), simulationManager.particles[i].getMass()));
+            AssertVec4Equal(
+                velocitySize,
+                glm::vec4(simulationManager.particles[i].getVelocity(), simulationManager.particles[i].getSize()));
+            AssertVec4Equal(
+                accelerationForce,
+                glm::vec4(simulationManager.particles[i].getAcceleration(), simulationManager.particles[i].getForce()));
+            AssertVec4Equal(
+                colorMovable,
+                glm::vec4(simulationManager.particles[i].getColor(), simulationManager.particles[i].getMovable() ? 1.0f : 0.0f));
+        }
+
+        TEST_METHOD(AddGroup_AllParticlesDataCorrect)
+        {
+            SimulationManager simulationManager;
+            simulationManager.initSimulation(PresetType::PRESET_SOLAR_SYSTEM);
+            std::vector<Particle> originalParticles = simulationManager.particles;
+
+            SpawnRegion spawnRegion = {
+                glm::vec3(0.0f),
+                glm::vec3(0.0f),
+                glm::vec3(-5.0f, 0.2f, 6.0f),
+                25.0f,
+                250.0f
+            };
+            VelocityProperties velocityProperties = {
+                VelocityType::VELOCITY_RANDOM,
+                1.0f,
+                glm::vec3(-10.0f, 0.0f, 10.0f),
+                glm::vec3(  5.0f, 0.0f, 25.0f),
+                glm::vec3(1.5f, 0.5f, -1.5f)
+            };
+            MassProperties massProperties = {
+                MassType::MASS_RANDOM,
+                1.0f,
+                0.5f,
+                15.0f
+            };
+            SizeProperties sizeProperties = {
+                SizeType::SIZE_RANDOM,
+                1.0f,
+                0.5f,
+                5.0f
+            };
+            ParticleGroupConfig config = {
+                500,
+                PositionType::POSITION_SPHERE,
+                spawnRegion,
+                velocityProperties,
+                true,
+                151.0f,
+                massProperties,
+                sizeProperties
+            };
+
+            simulationManager.addGroup(config);
+
+            Assert::AreEqual(originalParticles.size() + config.numberOfParticlesToAdd, simulationManager.particles.size());
+            Assert::AreEqual(static_cast<uint32_t>(originalParticles.size() + config.numberOfParticlesToAdd), simulationManager.settings.getNumberOfParticles());
+
+            int i = 0;
+            while (i < originalParticles.size()) {
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getPosition(), originalParticles[i].getMass()),
+                    glm::vec4(simulationManager.particles[i].getPosition(), simulationManager.particles[i].getMass()));
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getVelocity(), originalParticles[i].getSize()),
+                    glm::vec4(simulationManager.particles[i].getVelocity(), simulationManager.particles[i].getSize()));
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getAcceleration(), originalParticles[i].getForce()),
+                    glm::vec4(simulationManager.particles[i].getAcceleration(), simulationManager.particles[i].getForce()));
+                AssertVec4Equal(
+                    glm::vec4(originalParticles[i].getColor(), originalParticles[i].getMovable() ? 1.0f : 0.0f),
+                    glm::vec4(simulationManager.particles[i].getColor(), simulationManager.particles[i].getMovable() ? 1.0f : 0.0f));
+                i++;
+            }
+
+            AssertVec4Equal(
+                glm::vec4(config.region.sphereCenter, 1.0f),
+                glm::vec4(simulationManager.particles[i].getPosition(), simulationManager.particles[i].getMass()));
+            AssertVec4Equal(
+                glm::vec4(config.velocity.overallVelocity, 1.0f),
+                glm::vec4(simulationManager.particles[i].getVelocity(), simulationManager.particles[i].getSize()));
+            AssertVec4Equal(
+                glm::vec4(0.0f),
+                glm::vec4(simulationManager.particles[i].getAcceleration(), simulationManager.particles[i].getForce()));
+            AssertVec4Equal(
+                glm::vec4(1.0f),
+                glm::vec4(simulationManager.particles[i].getColor(), simulationManager.particles[i].getMovable() ? 1.0f : 0.0f));
+            i++;
+        
+            while (i < simulationManager.particles.size()) {
+                float distance = glm::distance(simulationManager.particles[i].getPosition(), config.region.sphereCenter);
+                Assert::IsTrue(distance >= config.region.sphereRadiusMin);
+                Assert::IsTrue(distance <= config.region.sphereRadiusMax);
+
+                Assert::IsTrue(simulationManager.particles[i].getMass() >= config.mass.randomMin);
+                Assert::IsTrue(simulationManager.particles[i].getMass() <= config.mass.randomMax);
+
+                Assert::IsTrue(simulationManager.particles[i].getVelocity().x >= config.velocity.randomMin.x + config.velocity.overallVelocity.x);
+                Assert::IsTrue(simulationManager.particles[i].getVelocity().x <= config.velocity.randomMax.x + config.velocity.overallVelocity.x);
+                Assert::IsTrue(simulationManager.particles[i].getVelocity().y >= config.velocity.randomMin.y + config.velocity.overallVelocity.y);
+                Assert::IsTrue(simulationManager.particles[i].getVelocity().y <= config.velocity.randomMax.y + config.velocity.overallVelocity.y);
+                Assert::IsTrue(simulationManager.particles[i].getVelocity().z >= config.velocity.randomMin.z + config.velocity.overallVelocity.z);
+                Assert::IsTrue(simulationManager.particles[i].getVelocity().z <= config.velocity.randomMax.z + config.velocity.overallVelocity.z);
+
+                Assert::IsTrue(simulationManager.particles[i].getSize() >= config.size.randomMin);
+                Assert::IsTrue(simulationManager.particles[i].getSize() <= config.size.randomMax);
+
+                AssertVec4Equal(glm::vec4(0.0f), glm::vec4(simulationManager.particles[i].getAcceleration(), simulationManager.particles[i].getForce()));
+                AssertVec4Equal(glm::vec4(1.0f), glm::vec4(simulationManager.particles[i].getColor(), simulationManager.particles[i].getMovable() ? 1.0f : 0.0f));
+
+                i++;
+            }
+        }
     };
 }
