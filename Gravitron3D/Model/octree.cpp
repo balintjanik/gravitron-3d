@@ -1,6 +1,6 @@
 #include "Octree.h"
 
-// Decides which octant an object is in based on its position
+// Decide which octant an object is in based on its position
 uint32_t Octant::getOctantFromPosition(glm::vec3 position)
 {
     uint32_t x = uint32_t(position.x < getCenter().x);
@@ -10,7 +10,7 @@ uint32_t Octant::getOctantFromPosition(glm::vec3 position)
 
 }
 
-// Creates the ith octant of a node
+// Create the i-th octant of a node
 Octant Octant::intoOctant(uint32_t i) {
     Octant newOctant = *this;
     float size = newOctant.getSize() * 0.5f;
@@ -25,7 +25,7 @@ Octant Octant::intoOctant(uint32_t i) {
     return newOctant;
 }
 
-// Creates all 8 octants of a node
+// Create all 8 octants of a node
 std::vector<Octant> Octant::intoOctants(){
     std::vector<Octant> octants;
     for (uint32_t i = 0; i < 8; ++i) {
@@ -34,7 +34,7 @@ std::vector<Octant> Octant::intoOctants(){
     return octants;
 }
 
-// Creates an octant containing all particles in the provided list
+// Create an octant containing all particles in the provided list
 Octant Octant::createNewContaining(std::vector<Particle>& particles)
 {
     if (particles.size() == 0)
@@ -65,25 +65,25 @@ Octant Octant::createNewContaining(std::vector<Particle>& particles)
     return Octant(glm::vec4(center_x, center_y, center_z, size));
 }
 
-// Decides if the node is a branch
+// Decide if the node is a branch
 bool Node::isBranch()
 {
     return children != 0;
 }
 
-// Decides if the node is empty
+// Decide if the node is empty
 bool Node::isEmpty()
 {
     return positionMass.w == 0.0;
 }
 
-// Decides if the node is a leaf
+// Decide if the node is a leaf
 bool Node::isLeaf()
 {
     return children == 0;
 }
 
-// Clears the octree and initializes the root node with the provided octant
+// Clear the octree and initialize the root node with the provided octant
 void Octree::clear(Octant octant)
 {
     nodes.clear();
@@ -91,7 +91,7 @@ void Octree::clear(Octant octant)
     nodes.push_back(Node(0, octant));
 }
 
-// Subdivides a node by creating its children
+// Subdivide a node by creating its children
 uint32_t Octree::subdivide(uint32_t node) {
     parents.push_back(node);
 
@@ -118,7 +118,7 @@ uint32_t Octree::subdivide(uint32_t node) {
     return children;
 }
 
-// Inserts a particle into the octree
+// Insert a particle into the octree
 void Octree::insert(glm::vec3 position, float mass)
 {
     uint32_t node = ROOT;
