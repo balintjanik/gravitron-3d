@@ -106,7 +106,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(VCInstallDir)UnitTest\lib;$(SolutionDir)Gravitron3D\x64\Release\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Octree.obj;ParticleDataLoader.obj;PresetUtils.obj;Settings.obj;SettingsDataLoader.obj;SimulationManager.obj;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Octree.obj;ParticleDataLoader.obj;PresetUtils.obj;SettingsDataLoader.obj;SimulationManager.obj;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Settings" "$(OutDir)Settings" /E /I /Y

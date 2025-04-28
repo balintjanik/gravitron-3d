@@ -131,7 +131,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model\Octree.cpp" />
     <ClCompile Include="Model\PresetUtils.cpp" />
-    <ClCompile Include="Model\Settings.cpp" />
     <ClCompile Include="Model\SimulationManager.cpp" />
     <ClCompile Include="Persistence\ParticleDataLoader.cpp" />
     <ClCompile Include="Persistence\SettingsDataLoader.cpp" />

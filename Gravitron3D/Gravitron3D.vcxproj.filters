@@ -26,9 +26,6 @@
     <ClCompile Include="Model\PresetUtils.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="Model\Settings.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
     <ClCompile Include="Model\SimulationManager.cpp">
       <Filter>Model</Filter>
     </ClCompile>
