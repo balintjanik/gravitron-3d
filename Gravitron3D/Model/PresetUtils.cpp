@@ -1,6 +1,7 @@
 ﻿#include "PresetUtils.h"
 #include <stdexcept>
 
+// Generate random float between minimum and maximum values (both inclusive)
 float PresetUtils::randomFloat(float min, float max)
 {
 	if (max < min)
@@ -11,6 +12,8 @@ float PresetUtils::randomFloat(float min, float max)
 	return (random * range) + min;
 }
 
+// Initialize the particles' positions randomly between minValue
+// and maxValue from rangeMin to rangeMax in the list
 void PresetUtils::calculatePositionsRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -24,6 +27,8 @@ void PresetUtils::calculatePositionsRandom(std::vector<Particle>& r_particles, i
 	}
 }
 
+// Initialize the particles' positions in a sphere between radiusMin and
+// radiusMax at the specified center from rangeMin to rangeMax in the list
 void PresetUtils::calculatePositionsSphere(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 center, float radiusMin, float radiusMax, bool is2D) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -49,6 +54,7 @@ void PresetUtils::calculatePositionsSphere(std::vector<Particle>& r_particles, i
 		float py = center.y + radius * sin(phi) * sin(theta);
 		float pz = center.z + radius * cos(phi);
 
+		// Only use x and z axes for 2D (disk)
 		if (is2D) {
 			px = center.x + radius * cos(theta);
 			py = center.y;
@@ -59,6 +65,8 @@ void PresetUtils::calculatePositionsSphere(std::vector<Particle>& r_particles, i
 	}
 }
 
+// Initialize the particles' positions evenly between minValue
+// and maxValue from rangeMin to rangeMax in the list
 void PresetUtils::calculatePositionsGrid3D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -89,6 +97,8 @@ void PresetUtils::calculatePositionsGrid3D(std::vector<Particle>& r_particles, i
 	}
 }
 
+// Initialize the particles' positions evenly on X and Z axes between
+// minValue and maxValue from rangeMin to rangeMax in the list
 void PresetUtils::calculatePositionsGrid2D(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {	
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -119,6 +129,8 @@ void PresetUtils::calculatePositionsGrid2D(std::vector<Particle>& r_particles, i
 	}
 }
 
+// Initialize the particles' velocities randomly between minValue
+// and maxValue from rangeMin to rangeMax in the list
 void PresetUtils::calculateVelocitiesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec3 minValue, glm::vec3 maxValue) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -132,6 +144,8 @@ void PresetUtils::calculateVelocitiesRandom(std::vector<Particle>& r_particles, 
 	}
 }
 
+// Initialize the particles' velocities to orbit a
+// center mass from rangeMin to rangeMax in the list
 void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, glm::vec4 center, float velocityScale) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -146,26 +160,25 @@ void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, i
 		float py = position.y;
 		float pz = position.z;
 
-		// Calculate the 3D distance from the center to the particle
+		// Calculate the distance from the center to the particle
 		float distance = sqrt((px - center.x) * (px - center.x) + (py - center.y) * (py - center.y) + (pz - center.z) * (pz - center.z));
 
-		// Calculate initial velocity magnitude for circular rotation, based on 3D distance
+		// Calculate initial velocity magnitude for circular rotation, based on distance
 		float velocityMagnitude = 0.f;
 		if (distance > 0.f)
 			velocityMagnitude = sqrt(center.w / distance) * velocityScale;
 
-		// Determine a perpendicular vector for the initial velocity
-		// Here, we use a simple approach by crossing the radius vector with an arbitrary vector (1, 0, 0) to get a perpendicular direction
+		// Perpendicular vector for the initial velocity
 		float rx = px - center.x;
 		float ry = py - center.y;
 		float rz = pz - center.z;
 
-		// Use a consistent reference vector for the cross product, e.g., (0, 1, 0)
+		// Consistent reference vector for the cross product
 		float ref_x = 0.0f;
 		float ref_y = 1.0f;
 		float ref_z = 0.0f;
 
-		// Cross product of radius vector (rx, ry, rz) with reference vector (ref_x, ref_y, ref_z)
+		// Cross product of radius vector with reference vector
 		float vx = ry * ref_z - rz * ref_y;
 		float vy = rz * ref_x - rx * ref_z;
 		float vz = rx * ref_y - ry * ref_x;
@@ -178,11 +191,13 @@ void PresetUtils::calculateVelocitiesOrbit(std::vector<Particle>& r_particles, i
 			vz = (vz / length) * velocityMagnitude;
 		}
 
-		// Add particle to the list
+		// Set velocity
 		r_particles[i].setVelocity(glm::vec3(vx, vy, vz));
 	}
 }
 
+// Initialize the particles' masses with a constant
+// value from rangeMin to rangeMax in the list
 void PresetUtils::calculateMassesConstant(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float value) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -196,6 +211,8 @@ void PresetUtils::calculateMassesConstant(std::vector<Particle>& r_particles, in
 	}
 }
 
+// Initialize the particles' masses randomly between minValue
+// and maxValue from rangeMin to rangeMax in the list
 void PresetUtils::calculateMassesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float minValue, float maxValue) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -209,6 +226,8 @@ void PresetUtils::calculateMassesRandom(std::vector<Particle>& r_particles, int 
 	}
 }
 
+// Initialize the particles' sizes with a constant
+// value from rangeMin to rangeMax in the list
 void PresetUtils::calculateSizesConstant(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float value) {
 	if (rangeMin < 0)
 		rangeMin = 0;
@@ -222,6 +241,8 @@ void PresetUtils::calculateSizesConstant(std::vector<Particle>& r_particles, int
 	}
 }
 
+// Initialize the particles' sizes randomly between minValue
+// and maxValue from rangeMin to rangeMax in the list
 void PresetUtils::calculateSizesRandom(std::vector<Particle>& r_particles, int rangeMin, int rangeMax, float minValue, float maxValue) {
 	if (rangeMin < 0)
 		rangeMin = 0;
