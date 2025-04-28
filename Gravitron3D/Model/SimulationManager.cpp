@@ -2,12 +2,14 @@
 #include <thread>
 #include <stdexcept>
 
+// Initialize settings
 void SimulationManager::initSettings() {
 	settings = Settings();
 	settings.setNumberOfThreads(std::thread::hardware_concurrency());
 	if (settings.getNumberOfThreads() == 0) settings.setNumberOfThreads(4); // Fallback to 4 if hardware_concurrency cannot detect
 }
 
+// Initialize simulation with specified preset
 void SimulationManager::initSimulation(PresetType preset) {
 	particles.clear();
 	settings.setNumberOfParticles(0);
@@ -40,6 +42,7 @@ void SimulationManager::initSimulation(PresetType preset) {
 	settings.setNumberOfParticles(particles.size());
 }
 
+// Update simulation by one step
 void SimulationManager::updateSimulation(const float deltaTime) {
 	if (settings.getSimulationSpeed() == 0.0f) return;
 
@@ -58,11 +61,13 @@ void SimulationManager::updateSimulation(const float deltaTime) {
 	updateParticles(deltaTime);
 }
 
+// Add a particle to the list
 void SimulationManager::addParticle(glm::vec4 positionMass, glm::vec4 velocitySize, glm::vec4 accelerationForce, glm::vec4 colorMovable) {
 	particles.push_back(Particle(positionMass, velocitySize, accelerationForce, colorMovable));
 	settings.setNumberOfParticles(particles.size());
 }
 
+// Add a group of particles to the list
 void SimulationManager::addGroup(const ParticleGroupConfig& config)
 {
 	if (config.numberOfParticlesToAdd == 0) return;
@@ -121,7 +126,6 @@ void SimulationManager::addGroup(const ParticleGroupConfig& config)
 		PresetUtils::calculatePositionsGrid2D(particles, rangeMin, rangeMax, config.region.cubeMin, config.region.cubeMax);
 		break;
 	default:
-		throw "Invalid position type.";
 		break;
 	}
 
@@ -173,28 +177,35 @@ void SimulationManager::addGroup(const ParticleGroupConfig& config)
 	}
 }
 
+// Update particles in a specified range
 void SimulationManager::updateParticlesRange(const size_t start, const size_t end, const float deltaTime) {
 	for (size_t i = start; i < end; i++) {
 		Particle& p = particles[i];
 
+		// Skip if particle is not movable
 		if (!p.getMovable())
 			continue;
 
+		// Calculate acceleration and accumulate forces
 		glm::vec3 acceleration = glm::vec3(0);
 		float allForce = octree.calculateAcceleration(acceleration, p.getPosition(), settings.getTheta(), settings.getEpsilon());
 
+		// Update force and acceleration
 		p.setForce(allForce);
 		p.setAcceleration(acceleration);
 
+		// Handle world bounds
 		glm::vec3 newVelocity = p.getVelocity() + p.getAcceleration() * deltaTime * settings.getSimulationSpeed();
 		glm::vec3 newPosition = p.getPosition() + newVelocity * deltaTime * settings.getSimulationSpeed();
 		handleWorldBounds(newPosition, newVelocity);
 
+		// Update velocity and position with the verified data
 		p.setVelocity(newVelocity);
 		p.setPosition(newPosition);
 	}
 }
 
+// Handle world bounds (particles placed back in and bounce back from the bounds)
 void SimulationManager::handleWorldBounds(glm::vec3& r_position, glm::vec3& r_velocity) {
 	if (r_position.x < minWorldBound) {
 		r_velocity.x *= -1;
@@ -222,23 +233,28 @@ void SimulationManager::handleWorldBounds(glm::vec3& r_position, glm::vec3& r_ve
 	}
 }
 
+// Update particles of the simulation
 void SimulationManager::updateParticles(const float deltaTime) {
+	// Calculate necessary number of threads
 	std::vector<std::thread> threads;
 	size_t numThreads = std::min(1 + settings.getNumberOfParticles() / 200, settings.getNumberOfThreads());
-	size_t chunk_size = settings.getNumberOfParticles() / numThreads;
+	size_t chunkSize = settings.getNumberOfParticles() / numThreads;
 
+	// Start threads, each calculating a chunk of the particles
 	for (size_t t = 0; t < numThreads; ++t) {
-		size_t start = t * chunk_size;
-		size_t end = (t == numThreads - 1) ? settings.getNumberOfParticles() : (t + 1) * chunk_size;
+		size_t start = t * chunkSize;
+		size_t end = (t == numThreads - 1) ? settings.getNumberOfParticles() : (t + 1) * chunkSize;
 
 		threads.emplace_back(&SimulationManager::updateParticlesRange, this, start, end, deltaTime);
 	}
 
+	// Join threads
 	for (std::thread& thread : threads) {
 		thread.join();
 	}
 }
 
+// Load settings
 void SimulationManager::loadSettings(const std::string& filename) {
 	try {
 		Settings newSettings = SettingsDataLoader::loadFromFile(filename);
@@ -250,6 +266,7 @@ void SimulationManager::loadSettings(const std::string& filename) {
 	}
 }
 
+// Save settings
 void SimulationManager::saveSettings(const std::string& filename) {
 	try {
 		SettingsDataLoader::saveToFile(filename, settings);
@@ -259,11 +276,13 @@ void SimulationManager::saveSettings(const std::string& filename) {
 	}
 }
 
+// Set settings back to default
 void SimulationManager::defaultSettings() {
 	initSettings();
 	settings.setNumberOfParticles(particles.size());
 }
 
+// Load particles
 void SimulationManager::loadParticles(const std::string& filename) {
 	try {
 		std::vector<Particle> newParticles = ParticleDataLoader::loadFromFile(filename);
@@ -275,6 +294,7 @@ void SimulationManager::loadParticles(const std::string& filename) {
 	}
 }
 
+// Save particles
 void SimulationManager::saveParticles(const std::string& filename) {
 	try {
 		ParticleDataLoader::saveToFile(filename, particles);
