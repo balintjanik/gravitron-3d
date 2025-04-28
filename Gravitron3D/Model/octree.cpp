@@ -1,5 +1,6 @@
 #include "Octree.h"
 
+// Decides which octant an object is in based on its position
 uint32_t Octant::getOctantFromPosition(glm::vec3 position)
 {
     uint32_t x = uint32_t(position.x < getCenter().x);
@@ -9,6 +10,7 @@ uint32_t Octant::getOctantFromPosition(glm::vec3 position)
 
 }
 
+// Creates the ith octant of a node
 Octant Octant::intoOctant(uint32_t i) {
     Octant newOctant = *this;
     float size = newOctant.getSize() * 0.5f;
@@ -23,6 +25,7 @@ Octant Octant::intoOctant(uint32_t i) {
     return newOctant;
 }
 
+// Creates all 8 octants of a node
 std::vector<Octant> Octant::intoOctants(){
     std::vector<Octant> octants;
     for (uint32_t i = 0; i < 8; ++i) {
@@ -31,6 +34,7 @@ std::vector<Octant> Octant::intoOctants(){
     return octants;
 }
 
+// Creates an octant containing all particles in the provided list
 Octant Octant::createNewContaining(std::vector<Particle>& particles)
 {
     if (particles.size() == 0)
@@ -61,21 +65,25 @@ Octant Octant::createNewContaining(std::vector<Particle>& particles)
     return Octant(glm::vec4(center_x, center_y, center_z, size));
 }
 
+// Decides if the node is a branch
 bool Node::isBranch()
 {
     return children != 0;
 }
 
+// Decides if the node is empty
 bool Node::isEmpty()
 {
     return positionMass.w == 0.0;
 }
 
+// Decides if the node is a leaf
 bool Node::isLeaf()
 {
     return children == 0;
 }
 
+// Clears the octree and initializes the root node with the provided octant
 void Octree::clear(Octant octant)
 {
     nodes.clear();
@@ -83,6 +91,7 @@ void Octree::clear(Octant octant)
     nodes.push_back(Node(0, octant));
 }
 
+// Subdivides a node by creating its children
 uint32_t Octree::subdivide(uint32_t node) {
     parents.push_back(node);
 
@@ -109,16 +118,19 @@ uint32_t Octree::subdivide(uint32_t node) {
     return children;
 }
 
+// Inserts a particle into the octree
 void Octree::insert(glm::vec3 position, float mass)
 {
     uint32_t node = ROOT;
 
+    // Find the leaf node where the particle is supposed to be inserted to
     while (nodes[node].isBranch())
     {
         size_t q = nodes[node].octant.getOctantFromPosition(position);
         node = nodes[node].children + q;
     }
 
+    // If the leaf node is empty, insert the particle and return, otherwise continue
     if (nodes[node].isEmpty())
     {
         nodes[node].setPosition(position);
@@ -126,6 +138,7 @@ void Octree::insert(glm::vec3 position, float mass)
         return;
     }
 
+    // If the 2 particles are extremely closed, they are "merged" to avoid extreme depths in the tree, otherwise continue
     glm::vec3 nodePosition = nodes[node].getPosition();
     float nodeMass = nodes[node].getMass();
 
@@ -136,22 +149,25 @@ void Octree::insert(glm::vec3 position, float mass)
         return;
     }
 
+    // Subdivide until the 2 particles are in the same node
     bool bothInTheSameLeafNode = true;
     while (bothInTheSameLeafNode)
     {
-        size_t children = subdivide(node);
+        uint32_t children = subdivide(node);
 
-        size_t o1 = nodes[node].octant.getOctantFromPosition(nodePosition);
-        size_t o2 = nodes[node].octant.getOctantFromPosition(position);
+        uint32_t o1 = nodes[node].octant.getOctantFromPosition(nodePosition);
+        uint32_t o2 = nodes[node].octant.getOctantFromPosition(position);
 
+        // If both fall into the same node, continue subdividing its child
         if (o1 == o2)
         {
             node = children + o1;
         }
+        // Otherwise insert both particles into the correct newly created leaf node
         else
         {
-            size_t n1 = children + o1;
-            size_t n2 = children + o2;
+            uint32_t n1 = children + o1;
+            uint32_t n2 = children + o2;
 
             nodes[n1].setPosition(nodePosition);
             nodes[n1].setMass(nodeMass);
@@ -162,6 +178,7 @@ void Octree::insert(glm::vec3 position, float mass)
     }
 }
 
+// Update parent nodes' position and mass with their children's average and sum
 void Octree::propagate()
 {
     std::reverse(parents.begin(), parents.end());
@@ -197,6 +214,7 @@ void Octree::propagate()
     }
 }
 
+// Calculate the acceleration of a particle
 float Octree::calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 position, float theta, float epsilon)
 {
     float allForce = 0;
@@ -208,23 +226,25 @@ float Octree::calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 positio
     uint32_t node = ROOT;
     bool checkedAll = false;
 
+    // Iterate until all particles have been accounted for
     while (!checkedAll)
     {
         Node currentNode = nodes[node];
 
+        // Calculate distance between particle and node
         glm::vec3 distance = currentNode.getPosition() - position;
         float distanceSq = glm::dot(distance, distance);
 
-        // FONTOS - ez alapból nem volt benne, de, ha ez nincs,
-        // akkor a saját node-jánál is számolni akar,
-        // zéróosztó lesz és beakad meghal a program
-        // Note: floating-point division miatt nem == 0.0 hanem ez lett
+        // Check if the node is the one the particle is in
         if (distanceSq < 1e-10)
         {
+            // If so, and the next node to check is the root, then the calculations are finished
             if (currentNode.next == 0)
             {
                 checkedAll = true;
             }
+            // Otherwise just skip this node (to avoid zero-division during
+            // force calculation due to 0 distance), and go to the next
             else
             {
                 node = currentNode.next;
@@ -232,13 +252,17 @@ float Octree::calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 positio
             continue;
         }
 
+        // If the observed node is a leaf, or it fulfills the Barnes-Hut criteria then calculate the force
         if (currentNode.isLeaf() || currentNode.octant.getSize() * currentNode.octant.getSize() < distanceSq * thetaSq)
         {
+            // Calculate acceleration
             float denom = (distanceSq + epsilonSq) * sqrt(distanceSq);
             r_acceleration += distance * (currentNode.getMass() / denom);
 
+            // Accumulate forces (only used for to color particles based on force option in the app)
             allForce += (currentNode.getMass()) / (distanceSq + epsilonSq);
 
+            // If the next node is the root, then the calculations are finished
             if (currentNode.next == 0)
             {
                 checkedAll = true;
@@ -247,6 +271,7 @@ float Octree::calculateAcceleration(glm::vec3& r_acceleration, glm::vec3 positio
 
             node = currentNode.next;
         }
+        // Otherwise observe its children
         else
         {
             node = currentNode.children;
