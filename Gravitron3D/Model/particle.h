@@ -42,6 +42,17 @@ public:
 			glm::vec4(color_, movable_)
 		)
 	{
+		setPosition(position_);
+		setMass(mass_);
+
+		setVelocity(velocity_);
+		setSize(size_);
+
+		setAcceleration(acceleration_);
+		setForce(force_);
+
+		setColor(color_);
+		setMovable(movable_);
 	}
 
 	// Getters
@@ -55,27 +66,39 @@ public:
 	bool getMovable() const { return colorMovable.w == 1.0f; }
 
 	// Setters
-	void setPosition(const glm::vec3& newPosition) { positionMass = glm::vec4(newPosition, positionMass.w); }
+	void setPosition(const glm::vec3& newPosition) {
+		positionMass = glm::vec4(newPosition, positionMass.w);
+	}
+
 	void setMass(const float newMass) {
 		if (newMass < 0.00001f)
 			throw std::runtime_error("Incorrect value for mass: " + std::to_string(newMass) + ". Value must be larger than 0.00001");
 		else
 			positionMass.w = newMass;
 	}
-	void setVelocity(const glm::vec3& newVelocity) { velocitySize = glm::vec4(newVelocity, velocitySize.w); }
+
+	void setVelocity(const glm::vec3& newVelocity) {
+		velocitySize = glm::vec4(newVelocity, velocitySize.w);
+	}
+
 	void setSize(float newSize) {
 		if (newSize < 0.1f)
 			throw std::runtime_error("Incorrect value for size: " + std::to_string(newSize) + ". Value must be larger than 0.5");
 		else
 			velocitySize.w = newSize;
 	}
-	void setAcceleration(const glm::vec3& newAcceleration) { accelerationForce = glm::vec4(newAcceleration, accelerationForce.w); }
+
+	void setAcceleration(const glm::vec3& newAcceleration) {
+		accelerationForce = glm::vec4(newAcceleration, accelerationForce.w);
+	}
+
 	void setForce(float newForce) {
 		if (newForce < 0.0f)
 			throw std::runtime_error("Incorrect value for force: " + std::to_string(newForce) + ". Value must be larger than 0");
 		else
 			accelerationForce.w = newForce;
 	}
+
 	void setColor(const glm::vec3& newColor) {
 		if (newColor.r < 0.0f || newColor.g < 0.0f || newColor.b < 0.0f ||
 			newColor.r > 1.0f || newColor.g > 1.0f || newColor.b > 1.0f)
@@ -83,5 +106,8 @@ public:
 		else
 			colorMovable = glm::vec4(newColor, colorMovable.w);
 	}
-	void setMovable(bool newMovable) { colorMovable.w = newMovable ? 1 : 0; }
+
+	void setMovable(bool newMovable) { 
+		colorMovable.w = newMovable ? 1 : 0;
+	}
 };
