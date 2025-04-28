@@ -26,11 +26,12 @@ void main()
 
     vec3 normalizedInstancePosition = position / 100.0;
 
-    mat4 world = mat4(1.0);
-    world[0][0] = instanceSize;
-    world[1][1] = instanceSize;
-    world[2][2] = instanceSize;
-    world[3] = vec4(normalizedInstancePosition, 1.0);
+    mat4 world = mat4(
+        vec4(instanceSize, 0.0, 0.0, 0.0),
+        vec4(0.0, instanceSize, 0.0, 0.0),
+        vec4(0.0, 0.0, instanceSize, 0.0),
+        vec4(normalizedInstancePosition, 1.0)
+    );
 
     mat4 worldIT = transpose(inverse(world));
 
