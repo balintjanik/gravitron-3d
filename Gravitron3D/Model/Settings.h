@@ -99,38 +99,57 @@ public:
     void setNumberOfParticles(int _numberOfParticles) {
         numberOfParticles = static_cast<uint32_t>(glm::clamp(_numberOfParticles, static_cast<int>(minNumberOfParticles), static_cast<int>(maxNumberOfParticles)));
     }
-    void setSimulationSpeed(float _simulationSpeed) { simulationSpeed = glm::clamp(_simulationSpeed, minSimulationSpeed, maxSimulationSpeed); }
+
+    void setSimulationSpeed(float _simulationSpeed) {
+        simulationSpeed = glm::clamp(_simulationSpeed, minSimulationSpeed, maxSimulationSpeed);
+    }
+
     void setNumberOfThreads(int _numberOfThreads) {
         if (_numberOfThreads < 1)
             _numberOfThreads = 1;
         numberOfThreads = static_cast<uint32_t>(_numberOfThreads);
     }
+
     void setTheta(float _theta) {
         theta = glm::clamp(_theta, minTheta, maxTheta);
     }
+
     void setEpsilon(float _epsilon) {
         epsilon = glm::clamp(_epsilon, minEpsilon, maxEpsilon);
     }
-    void setLightPos(const glm::vec4& pos) { lightPos = pos; }
+
+    void setLightPos(const glm::vec4& pos) {
+        lightPos = pos;
+    }
+
     void setLightConstantAttenuation(float constant) {
         lightConstantAttenuation = glm::clamp(constant, minLightConstantAttenuation, maxLightConstantAttenuation);
     }
+
     void setLightLinearAttenuation(float linear) {
         lightLinearAttenuation = glm::clamp(linear, minLightLinearAttenuation, maxLightLinearAttenuation);
     }
+
     void setLightQuadraticAttenuation(float quadratic) {
         lightQuadraticAttenuation = glm::clamp(quadratic, minLightQuadraticAttenuation, maxLightQuadraticAttenuation);
     }
+
     void setScaleFactor(float scale) {
         scaleFactor = glm::clamp(scale, minScaleFactor, maxScaleFactor);
     }
-    void setIsForceColor(bool _isForceColor) { isForceColor = _isForceColor; }
+
+    void setIsForceColor(bool _isForceColor) {
+        isForceColor = _isForceColor;
+    }
+
     void setMinForceColor(float _minForceColor) {
         minForceColor = glm::clamp(_minForceColor, 0.0f, maxForceColor);
     }
+
     void setMaxForceColor(float _maxForceColor) {
         maxForceColor = glm::clamp(_maxForceColor, minForceColor, std::numeric_limits<float>::max());
     }
+
     void setBackgroundColor(glm::vec3 _backgroundColor) {
         backgroundColor = glm::clamp(_backgroundColor, 0.0f, 1.0f);
     }
