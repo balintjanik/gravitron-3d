@@ -451,14 +451,14 @@ void SimulationView::Render()
 	// Render particles
 	RenderParticlesInstanced();
 
-	// Render spawn particle preview
-	if (spawnParticle_show) {
-		RenderParticleSpawnPreview();
-	}
-
 	// Render octree
 	if (showOctree) {
 		RenderOctreeNodes();
+	}
+
+	// Render spawn particle preview
+	if (spawnParticle_show) {
+		RenderParticleSpawnPreview();
 	}
 
 	// Cleanup
