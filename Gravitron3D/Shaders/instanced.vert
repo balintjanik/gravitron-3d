@@ -25,12 +25,12 @@ uniform float scaleFactor;
 
 void main()
 {
+    // Create World and WorldIT matrices
     vec3 instancePosition = instancePositionMass.xyz;
     float instanceScale = instanceVelocitySize.w;
     float instanceForce = instanceAccelerationForce.w;
     vec3 instanceColor = instanceColorMovable.xyz;
     float instanceSize = scaleFactor * instanceScale;
-
     vec3 normalizedInstancePosition = instancePosition / 100.0;
 
     mat4 world = mat4(
@@ -39,9 +39,9 @@ void main()
         vec4(0.0, 0.0, instanceSize, 0.0),
         vec4(normalizedInstancePosition, 1.0)
     );
-
     mat4 worldIT = transpose(inverse(world));
 
+    // Outputs
     gl_Position = viewProj * world * vec4(vs_in_pos, 1.0);
     vs_out_pos  = (world   * vec4(vs_in_pos, 1)).xyz;
     vs_out_norm = (worldIT * vec4(vs_in_norm, 0)).xyz;
