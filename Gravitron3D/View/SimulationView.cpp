@@ -5,16 +5,12 @@
 
 #include <filesystem>
 
-SimulationView::SimulationView()
-{
-}
+SimulationView::SimulationView() { }
 
-SimulationView::~SimulationView()
-{
-}
+SimulationView::~SimulationView() { }
 
-void SimulationView::SetupDebugCallback()
-{
+// Setup debug callback for OpenGL
+void SimulationView::SetupDebugCallback() {
 	GLint context_flags;
 	glGetIntegerv(GL_CONTEXT_FLAGS, &context_flags);
 	if (context_flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
@@ -26,8 +22,8 @@ void SimulationView::SetupDebugCallback()
 	}
 }
 
-void SimulationView::InitShaders()
-{
+// Initialize shaders
+void SimulationView::InitShaders() {
 	// Instanced Shader Program
 	m_instancedProgramID = glCreateProgram();
 	AttachShader(m_instancedProgramID, GL_VERTEX_SHADER, "Shaders/instanced.vert");
@@ -41,12 +37,13 @@ void SimulationView::InitShaders()
 	LinkProgram(m_individualProgramID);
 }
 
-void SimulationView::CleanShaders() const
-{
+// Delete shaders
+void SimulationView::CleanShaders() const {
 	glDeleteProgram( m_instancedProgramID );
 	glDeleteProgram( m_individualProgramID );
 }
 
+// Initialize geometry
 void SimulationView::InitGeometry()
 {
 
@@ -62,9 +59,9 @@ void SimulationView::InitGeometry()
 
 	// Sphere
 	MeshObject<Vertex> sphereMeshCPU = ObjParser::parse("Assets/rockICO.obj");
-
 	m_sphereGPU = CreateGLObjectFromMesh( sphereMeshCPU, vertexAttribList );
 
+	// Additionally setup instance buffers for sphere (for instanced drawing)
 	glBindVertexArray(m_sphereGPU.vaoID);
 
 	// Instance VBO (particles contains the entire particle data)
@@ -94,7 +91,7 @@ void SimulationView::InitGeometry()
 
 	glBindVertexArray(0);
 
-	// Setup cube edges
+	// Additionally setup custom ibo for node to display cube edges only
 	glBindVertexArray(m_nodeGPU.vaoID);
 
 	const GLuint nodeEdges[] = {
@@ -112,47 +109,49 @@ void SimulationView::InitGeometry()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(nodeEdges), nodeEdges, GL_STATIC_DRAW);
 }
 
-void SimulationView::CleanGeometry()
-{
+// Delete geometry data
+void SimulationView::CleanGeometry() {
 	CleanOGLObject( m_nodeGPU );
 	CleanOGLObject( m_sphereGPU );
 }
 
+// Initialize textures
 void SimulationView::InitTextures()
 {
+	// Create sampler
 	glCreateSamplers( 1, &m_SamplerID );
 	glSamplerParameteri( m_SamplerID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
 	glSamplerParameteri( m_SamplerID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
 	glSamplerParameteri( m_SamplerID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR );
 	glSamplerParameteri( m_SamplerID, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
+	// Sphere texture
 	ImageRGBA sphereImage = ImageFromFile( "Assets/rock.jpg" );
-
 	glCreateTextures( GL_TEXTURE_2D, 1, &m_sphereTextureID );
 	glTextureStorage2D( m_sphereTextureID, NumberOfMIPLevels( sphereImage ), GL_RGBA8, sphereImage.width, sphereImage.height );
 	glTextureSubImage2D( m_sphereTextureID, 0, 0, 0, sphereImage.width, sphereImage.height, GL_RGBA, GL_UNSIGNED_BYTE, sphereImage.data() );
-
 	glGenerateTextureMipmap( m_sphereTextureID );
 
+	// Node texture
 	ImageRGBA nodeImage = ImageFromFile("Assets/node.jpg");
-
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_nodeTextureID);
 	glTextureStorage2D( m_nodeTextureID, NumberOfMIPLevels(nodeImage), GL_RGBA8, nodeImage.width, nodeImage.height );
 	glTextureSubImage2D( m_nodeTextureID, 0, 0, 0, nodeImage.width, nodeImage.height, GL_RGBA, GL_UNSIGNED_BYTE, nodeImage.data() );
-
 	glGenerateTextureMipmap( m_nodeTextureID );
 }
 
-void SimulationView::CleanTextures() const
-{
+// Delete textures
+void SimulationView::CleanTextures() const {
 	glDeleteTextures( 1, &m_nodeTextureID );
 	glDeleteTextures( 1, &m_sphereTextureID );
 }
 
+// Initialize simulation
 void SimulationView::InitSimulation() {
 	simulationManager.initSimulation(presetType);
 }
 
+// Initialize ImGui style settings
 void SimulationView::InitImGuiSettings() {
 	io = ImGui::GetIO();
 
@@ -162,7 +161,7 @@ void SimulationView::InitImGuiSettings() {
 	ImGui::SetNextWindowSize(ImVec2(windowWidth, windowHeight));
 
 	// Position
-	ImGui::SetNextWindowPos(ImVec2(0, 0)); // Left side
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
 	ImGuiStyle& style = ImGui::GetStyle();
 	ImVec4* colors = style.Colors;
@@ -176,12 +175,12 @@ void SimulationView::InitImGuiSettings() {
 	font_cfg.GlyphOffset = ImVec2(0.0f, -1.0f);
 	io.Fonts->AddFontFromFileTTF("Assets/Inter.ttc", 15.0f, &font_cfg);
 
-	// Base Background
+	// Base background
 	colors[ImGuiCol_WindowBg] = ImVec4(0.0745f, 0.0745f, 0.0745f, 0.7f);
 	colors[ImGuiCol_ChildBg] = ImVec4(0.09f, 0.09f, 0.09f, 1.0f);
 	colors[ImGuiCol_PopupBg] = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
 
-	// Window Title Bar
+	// Window title bar
 	colors[ImGuiCol_TitleBg] = ImVec4(0.12f, 0.12f, 0.12f, 1.0f);
 	colors[ImGuiCol_TitleBgActive] = ImVec4(0.22f, 0.22f, 0.22f, 1.0f);
 	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
@@ -200,7 +199,7 @@ void SimulationView::InitImGuiSettings() {
 	colors[ImGuiCol_ButtonHovered] = ImVec4(0.35f, 0.35f, 0.35f, 1.0f);
 	colors[ImGuiCol_ButtonActive] = ImVec4(0.50f, 0.50f, 0.50f, 1.0f);
 
-	// Frame BGs
+	// Frame backgrounds
 	colors[ImGuiCol_FrameBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.0f);
 	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.30f, 0.30f, 0.30f, 1.0f);
 	colors[ImGuiCol_FrameBgActive] = ImVec4(0.45f, 0.45f, 0.45f, 1.0f);
@@ -217,11 +216,11 @@ void SimulationView::InitImGuiSettings() {
 	// Checkbox tick
 	colors[ImGuiCol_CheckMark] = ImVec4(0.95f, 0.95f, 0.95f, 1.0f);
 
-	// Separators & Borders
+	// Separators and borders
 	colors[ImGuiCol_Border] = ImVec4(0.11f, 0.11f, 0.11f, 1.0f);
 	colors[ImGuiCol_Separator] = ImVec4(0.28f, 0.28f, 0.28f, 1.0f);
 
-	// Resize Grips
+	// Resize grips
 	colors[ImGuiCol_ResizeGrip] = ImVec4(0.25f, 0.25f, 0.25f, 0.7f);
 	colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.45f, 0.45f, 0.45f, 0.9f);
 	colors[ImGuiCol_ResizeGripActive] = ImVec4(0.65f, 0.65f, 0.65f, 1.0f);
@@ -233,15 +232,19 @@ void SimulationView::InitImGuiSettings() {
 	style.ScrollbarRounding = 6.0f;
 }
 
+// Set clear color
 void SimulationView::SetBackgroundColor(glm::vec3 color) {
 	glClearColor(color.x, color.y, color.z, 1.0f);
 }
 
+// Initialize view
 bool SimulationView::Init()
 {
+	// Initialize model layer's manager and start simulation
 	simulationManager.initSettings();
 	InitSimulation();
 
+	// Initialize OpenGL and drawing related settings
 	SetupDebugCallback();
 	SetBackgroundColor(backgroundColor);
 
@@ -256,25 +259,28 @@ bool SimulationView::Init()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	// Initialize camera
 	m_camera.SetView(
-		DEFAULT_CAMERA_POSITION,  // From
-		DEFAULT_CAMERA_TARGET,   // To
-		DEFAULT_CAMERA_WORLDUP);  // Up
+		DEFAULT_CAMERA_POSITION,
+		DEFAULT_CAMERA_TARGET,
+		DEFAULT_CAMERA_WORLDUP);
 
 	m_cameraManipulator.SetCamera( &m_camera );
 
+	// Initialize UI
 	InitImGuiSettings();
 
 	return true;
 }
 
-void SimulationView::Clean()
-{
+// Clean everything loaded for drawing
+void SimulationView::Clean() {
 	CleanShaders();
 	CleanGeometry();
 	CleanTextures();
 }
 
+// Update local variables based on model layer's data
 void SimulationView::UpdateData() {
 	// FPS
 	timeSinceLastSec += m_DeltaTimeInSec;
@@ -318,6 +324,7 @@ void SimulationView::UpdateData() {
 	maxWorldBound = simulationManager.getMaxWorldBound();
 }
 
+// Update logic
 void SimulationView::Update( const SUpdateInfo& updateInfo )
 {
 	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
@@ -336,10 +343,12 @@ void SimulationView::Update( const SUpdateInfo& updateInfo )
 	glNamedBufferData(instanceVBO, sizeof(Particle) * simulationManager.particles.size(), simulationManager.particles.data(), GL_DYNAMIC_DRAW);
 }
 
+// Render particles list with instanced drawing
 void SimulationView::RenderParticlesInstanced() {
+	// Load shaders for instanced drawing
 	glUseProgram(m_instancedProgramID);
 
-	// Set uniforms for instanced path
+	// Set uniforms
 	glProgramUniform1i(m_instancedProgramID, ul(m_instancedProgramID, "colorType"), isForceColor ? 1 : 0);
 	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "scaleFactor"), scaleFactor);
 	glProgramUniform1f(m_instancedProgramID, ul(m_instancedProgramID, "minVal"), minForceColor);
@@ -363,6 +372,7 @@ void SimulationView::RenderParticlesInstanced() {
 	glBindVertexArray(m_sphereGPU.vaoID);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	// Draw
 	glDrawElementsInstanced(
 		GL_TRIANGLES,
 		m_sphereGPU.count,
@@ -372,9 +382,12 @@ void SimulationView::RenderParticlesInstanced() {
 	);
 }
 
+// Render particle to be spawned preview
 void SimulationView::RenderParticleSpawnPreview() {
+	// Load shaders for individual drawing
 	glUseProgram(m_individualProgramID);
 
+	// Set uniforms
 	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "colorType"), 2); // Fixed color
 	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "negativeColor"), 1, glm::value_ptr(negativeColor)); // Fixed negative color relative to background
 	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scaleFactor"), 0.005f); // Fixed scale
@@ -391,11 +404,15 @@ void SimulationView::RenderParticleSpawnPreview() {
 	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "position"), 1, glm::value_ptr(spawnParticle_position));
 	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scale"), spawnParticle_size);
 
+	// Textures and samplers
 	glBindSampler(0, m_SamplerID);
 	glBindTextureUnit(0, m_sphereTextureID);
+
+	// Geometry
 	glBindVertexArray(m_sphereGPU.vaoID);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+	// Draw
 	glDrawElements(
 		GL_TRIANGLES,
 		m_sphereGPU.count,
@@ -404,9 +421,12 @@ void SimulationView::RenderParticleSpawnPreview() {
 	);
 }
 
+// Render octree nodes
 void SimulationView::RenderOctreeNodes() {
+	// Load shaders for individual drawing
 	glUseProgram(m_individualProgramID);
 
+	// Set uniforms
 	glProgramUniform1i(m_individualProgramID, ul(m_individualProgramID, "colorType"), 0); // Fixed color
 	glProgramUniform3fv(m_individualProgramID, ul(m_individualProgramID, "color"), 1, glm::value_ptr(negativeColor)); // Fixed negative color relative to background
 	glProgramUniform1f(m_individualProgramID, ul(m_individualProgramID, "scaleFactor"), 0.005f); // Fixed scale
@@ -429,7 +449,7 @@ void SimulationView::RenderOctreeNodes() {
 	// Wireframe mode
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	// Loop through all octree nodes
+	// Loop through all octree nodes and draw only if it contains particles in its branch
 	for (const auto& node : simulationManager.octree.nodes) {
 		if (node.getMass() == 0) continue;
 
@@ -443,6 +463,7 @@ void SimulationView::RenderOctreeNodes() {
 	}
 }
 
+// Render
 void SimulationView::Render()
 {
 	// Clear screen
@@ -468,6 +489,7 @@ void SimulationView::Render()
 	glBindVertexArray( 0 );
 }
 
+// Template function to create a dropdown from an enumerator
 template <typename EnumType, size_t N>
 bool SimulationView::ShowEnumDropdown(const char* label, const char* (&names)[N], EnumType& currentValue) {
 	bool valueChanged = false;
@@ -491,12 +513,14 @@ bool SimulationView::ShowEnumDropdown(const char* label, const char* (&names)[N]
 	return valueChanged;
 }
 
+// Update warning/error message data
 void SimulationView::UpdateMessage(std::string newMessage, glm::vec3 newMessageColor) {
 	message = newMessage;
 	messageColor = newMessageColor;
 	messageTime = 0.0f;
 }
 
+// Display warning/error message
 void SimulationView::ShowMessage(float r, float g, float b) {
 	messageTime += ImGui::GetIO().DeltaTime;
 
@@ -533,6 +557,7 @@ void SimulationView::ShowMessage(float r, float g, float b) {
 	ImGui::PopStyleColor();
 }
 
+// Collect previously saved settings files
 void SimulationView::CollectSettingsFiles() {
 	// Ensure directories exist before saving or loading
 	std::filesystem::create_directories("UserData");
@@ -548,6 +573,7 @@ void SimulationView::CollectSettingsFiles() {
 	}
 }
 
+// Display UI for settings saving
 void SimulationView::SaveSettingsUI() {
 	ImGui::SeparatorText("Save settings");
 	ImGui::InputText("##SettingsFilename", saveSettingsFileName, IM_ARRAYSIZE(saveSettingsFileName));
@@ -579,16 +605,17 @@ void SimulationView::SaveSettingsUI() {
 	}
 }
 
+// Display UI for settings loading
 void SimulationView::LoadSettingsUI() {
 	ImGui::SeparatorText("Load settings");
 	if (!availableSettingsFiles.empty()) {
-		// Convert availableFiles to const char* array for Combo box
+		// Convert availableFiles to const char* array for combo box
 		std::vector<const char*> fileNames;
 		for (const auto& file : availableSettingsFiles) {
 			fileNames.push_back(file.c_str());
 		}
 
-		// Display combo box with file names
+		// Display combo box with filenames
 		if (ImGui::BeginCombo("##SettingsFiles", selectedSettingsFileIndex > 0 ? availableSettingsFiles[selectedSettingsFileIndex].c_str() : "Select a file")) {
 			for (int i = 0; i < availableSettingsFiles.size(); ++i) {
 				bool isSelected = (i == selectedSettingsFileIndex);
@@ -627,6 +654,7 @@ void SimulationView::LoadSettingsUI() {
 	}
 }
 
+// Collect previously saved particles files
 void SimulationView::CollectParticlesFiles() {
 	// Ensure directories exist before saving or loading
 	std::filesystem::create_directories("UserData");
@@ -642,6 +670,7 @@ void SimulationView::CollectParticlesFiles() {
 	}
 }
 
+// Display UI for particles saving
 void SimulationView::SaveParticlesUI() {
 	ImGui::SeparatorText("Save particles");
 	ImGui::InputText("##ParticlesFilename", saveParticlesFileName, IM_ARRAYSIZE(saveParticlesFileName));
@@ -673,16 +702,17 @@ void SimulationView::SaveParticlesUI() {
 	}
 }
 
+// Display UI for particles loading
 void SimulationView::LoadParticlesUI() {
 	ImGui::SeparatorText("Load particles");
 	if (!availableParticlesFiles.empty()) {
-		// Convert availableFiles to const char* array for Combo box
+		// Convert availableFiles to const char* array for combo box
 		std::vector<const char*> fileNames;
 		for (const auto& file : availableParticlesFiles) {
 			fileNames.push_back(file.c_str());
 		}
 
-		// Display combo box with file names
+		// Display combo box with filenames
 		if (ImGui::BeginCombo("##ParticlesFiles", selectedParticlesFileIndex > 0 ? availableParticlesFiles[selectedParticlesFileIndex].c_str() : "Select a file")) {
 			for (int i = 0; i < availableParticlesFiles.size(); ++i) {
 				bool isSelected = (i == selectedParticlesFileIndex);
@@ -721,6 +751,7 @@ void SimulationView::LoadParticlesUI() {
 	}
 }
 
+// Set camera attributes based on provided preset
 void SimulationView::SetCameraPresetView(CameraPresets direction) {
 	float distance = glm::distance(m_camera.GetEye(), m_camera.GetAt());
 	glm::vec3 newCameraPosition = m_camera.GetAt();
@@ -768,6 +799,7 @@ void SimulationView::SetCameraPresetView(CameraPresets direction) {
 	m_cameraManipulator.SetCamera(&m_camera);
 }
 
+// Display UI for camera settings
 void SimulationView::ShowCameraSettings() {
 	float buttonWidth = 50.0f; 
 	float buttonHeight = 20.0f;
@@ -839,11 +871,12 @@ void SimulationView::ShowCameraSettings() {
 	ImGui::EndGroup();
 }
 
+// Display UI for light type settings
 void SimulationView::ShowLightTypeSettings() {
 	float spacing = 5.0f;
 	float buttonWidth = ImGui::GetContentRegionAvail().x * 0.333f - spacing / 2.0f;
 
-	int lightType = 0; // Constant
+	int lightType = 0; // Constant light
 	if (lightPos.w == 0.0f)
 		lightType = 1; // Directional light
 	else if (lightPos.w == 1.0f)
@@ -872,7 +905,7 @@ void SimulationView::ShowLightTypeSettings() {
 	ToggleButton("Point", 2);
 
 	// Update light position
-	if (lightType == 0 && lightPos.w != 0.5f) // Constant
+	if (lightType == 0 && lightPos.w != 0.5f) // Constant light
 	{
 		lightPos.w = 0.5f;
 		simulationManager.settings.setLightPos(lightPos);
@@ -889,8 +922,9 @@ void SimulationView::ShowLightTypeSettings() {
 	}
 }
 
+// Display UI for light parameter settings
 void SimulationView::ShowLightParameterSettings() {
-	if (lightPos.w == 0.5f) // Constant
+	if (lightPos.w == 0.5f) // Constant light
 	{
 		ImGui::Text("There are no parameters for this light type.");
 	}
@@ -927,6 +961,7 @@ void SimulationView::ShowLightParameterSettings() {
 	}
 }
 
+// Display UI for spawn particle settings
 void SimulationView::ShowSpawnParticleSettings() {
 	if (ImGui::DragFloat3("Position", glm::value_ptr(spawnParticle_position), 10.0f, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound()))
 		spawnParticle_position = glm::clamp(spawnParticle_position, simulationManager.getMinWorldBound(), simulationManager.getMaxWorldBound());
@@ -955,6 +990,7 @@ void SimulationView::ShowSpawnParticleSettings() {
 	}
 }
 
+// Display UI for spawn group position settings
 void SimulationView::ShowSpawnGroupPositionSettings(PositionType positionType) {
 	switch (positionType) {
 	case POSITION_RANDOM:
@@ -1000,6 +1036,7 @@ void SimulationView::ShowSpawnGroupPositionSettings(PositionType positionType) {
 	}
 }
 
+// Display UI for spawn group velocity settings
 void SimulationView::ShowSpawnGroupVelocitySettings(VelocityType velocityType) {
 	switch (velocityType) {
 	case VELOCITY_ORBIT:
@@ -1021,6 +1058,7 @@ void SimulationView::ShowSpawnGroupVelocitySettings(VelocityType velocityType) {
 	}
 }
 
+// Display UI for spawn group mass settings
 void SimulationView::ShowSpawnGroupMassSettings(MassType massType) {
 	switch (massType)
 	{
@@ -1039,6 +1077,7 @@ void SimulationView::ShowSpawnGroupMassSettings(MassType massType) {
 	}
 }
 
+// Display UI for spawn group size settings
 void SimulationView::ShowSpawnGroupSizeSettings(SizeType sizeType) {
 	switch (sizeType)
 	{
@@ -1057,8 +1096,8 @@ void SimulationView::ShowSpawnGroupSizeSettings(SizeType sizeType) {
 	}
 }
 
-void SimulationView::RenderGUI()
-{
+// Render graphical user interface
+void SimulationView::RenderGUI() {
 	if (!showUI) return;
 
 	// Window
@@ -1252,61 +1291,54 @@ void SimulationView::RenderGUI()
 	ImGui::End();
 }
 
-void SimulationView::KeyboardDown(const SDL_KeyboardEvent& key)
-{	
+// Handle keyboard down events
+void SimulationView::KeyboardDown(const SDL_KeyboardEvent& key) {	
 	if ( key.repeat == 0 )
 	{
+		// Reload shaders
 		if ( key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_CTRL )
 		{
 			CleanShaders();
 			InitShaders();
 		}
-		if ( key.keysym.sym == SDLK_F1 )
-		{
-			GLint polygonModeFrontAndBack[ 2 ] = {};
-			glGetIntegerv( GL_POLYGON_MODE, polygonModeFrontAndBack );
-			GLenum polygonMode = ( polygonModeFrontAndBack[ 0 ] != GL_FILL ? GL_FILL : GL_LINE );
-			// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glPolygonMode.xhtml
-			glPolygonMode( GL_FRONT_AND_BACK, polygonMode );
-		}
+		// Show/hide UI
 		if (key.keysym.sym == SDLK_h)
 		{
 			showUI = !showUI;
 		}
 	}
+	// Pass event to camera manipulator
 	m_cameraManipulator.KeyboardDown( key );
 }
 
-void SimulationView::KeyboardUp(const SDL_KeyboardEvent& key)
-{
+// Handle keyboard up events
+void SimulationView::KeyboardUp(const SDL_KeyboardEvent& key) {
+	// Pass event to camera manipulator
 	m_cameraManipulator.KeyboardUp( key );
 }
 
-void SimulationView::MouseMove(const SDL_MouseMotionEvent& mouse)
-{
+// Handle mouse move events
+void SimulationView::MouseMove(const SDL_MouseMotionEvent& mouse) {
 	m_cameraManipulator.MouseMove( mouse );
 }
 
-void SimulationView::MouseDown(const SDL_MouseButtonEvent& mouse)
-{
-}
+// Handle mouse down events
+void SimulationView::MouseDown(const SDL_MouseButtonEvent& mouse) { }
 
-void SimulationView::MouseUp(const SDL_MouseButtonEvent& mouse)
-{
-}
+// Handle mouse up events
+void SimulationView::MouseUp(const SDL_MouseButtonEvent& mouse) { }
 
-void SimulationView::MouseWheel(const SDL_MouseWheelEvent& wheel)
-{
+// Handle mouse wheel events
+void SimulationView::MouseWheel(const SDL_MouseWheelEvent& wheel) {
+	// Pass event to camera manipulator
 	m_cameraManipulator.MouseWheel( wheel );
 }
 
-void SimulationView::Resize(int _w, int _h)
-{
+// Handle window resize events
+void SimulationView::Resize(int _w, int _h) {
 	glViewport(0, 0, _w, _h);
 	m_camera.SetAspect( static_cast<float>(_w) / _h );
 }
 
-void SimulationView::OtherEvent( const SDL_Event& ev )
-{
-
-}
+// Handle any other events
+void SimulationView::OtherEvent( const SDL_Event& ev ) { }
