@@ -5,21 +5,15 @@
 #include <SDL2/SDL.h>
 #include <utility>
 
-CameraManipulator::CameraManipulator()
-{
-}
+CameraManipulator::CameraManipulator() { }
 
-CameraManipulator::~CameraManipulator()
-{
-}
+CameraManipulator::~CameraManipulator() { }
 
-void CameraManipulator::SetCamera( Camera* _pCamera )
-{
+void CameraManipulator::SetCamera( Camera* _pCamera ) {
     m_pCamera = _pCamera;
-
     if ( !m_pCamera ) return;
 
-    // Set the initial spherical coordinates.
+    // Set the initial spherical coordinates
     m_center = m_pCamera->GetAt();
     glm::vec3 ToAim = m_center - m_pCamera->GetEye();
 
@@ -30,36 +24,34 @@ void CameraManipulator::SetCamera( Camera* _pCamera )
 
 }
 
-void CameraManipulator::Update( float _deltaTime )
-{
+void CameraManipulator::Update( float _deltaTime ) {
     if ( !m_pCamera ) return;
 
-    // Frissitjuk a kamerát a Model paraméterek alapján.
-
-	// Az új nézési irányt a gömbi koordináták alapján számoljuk ki.
+	// Calculate new look direction based on spherical coordinates
     glm::vec3 lookDirection( cosf(m_u) * sinf(m_v),
                              cosf(m_v), 
                              sinf(m_u) * sinf(m_v) );
-	// Az új kamera pozíciót a nézési irány és a távolság alapján számoljuk ki.
+
+	// Calculate new camera position based on view direction and distance
     glm::vec3 eye = m_center - m_distance * lookDirection;
 
-	// Az új felfelé irány a világ felfelével legyen azonos.
+	// The new up direction should be the same as the world's up direction
     glm::vec3 up = m_pCamera->GetWorldUp();
 
-	// Az új jobbra irányt a nézési irány és a felfelé irány keresztszorzatából számoljuk ki.
+	// The new right direction is the normalized cross product of the look direction and up direction
     glm::vec3 right = glm::normalize( glm::cross( lookDirection, up ) );
 
-	// Az új előre irányt a felfelé és jobbra irányok keresztszorzatából számoljuk ki.
+	// The new forward direction is the cross product of the up direction and right direction
     glm::vec3 forward = glm::cross( up, right);
 
-	// Az új elmozdulásat a kamera mozgás irányának és sebességének a segítségével számoljuk ki.
+	// The new delta position is calculated based on the camera movement's direction and speed
     glm::vec3 deltaPosition = ( m_goForward * forward + m_goRight * right + m_goUp * up ) * m_speed * (10.0f * m_distance / MAX_DISTANCE) * _deltaTime;
 
-	// Az új kamera pozíciót és nézési cél pozíciót beállítjuk.
+	// Update data
     eye += deltaPosition;
     m_center += deltaPosition;   
 
-	// Frissítjük a kamerát az új pozícióval és nézési iránnyal.
+	// Update camera with new position and look direction
     m_pCamera->SetView( eye, m_center, m_pCamera->GetWorldUp() );
 }
 
