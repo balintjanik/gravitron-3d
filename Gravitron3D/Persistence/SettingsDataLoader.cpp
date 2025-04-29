@@ -3,7 +3,9 @@
 #include <iostream>
 #include <vector>
 
+// Save the provided settings to a .stg file
 void SettingsDataLoader::saveToFile(const std::string& filename, const Settings& settings) {
+    // Open file
     std::ofstream out(filename);
     if (!out) {
         throw std::runtime_error("Failed to open file for saving: " + filename);
@@ -12,7 +14,7 @@ void SettingsDataLoader::saveToFile(const std::string& filename, const Settings&
     // Save version
     out << "version=" << settings.getVersion() << std::endl;
 
-    // Save other members via getters
+    // Save all attributes
     out << "numberOfParticles=" << settings.getNumberOfParticles() << std::endl;
     out << "simulationSpeed=" << settings.getSimulationSpeed() << std::endl;
     out << "numberOfThreads=" << settings.getNumberOfThreads() << std::endl;
@@ -37,22 +39,26 @@ void SettingsDataLoader::saveToFile(const std::string& filename, const Settings&
         throw std::runtime_error("Failed to write settings data.");
     }
 
+    // Close file
     out.close();
 }
 
+// Load settings data from a .stg file into an object
 Settings SettingsDataLoader::loadFromFile(const std::string& filename) {
-    Settings settings;
+    // Open file
     std::ifstream in(filename);
     if (!in) {
         throw std::runtime_error("Failed to open file for loading: " + filename);
     }
 
+    Settings settings;
     const std::vector<std::string> keys = {
         "version", "numberOfParticles", "simulationSpeed", "numberOfThreads", "theta", "epsilon",
         "lightPos", "lightConstantAttenuation", "lightLinearAttenuation", "lightQuadraticAttenuation", "scaleFactor",
         "isForceColor", "minForceColor", "maxForceColor", "backgroundColor"
     };
 
+    // Read settings data
     int index = 0;
     const int maxIndex = keys.size();
     std::string line;
@@ -144,6 +150,7 @@ Settings SettingsDataLoader::loadFromFile(const std::string& filename) {
         throw std::runtime_error("Failed to read settings data");
     }
 
+    // Close file
     in.close();
     return settings;
 }

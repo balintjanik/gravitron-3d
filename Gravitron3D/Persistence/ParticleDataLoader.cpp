@@ -3,13 +3,16 @@
 #include <iostream>
 #include <sstream>
 
+// Save the provided particle list to a .csv file
 void ParticleDataLoader::saveToFile(const std::string& filename, const std::vector<Particle>& particles) {
+    // Open file
     std::ofstream outFile(filename);
     if (!outFile) {
         throw std::runtime_error("Failed to open file for saving: " + filename);
     }
 
     try {
+        // Write header
         std::string separator = ";";
         outFile << "PositionX" << separator << "PositionY" << separator << "PositionZ" << separator << "Mass" << separator
             << "VelocityX" << separator << "VelocityY" << separator << "VelocityZ" << separator << "Size" << separator
@@ -20,6 +23,7 @@ void ParticleDataLoader::saveToFile(const std::string& filename, const std::vect
             throw std::runtime_error("Failed to write header to file.");
         }
 
+        // Write all particles' data
         for (const auto& particle : particles) {
             outFile << particle.getPosition().x << separator
                 << particle.getPosition().y << separator
@@ -49,10 +53,13 @@ void ParticleDataLoader::saveToFile(const std::string& filename, const std::vect
         throw;
     }
 
+    // Close file
     outFile.close();
 }
 
+// Load particles' data from a .csv file into a list
 std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filename) {
+    // Open file
     std::ifstream inFile(filename);
     if (!inFile) {
         throw std::runtime_error("Failed to open file for loading: " + filename);
@@ -67,7 +74,7 @@ std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filena
         throw std::runtime_error("Failed to read header from file.");
     }
 
-    // Read particle data
+    // Read particles' data
     while (std::getline(inFile, line)) {
         std::istringstream lineStream(line);
         std::vector<float> values;
@@ -98,6 +105,7 @@ std::vector<Particle> ParticleDataLoader::loadFromFile(const std::string& filena
         throw std::runtime_error("Failed to read particle data");
     }
 
+    // Close file
     inFile.close();
     return particles;
 }
