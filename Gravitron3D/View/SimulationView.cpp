@@ -327,8 +327,14 @@ void SimulationView::UpdateData() {
 // Update logic
 void SimulationView::Update( const SUpdateInfo& updateInfo )
 {
-	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
-	m_DeltaTimeInSec = updateInfo.DeltaTimeInSec;
+	if (windowWasResized) {
+		m_DeltaTimeInSec = 0.0f;
+		windowWasResized = false;
+	}
+	else {
+		m_DeltaTimeInSec = updateInfo.DeltaTimeInSec;
+		m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
+	}
 
 	// Update camera
 	m_cameraManipulator.Update( m_DeltaTimeInSec );
@@ -1338,6 +1344,7 @@ void SimulationView::MouseWheel(const SDL_MouseWheelEvent& wheel) {
 void SimulationView::Resize(int _w, int _h) {
 	glViewport(0, 0, _w, _h);
 	m_camera.SetAspect( static_cast<float>(_w) / _h );
+	windowWasResized = true;
 }
 
 // Handle any other events

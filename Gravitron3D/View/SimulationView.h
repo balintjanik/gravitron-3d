@@ -57,6 +57,7 @@ protected:
 
 	float m_ElapsedTimeInSec = 0.0f;
 	float m_DeltaTimeInSec = 0.0f;
+	bool windowWasResized = false;
 
 	// Camera
 	Camera m_camera;
