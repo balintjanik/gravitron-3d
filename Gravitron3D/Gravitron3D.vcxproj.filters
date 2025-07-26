@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model\Octree.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="View\Camera.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\CameraManipulator.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\GLUtils.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\SimulationView.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\ObjParser.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="View\SDL_GLDebugMessageCallback.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\PresetUtils.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Model\SimulationManager.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Persistence\ParticleDataLoader.cpp">
+      <Filter>Persistence</Filter>
+    </ClCompile>
+    <ClCompile Include="Persistence\SettingsDataLoader.cpp">
+      <Filter>Persistence</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Model\Octree.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Particle.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="View\Camera.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\CameraManipulator.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\GLUtils.hpp">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\SimulationView.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\ObjParser.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="View\SDL_GLDebugMessageCallback.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\PositionType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\PresetUtils.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\PresetType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\Settings.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SimulationManager.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\VelocityType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Persistence\ParticleDataLoader.h">
+      <Filter>Persistence</Filter>
+    </ClInclude>
+    <ClInclude Include="Persistence\SettingsDataLoader.h">
+      <Filter>Persistence</Filter>
+    </ClInclude>
+    <ClInclude Include="View\CameraPresets.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\MassType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Model\SizeType.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Model\ParticleGroupConfig.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="View\SUpdateInfo.h">
+      <Filter>View</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Model">
+      <UniqueIdentifier>{8ab5eaae-2796-4f09-9145-186b72c8eec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{1bc39cdb-f456-4931-a703-55562537fb5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2517ddf1-f9ab-4ed0-a705-aa4ce323c3ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View">
+      <UniqueIdentifier>{ae14e814-d85e-4f9d-b606-4fb8cc3ad6c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Persistence">
+      <UniqueIdentifier>{0243b94b-aff9-49ca-8ab3-6e80d88e5e18}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="imgui.ini" />
+    <None Include="Shaders\shader.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Assets\icon.ico">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\icon.png">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\Inter.ttc">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Shaders\individual.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\instanced.vert">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\node.jpg">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rock.jpg">
+      <Filter>Assets</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\node.obj">
+      <Filter>Assets</Filter>
+    </None>
+    <None Include="Assets\rockICO.obj">
+      <Filter>Assets</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="resource.rc" />
+  </ItemGroup>
+</Project>

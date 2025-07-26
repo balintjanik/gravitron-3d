@@ -1,0 +1,15 @@
+version=6
+numberOfParticles=0
+simulationSpeed=0.35
+numberOfThreads=8
+theta=0.3
+epsilon=5
+lightPos=0,-1,0,0.5
+lightConstantAttenuation=0.1
+lightLinearAttenuation=0.2
+lightQuadraticAttenuation=0.3
+scaleFactor=0.01
+isForceColor=1
+minForceColor=10
+maxForceColor=90
+backgroundColor=0.1,0.1,0.1

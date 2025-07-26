@@ -1,0 +1,6 @@
+**/x64/
+.vs/
+
+Gravitron3D/UserData/Settings/*.stg
+Gravitron3D/UserData/Particles/*.ptc
+Gravitron3D/UserData/Particles/*.csv
